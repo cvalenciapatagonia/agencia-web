@@ -1,0 +1,17 @@
+# Secretos y configuración local
+.env
+.env.*
+*.key
+*.pem
+
+# Dependencias y temporales
+node_modules/
+*.log
+.DS_Store
+Thumbs.db
+
+# Configuración local de Claude
+.claude/
+
+# Video original sin uso en la página (se conserva solo en disco)
+sitio/assets/video/hero-construccion2.mp4

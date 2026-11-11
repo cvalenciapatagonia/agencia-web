@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Prototipo — Hero con scroll</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0a0a;--surface:#141414;--line:#262626;--text:#ededed;--muted:#8a8a8a;--accent:#d6fa50}
+*{box-sizing:border-box;margin:0}
+body{background:var(--bg);color:var(--text);font-family:Onest,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+.mono{font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+nav{position:fixed;inset:0 0 auto 0;z-index:10;display:flex;justify-content:space-between;align-items:center;padding:20px 48px;background:linear-gradient(#0a0a0a,transparent)}
+.logo{font-weight:600;letter-spacing:-.02em}.logo i{display:inline-block;width:10px;height:10px;background:var(--accent);border-radius:2px;margin-right:10px}
+.btn{display:inline-block;padding:11px 22px;border-radius:999px;background:var(--accent);color:#0a0a0a;font-weight:500;font-size:14px;text-decoration:none}
+
+.stage{position:relative;height:100vh;overflow:hidden;display:flex;flex-direction:column;align-items:center}
+.stage::before{content:"";position:absolute;inset:auto 0 -20% 0;height:60%;background:radial-gradient(ellipse at 50% 100%,rgba(214,250,80,.10),transparent 65%);pointer-events:none}
+.caps{position:relative;width:min(900px,88vw);height:24vh;margin-top:13vh}
+.cap{position:absolute;inset:0;text-align:center;opacity:0}
+.cap h1,.cap h2{font-size:clamp(28px,4.4vw,60px);font-weight:500;letter-spacing:-.04em;line-height:1.05;margin-top:14px}
+.cap em{font-style:normal;color:var(--accent)}
+.diorama{width:min(1100px,94vw);height:46vh;margin-top:auto;margin-bottom:7vh;position:relative}
+.diorama svg{display:block;width:100%;height:100%;overflow:visible}
+.search{position:absolute;left:0;right:0;margin:0 auto;top:-4vh;width:min(560px,86vw);opacity:0;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:0 30px 80px rgba(0,0,0,.6)}
+.sbar{display:flex;align-items:center;gap:10px;background:#0a0a0a;border:1px solid var(--line);border-radius:999px;padding:12px 18px;font-size:15px;color:var(--text)}
+.sbar span{color:var(--muted)}
+.res{margin-top:12px;padding:14px 16px;border:1px solid var(--line);border-radius:12px}
+.res .l1{height:8px;width:55%;background:#2a2a2a;border-radius:4px}.res .l2{height:6px;width:85%;background:#1f1f1f;border-radius:4px;margin-top:9px}
+.res.top{border-color:var(--accent);background:rgba(214,250,80,.06)}
+.res.top b{display:block;font-weight:500;font-size:15px;margin-bottom:4px}
+.res.top .tag{float:right;color:#0a0a0a;background:var(--accent);padding:2px 10px;border-radius:99px;font-size:11px;font-weight:500}
+.res.top p{font-size:13px;color:var(--muted)}
+.dots{position:absolute;bottom:3vh;display:flex;gap:8px}
+.dots i{width:28px;height:3px;border-radius:2px;background:#262626;transition:background .3s}
+.dots i.on{background:var(--accent)}
+
+.after{background:#f5f5f0;color:#111;padding:110px 48px}
+.after .in{max-width:1100px;margin:auto}
+.after h2{font-size:clamp(30px,4vw,52px);font-weight:500;letter-spacing:-.035em;line-height:1.05;max-width:16ch}
+.after .row{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:40px}
+.after .c{background:#fff;border:1px solid #e3e3dc;border-radius:16px;padding:26px}
+.after .c b{display:block;font-size:20px;font-weight:500;margin-bottom:6px}.after .c p{font-size:14px;color:#666}
+.after .btn{margin-top:36px}
+@media(max-width:700px){nav{padding:16px 20px}.after{padding:70px 20px}.after .row{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<nav><div class="logo"><i></i>Estudio</div><a class="btn" href="#">WhatsApp</a></nav>
+
+<header class="stage" id="stage">
+  <div class="caps">
+    <div class="cap"><span class="mono">01 / 05 · Hoy</span><h1>Tu negocio existe.<br><em>En internet, nadie lo ve.</em></h1></div>
+    <div class="cap"><span class="mono">02 / 05 · Presencia</span><h2>Le damos una <em>cara digital</em> propia y profesional.</h2></div>
+    <div class="cap"><span class="mono">03 / 05 · Desarrollo</span><h2>Diseño a medida, rápido, claro y con <em>WhatsApp</em> a un toque.</h2></div>
+    <div class="cap"><span class="mono">04 / 05 · Clientes</span><h2>Las visitas se vuelven <em>mensajes</em>. Los mensajes, ventas.</h2></div>
+    <div class="cap"><span class="mono">05 / 05 · SEO</span><h2>Y cuando te buscan en Google, <em>apareces tú</em>.</h2></div>
+  </div>
+
+  <div class="diorama">
+    <svg id="svg" viewBox="0 0 1000 440" aria-hidden="true"></svg>
+    <div class="search" id="search" aria-hidden="true">
+      <div class="sbar"><span>⌕</span> dentista cerca de mí</div>
+      <div class="res top"><span class="tag">#1</span><b>Tu negocio</b><p>Reserva por WhatsApp · Abierto ahora · ★ 4,9</p></div>
+      <div class="res"><div class="l1"></div><div class="l2"></div></div>
+      <div class="res"><div class="l1"></div><div class="l2"></div></div>
+    </div>
+  </div>
+  <div class="dots" id="dots"><i class="on"></i><i></i><i></i><i></i><i></i></div>
+</header>
+
+<section class="after">
+  <div class="in">
+    <span class="mono" style="color:#777">// Servicios</span>
+    <h2 style="margin-top:14px">Lo que puedo hacer por tu negocio</h2>
+    <div class="row">
+      <div class="c"><b>Landing pages</b><p>Una página enfocada en conseguir clientes.</p></div>
+      <div class="c"><b>Sitios web</b><p>Presencia profesional, lista para Google.</p></div>
+      <div class="c"><b>Apps y sistemas</b><p>Cotizadores, paneles y automatizaciones.</p></div>
+    </div>
+    <a class="btn" href="#">Cotizar por WhatsApp</a>
+  </div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+<script>
+// ---------- Diorama (SVG generado) ----------
+const G = 400;
+const shops = [
+  {x:50,  w:200, h:170, name:'CLÍNICA',      icon:'cross'},
+  {x:280, w:200, h:140, name:'SALÓN',        icon:'circle'},
+  {x:510, w:200, h:155, name:'FERRETERÍA',   icon:'gear'},
+  {x:740, w:210, h:200, name:'CONSTRUCTORA', icon:'bricks'}
+];
+const icon = (k, top) => ({
+  cross:  `<rect x="30" y="${top+22}" width="8" height="26" fill="#3a3a3a"/><rect x="21" y="${top+31}" width="26" height="8" fill="#3a3a3a"/>`,
+  circle: `<circle cx="38" cy="${top+34}" r="14" fill="none" stroke="#3a3a3a" stroke-width="4"/>`,
+  gear:   `<circle cx="38" cy="${top+34}" r="13" fill="none" stroke="#3a3a3a" stroke-width="6" stroke-dasharray="5 4"/>`,
+  bricks: `<g stroke="#3a3a3a" stroke-width="3"><path d="M22 ${top+24}h32M22 ${top+36}h32M22 ${top+48}h32"/></g>`
+}[k]);
+
+let html = `<line x1="0" y1="${G}" x2="1000" y2="${G}" stroke="#262626" stroke-width="2"/>`;
+shops.forEach((s,i)=>{
+  const top = G - s.h, sx = (s.w-150)/2, sy = top-128;
+  html += `
+  <g class="shop" transform="translate(${s.x},0)">
+    <g class="shopbody">
+      <rect x="0" y="${top}" width="${s.w}" height="${s.h}" rx="6" fill="#141414" stroke="#2e2e2e"/>
+      <rect x="22" y="${G-72}" width="44" height="72" fill="#0a0a0a" stroke="#2e2e2e"/>
+      <rect x="88" y="${top+34}" width="${s.w-110}" height="50" fill="#0a0a0a" stroke="#2e2e2e"/>
+      ${icon(s.icon, top)}
+    </g>
+    <g class="sign">
+      <rect x="-6" y="${top-18}" width="${s.w+12}" height="18" rx="3" fill="#d6fa50"/>
+      <text x="${s.w/2}" y="${top-5}" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" font-weight="500" fill="#0a0a0a">${s.name}</text>
+    </g>
+    <g class="screen">
+      <rect x="${sx}" y="${sy}" width="150" height="100" rx="9" fill="#0a0a0a" stroke="#d6fa50" stroke-width="1.5"/>
+      <circle cx="${sx+12}" cy="${sy+11}" r="2.5" fill="#444"/><circle cx="${sx+22}" cy="${sy+11}" r="2.5" fill="#444"/><circle cx="${sx+32}" cy="${sy+11}" r="2.5" fill="#444"/>
+      <rect class="bar" x="${sx+14}" y="${sy+26}" width="90" height="8" rx="4" fill="#ededed"/>
+      <rect class="bar" x="${sx+14}" y="${sy+42}" width="122" height="5" rx="2.5" fill="#3a3a3a"/>
+      <rect class="bar" x="${sx+14}" y="${sy+52}" width="104" height="5" rx="2.5" fill="#3a3a3a"/>
+      <g class="wa"><rect x="${sx+14}" y="${sy+68}" width="64" height="18" rx="9" fill="#d6fa50"/>
+      <text x="${sx+46}" y="${sy+80.5}" text-anchor="middle" font-family="Onest, sans-serif" font-size="9" font-weight="600" fill="#0a0a0a">WhatsApp</text></g>
+    </g>
+    <g class="bubble">
+      <rect x="${s.w-78}" y="${sy-38}" width="68" height="26" rx="13" fill="#d6fa50"/>
+      <path d="M${s.w-30} ${sy-13} l6 9 l3 -9z" fill="#d6fa50"/>
+      <text x="${s.w-44}" y="${sy-21}" text-anchor="middle" font-family="Onest, sans-serif" font-size="11" font-weight="600" fill="#0a0a0a">¡Hola!</text>
+    </g>
+    <g class="person"><circle cx="-20" cy="${G-30}" r="6" fill="#ededed"/><rect x="-26" y="${G-22}" width="12" height="22" rx="5" fill="#ededed"/></g>
+  </g>`;
+});
+document.getElementById('svg').innerHTML = html;
+
+// ---------- Animación ----------
+gsap.registerPlugin(ScrollTrigger);
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const caps = gsap.utils.toArray('.cap');
+const dots = [...document.querySelectorAll('#dots i')];
+
+gsap.set('.shop', {opacity:.4});
+gsap.set('.sign', {scaleY:0, transformOrigin:'50% 100%'});
+gsap.set('.screen', {scale:0, opacity:0, transformOrigin:'50% 100%'});
+gsap.set('.bar', {scaleX:0, transformOrigin:'0% 50%'});
+gsap.set('.wa', {opacity:0});
+gsap.set('.bubble', {opacity:0, y:14});
+gsap.set('.person', {opacity:0, x:-40});
+gsap.set(caps, {opacity:0, y:24}); gsap.set(caps[0], {opacity:1, y:0});
+gsap.set('#search', {opacity:0, y:40});
+
+const tl = gsap.timeline({
+  defaults:{ease:'power2.out'},
+  scrollTrigger: reduce ? null : {
+    trigger:'#stage', start:'top top', end:'+=500%', scrub:.6, pin:true,
+    onUpdate:self=>{ const i=Math.min(4,Math.floor(self.progress*5)); dots.forEach((d,k)=>d.classList.toggle('on',k===i)); }
+  }
+});
+
+// captions
+caps.forEach((c,i)=>{
+  if(i>0) tl.to(c,{opacity:1,y:0,duration:.3},i+.05);
+  if(i<4) tl.to(c,{opacity:0,y:-24,duration:.25},i+.72);
+});
+// 2 · Presencia
+tl.to('.shop',{opacity:1,duration:.5,stagger:.08},1)
+  .to('.sign',{scaleY:1,duration:.4,stagger:.08},1.2)
+  .to('.screen',{scale:1,opacity:1,duration:.5,stagger:.08,ease:'back.out(1.6)'},1.4)
+// 3 · Desarrollo
+  .to('.bar',{scaleX:1,duration:.35,stagger:.03},2.05)
+  .to('.wa',{opacity:1,duration:.3,stagger:.05},2.5)
+// 4 · Clientes
+  .to('.person',{opacity:1,x:60,duration:.6,stagger:.07},3.05)
+  .to('.bubble',{opacity:1,y:0,duration:.35,stagger:.07,ease:'back.out(2)'},3.3)
+// 5 · SEO
+  .to('.diorama svg',{y:70,scale:.82,opacity:.18,duration:.6},4.05)
+  .to('#search',{opacity:1,y:0,duration:.6},4.2)
+  .to({}, {duration:.4}, 4.6);
+
+if(reduce){ tl.progress(1); document.getElementById('stage').style.height='auto'; }
+</script>
+</body>
+</html>

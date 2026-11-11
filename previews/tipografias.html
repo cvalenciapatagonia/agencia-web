@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="es-CL">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Comparador de tipografías — Estudio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..600&family=Geist:wght@400..600&family=Gloock&family=Hanken+Grotesk:wght@400..600&display=swap" rel="stylesheet">
+<link href="https://api.fontshare.com/v2/css?f[]=boska@400,500,400i,500i&f[]=satoshi@400,500,700&f[]=clash-display@500,600&f[]=general-sans@400,500,600&f[]=zodiak@400,700,400i&f[]=switzer@400,500&f[]=cabinet-grotesk@700,800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0}
+body{background:#ebe2d8;color:#16120f;font-family:system-ui,sans-serif;padding:40px 32px 80px}
+.intro{max-width:1240px;margin:0 auto 28px}
+.intro h1{font-size:15px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#3e5870}
+.intro p{margin-top:8px;color:#5c544c;font-size:15px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px;max-width:1240px;margin:auto}
+.op{position:relative;background:#f4ebe2;border-radius:24px;padding:38px 40px 34px;overflow:hidden;min-height:400px;
+  background-image:linear-gradient(90deg,#f4ebe2 64%,rgba(244,235,226,.2)),url(../sitio/assets/img/hero-final.webp);background-size:cover;background-position:right center}
+.letra{position:absolute;top:16px;right:18px;display:grid;place-items:center;width:40px;height:40px;border-radius:50%;background:#16120f;color:#fff;font:600 17px system-ui}
+.ficha{font:500 12px system-ui;color:#5c544c;letter-spacing:.02em;margin-bottom:22px}
+.ficha b{color:#16120f}
+.et{font-size:11.5px;letter-spacing:.22em;text-transform:uppercase;color:#3e5870;font-weight:500}
+.h{font-size:58px;line-height:1;letter-spacing:-.035em;margin-top:14px;max-width:9.5em}
+.h em{color:#3e5870}
+.sub{font-size:19px;color:#5c544c;margin-top:16px}
+.acc{display:flex;align-items:center;gap:18px;margin-top:24px}
+.btn{display:inline-flex;align-items:center;gap:10px;background:#0f7a3e;color:#fff;border-radius:999px;padding:7px 20px 7px 7px;font-size:16px;font-weight:500}
+.btn i{display:grid;place-items:center;width:32px;height:32px;border-radius:50%;background:#25d366}
+.btn svg{width:18px;height:18px}
+.lnk{font-size:16px;text-decoration:underline;text-underline-offset:6px}
+.chips{display:flex;gap:7px;margin-top:20px}
+.chips span{font-size:13px;background:rgba(255,255,255,.7);border-radius:999px;padding:5px 12px}
+.h3{font-size:24px;margin-top:26px;letter-spacing:-.02em}
+.p{font-size:15px;color:#5c544c;margin-top:6px;max-width:42ch;line-height:1.55}
+
+/* A — actual */
+.a{font-family:"Geist"} .a .h,.a .h3{font-family:"Fraunces";font-weight:400} .a .h em{font-weight:300}
+/* B — Boska + Satoshi: serif editorial con cortes marcados */
+.b{font-family:"Satoshi"} .b .h,.b .h3{font-family:"Boska";font-weight:500;letter-spacing:-.03em} .b .h em{font-weight:400}
+/* C — Clash Display + General Sans: agencia moderna, sin serif */
+.c{font-family:"General Sans"} .c .h,.c .h3{font-family:"Clash Display";font-weight:600;letter-spacing:-.03em} .c .h em{font-style:normal;color:#0f7a3e}
+/* D — Zodiak + Switzer: serif expresiva, cálida y con personalidad */
+.d{font-family:"Switzer"} .d .h,.d .h3{font-family:"Zodiak";font-weight:400;letter-spacing:-.04em} .d .h em{font-weight:400}
+/* E — Bricolage Grotesque: grotesca con carácter, cercana */
+.e{font-family:"Bricolage Grotesque"} .e .h,.e .h3{font-weight:700;font-variation-settings:"opsz" 96;letter-spacing:-.045em} .e .h em{font-style:normal;color:#3e5870;font-weight:400}
+/* F — Gloock + Hanken Grotesk: serif de alto contraste, contundente */
+.f{font-family:"Hanken Grotesk"} .f .h,.f .h3{font-family:"Gloock";font-weight:400;letter-spacing:-.03em} .f .h em{font-style:normal;color:#3e5870}
+/* G — Cabinet Grotesk + Satoshi: grotesca gruesa, muy estimulante */
+.g{font-family:"Satoshi"} .g .h,.g .h3{font-family:"Cabinet Grotesk";font-weight:800;letter-spacing:-.04em} .g .h em{font-style:normal;color:#0f7a3e}
+/* H — Satoshi + cursiva Boska: mezcla moderna y editorial */
+.hh{font-family:"Satoshi"} .hh .h,.hh .h3{font-family:"Satoshi";font-weight:700;letter-spacing:-.045em} .hh .h em{font-family:"Boska";font-style:italic;font-weight:400;letter-spacing:-.02em;color:#3e5870}
+</style>
+</head>
+<body>
+<div class="intro">
+  <h1>Comparador de tipografías</h1>
+  <p>El mismo hero con 8 combinaciones. La A es la actual. Todas son gratuitas para uso comercial (Google Fonts o Fontshare).</p>
+</div>
+<div class="grid" id="grid"></div>
+
+<template id="t">
+  <article class="op">
+    <span class="letra"></span>
+    <p class="ficha"></p>
+    <p class="et">Desarrollo web y apps · Chile</p>
+    <p class="h">Tu negocio tiene algo que <em>contar</em>.</p>
+    <p class="sub">Sitios web y apps a medida para pymes.</p>
+    <div class="acc">
+      <span class="btn"><i><svg viewBox="0 0 24 24"><path fill="#fff" d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg></i>Cotizar por WhatsApp</span>
+      <span class="lnk">Ver trabajos →</span>
+    </div>
+    <div class="chips"><span>Búsqueda en Google</span><span>Mapa y ubicación</span><span>Reseñas</span><span>WhatsApp</span></div>
+    <p class="h3">Te encuentran en el mapa</p>
+    <p class="p">Tu perfil de empresa muestra dirección, horario y lo que opinan otros clientes.</p>
+  </article>
+</template>
+
+<script>
+var ops = [
+  ['A', 'a', '<b>Actual:</b> Fraunces + Geist'],
+  ['B', 'b', '<b>Boska + Satoshi</b> · serif editorial con cortes marcados'],
+  ['C', 'c', '<b>Clash Display + General Sans</b> · agencia moderna, sin serif'],
+  ['D', 'd', '<b>Zodiak + Switzer</b> · serif expresiva y cálida'],
+  ['E', 'e', '<b>Bricolage Grotesque</b> · grotesca con carácter, cercana'],
+  ['F', 'f', '<b>Gloock + Hanken Grotesk</b> · serif de alto contraste'],
+  ['G', 'g', '<b>Cabinet Grotesk + Satoshi</b> · grotesca gruesa, enérgica'],
+  ['H', 'hh', '<b>Satoshi + cursiva Boska</b> · mezcla moderna y editorial']
+];
+var t = document.getElementById('t'), grid = document.getElementById('grid');
+ops.forEach(function (o) {
+  var n = t.content.cloneNode(true), art = n.querySelector('.op');
+  art.classList.add(o[1]);
+  n.querySelector('.letra').textContent = o[0];
+  n.querySelector('.ficha').innerHTML = o[2];
+  grid.appendChild(n);
+});
+</script>
+</body>
+</html>
