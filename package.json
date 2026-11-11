@@ -1,0 +1,11 @@
+{
+  "name": "agencia-web",
+  "private": true,
+  "scripts": {
+    "build:3d": "esbuild fuente/escena3d.js --bundle --minify --format=esm --target=es2020 --outfile=sitio/js/escena3d.min.js"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.2",
+    "three": "^0.187.0"
+  }
+}

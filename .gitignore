@@ -15,3 +15,5 @@ Thumbs.db
 
 # Video original sin uso en la página (se conserva solo en disco)
 sitio/assets/video/hero-construccion2.mp4
+
+node_modules/

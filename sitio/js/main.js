@@ -82,7 +82,9 @@
   var controlTxt = document.querySelector('.video-control-txt');
   var tarjetas = Array.prototype.slice.call(document.querySelectorAll('.tarjeta[data-desde]'));
 
-  if (hero && video && control) iniciarVideo();
+  // En la versión 3D (rama threejs) la escena reemplaza al video: no se carga el video
+  // y los chips quedan encendidos.
+  if (hero && video && control && hero.dataset.modo !== '3d') iniciarVideo();
 
   function iniciarVideo() {
     var sinMovimiento = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
