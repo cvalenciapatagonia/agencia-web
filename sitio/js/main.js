@@ -93,8 +93,8 @@
 
     // Fuentes: versión liviana en pantallas chicas, WebM + MP4 en escritorio.
     var fuentes = pantallaChica
-      ? [['assets/video/hero-720.mp4', 'video/mp4']]
-      : [['assets/video/hero-1080.mp4', 'video/mp4'], ['assets/video/hero-1080.webm', 'video/webm']];
+      ? [['assets/video/hero-negro-720.mp4', 'video/mp4']]
+      : [['assets/video/hero-negro-1080.mp4', 'video/mp4'], ['assets/video/hero-negro-1080.webm', 'video/webm']];
     fuentes.forEach(function (f, i) {
       var s = document.createElement('source');
       s.src = f[0];
@@ -342,14 +342,14 @@
     // Con reproducción automática, los chips empiezan apagados y se van encendiendo.
     if (listaChips) listaChips.classList.add('coleccion');
 
-    video.poster = 'assets/img/hero-inicio.webp';
+    video.poster = 'assets/img/hero-negro-inicio.webp';
     video.preload = 'auto';
     var intento = video.play();
     if (intento && intento.catch) {
       intento.catch(function () {
         // El navegador bloqueó la reproducción automática: queda la composición final y el botón.
         if (iniciado) return;
-        video.poster = 'assets/img/hero-final.webp';
+        video.poster = 'assets/img/hero-negro-final.webp';
         modoFinal = true;
         sinColeccion();
         estado('pausado', 'Reproducir animación');

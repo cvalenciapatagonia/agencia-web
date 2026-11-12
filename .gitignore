@@ -15,3 +15,6 @@ Thumbs.db
 
 # Video original sin uso en la página (se conserva solo en disco)
 sitio/assets/video/hero-construccion2.mp4
+
+# Video fuente del hero (la página usa las versiones hero-negro-* recortadas a 16 s)
+sitio/assets/video/hero-fondo-negro.mp4
