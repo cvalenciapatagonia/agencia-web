@@ -49,6 +49,10 @@ export async function iniciarEscena3D(contenedor, opciones = {}) {
   const relleno = new DirectionalLight(new Color('#e4ecff'), 0.4);
   relleno.position.set(5, 3, 6);
   escena.add(relleno);
+  // Luz de contorno desde atrás a la derecha: marca los bordes del teléfono y de la tapa
+  const contorno = new DirectionalLight(new Color('#ffffff'), 0.7);
+  contorno.position.set(4, 3.5, -5);
+  escena.add(contorno);
 
   const piso = new Mesh(new PlaneGeometry(30, 30), new ShadowMaterial({ opacity: 0.1 }));
   piso.rotation.x = -Math.PI / 2;
@@ -194,6 +198,8 @@ export async function iniciarEscena3D(contenedor, opciones = {}) {
   // ---------- Teléfono (glTF) ----------
   const telefono = gltfTelefono.scene;
   const ESC_TEL = 1.85;
+  // A la derecha del notebook, con aire entre ambos, para que no se confundan
+  const TEL_X = 1.92, TEL_Z = 1.1, TEL_ROT = -0.36;
   telefono.traverse((o) => {
     if (!o.isMesh) return;
     if (o.name === 'group1808723591') o.visible = false;            // muesca que sobresale
@@ -214,8 +220,8 @@ export async function iniciarEscena3D(contenedor, opciones = {}) {
   telefono.position.y = 0.448 * ESC_TEL + 0.002;
   const grupoTelefono = new Group();
   grupoTelefono.add(telefono);
-  grupoTelefono.position.set(1.05, 0, 1.2);
-  grupoTelefono.rotation.y = -0.3;
+  grupoTelefono.position.set(TEL_X, 0, TEL_Z);
+  grupoTelefono.rotation.y = TEL_ROT;
   escena.add(grupoTelefono);
 
   // ---------- Sombra de contacto ----------
@@ -241,8 +247,8 @@ export async function iniciarEscena3D(contenedor, opciones = {}) {
     huella(0, 0.05, AN, FO, -0.42, 48, 'rgba(70,46,28,.42)', 0.55);
     huella(0, 0.02, AN, FO, -0.42, 14, 'rgba(50,32,20,.55)', 0.12);
     // Teléfono parado: una franja fina y oscura en su base
-    huella(1.05, 1.22, 0.62, 0.14, -0.3, 22, 'rgba(70,46,28,.45)', 0.3);
-    huella(1.05, 1.2, 0.62, 0.1, -0.3, 4, 'rgba(40,26,16,.55)', 0);
+    huella(TEL_X, TEL_Z + 0.02, 0.62, 0.14, TEL_ROT, 22, 'rgba(70,46,28,.45)', 0.3);
+    huella(TEL_X, TEL_Z, 0.62, 0.1, TEL_ROT, 4, 'rgba(40,26,16,.55)', 0);
     const t = new CanvasTexture(c); t.colorSpace = SRGBColorSpace;
     const plano = new Mesh(new PlaneGeometry(SC, SC), new MeshBasicMaterial({ map: t, transparent: true, depthWrite: false, toneMapped: false }));
     plano.rotation.x = -Math.PI / 2;
@@ -254,7 +260,7 @@ export async function iniciarEscena3D(contenedor, opciones = {}) {
 
   // ---------- Cámara ----------
   const camara = new PerspectiveCamera(24, 1, 0.1, 100);
-  const objetivo = new Vector3(0.55, 0.9, 0.35);
+  const objetivo = new Vector3(0.75, 0.9, 0.35);
   const posBase = new Vector3(-1.2, 1.75, 7.6);
   let ancho = 1, alto = 1;
 
@@ -263,9 +269,9 @@ export async function iniciarEscena3D(contenedor, opciones = {}) {
     render.setSize(ancho, alto, false);
     camara.aspect = ancho / alto;
     // Los equipos ocupan la mitad derecha: se corre el encuadre hacia la izquierda
-    const corrimiento = ancho >= 900 ? -0.27 : 0;
+    const corrimiento = ancho >= 900 ? -0.23 : 0;
     camara.setViewOffset(ancho, alto, corrimiento * ancho, 0, ancho, alto);
-    const factor = MathUtils.clamp(2.35 / camara.aspect, 1.32, 2.2);
+    const factor = MathUtils.clamp(2.7 / camara.aspect, 1.5, 2.4);
     camara.position.copy(posBase).sub(objetivo).multiplyScalar(factor).add(objetivo);
     camara.updateProjectionMatrix();
     pedirCuadro();
