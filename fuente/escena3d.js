@@ -1,285 +1,191 @@
 /* Escena 3D del hero (rama threejs).
-   - Notebook: geometría propia con bordes redondeados (teclas, trackpad, bisagra).
-   - Teléfono: modelo glTF "NotchPhone" de Sal Blrm, licencia CC-BY 3.0
-     (ver sitio/assets/3d/CREDITOS.txt). Se usa su forma; materiales y pantalla son propios.
+   Réplica exacta del último cuadro del video (assets/img/hero-final.webp):
+   - La cámara se calzó con la foto a partir de las esquinas del notebook y del teléfono
+     (error medio ~7 px en 1920x1080).
+   - La foto se proyecta desde esa cámara sobre la geometría 3D (proyección de cámara).
+     En reposo el resultado es idéntico a la foto; al mover el mouse la cámara se desplaza
+     un poco y los equipos se separan del fondo con profundidad real.
+   - Notebook: geometría propia. Teléfono: forma del modelo glTF "NotchPhone" de Sal Blrm,
+     licencia CC-BY 3.0 (ver sitio/assets/3d/CREDITOS.txt).
    Compilar con: npm run build:3d */
 import {
-  WebGLRenderer, Scene, PerspectiveCamera, PMREMGenerator, DirectionalLight, Group, Mesh,
-  InstancedMesh, Object3D, PlaneGeometry, ShapeGeometry, Shape, ShadowMaterial, MeshBasicMaterial,
-  MeshStandardMaterial, MeshPhysicalMaterial,
-  TextureLoader, CanvasTexture, SRGBColorSpace, NeutralToneMapping, VSMShadowMap, RepeatWrapping,
-  Box3, Vector3, Vector2, MathUtils, Color
+  WebGLRenderer, Scene, PerspectiveCamera, Group, Mesh, InstancedMesh, Object3D,
+  PlaneGeometry, ShapeGeometry, Shape, ShaderMaterial, TextureLoader, SRGBColorSpace,
+  LinearFilter, Matrix4, Vector3
 } from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
+
+// Cámara calzada con la foto (1920x1080, 16:9)
+const CAM = { pos: [3.5226, 1.8294, 9.5674], yaw: 0.4905, pitch: -0.0575, roll: -0.0292, fov: 22.368 };
+// Notebook (1 unidad ≈ 11,6 cm): tapa abierta ALFA rad hacia atrás desde la vertical
+const AN = 2.7, FO = 1.9, AL_BASE = 0.085, AL_TAPA = 2.0074, GR_TAPA = 0.042, ALFA = 0.2951;
+// Teléfono calzado
+const TEL = { x: 1.0238, z: 1.4801, yaw: 0.15, esc: 2.1855 };
 
 export async function iniciarEscena3D(contenedor, opciones = {}) {
   const quieto = !!opciones.sinMovimiento;
-  const base = opciones.base || 'assets/3d/';
+  const base = opciones.base || 'assets/';
 
-  // ---------- Renderizador ----------
   const lienzo = document.createElement('canvas');
   lienzo.className = 'escena-3d';
   lienzo.setAttribute('aria-hidden', 'true');
-  const render = new WebGLRenderer({ canvas: lienzo, antialias: true, alpha: true, powerPreference: 'high-performance' });
+  const render = new WebGLRenderer({ canvas: lienzo, antialias: true, alpha: false, powerPreference: 'high-performance' });
   render.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
   render.outputColorSpace = SRGBColorSpace;
-  render.toneMapping = NeutralToneMapping;      // colores fieles, como una foto de producto
-  render.toneMappingExposure = 1.0;
-  render.shadowMap.enabled = true;
-  render.shadowMap.type = VSMShadowMap;
 
-  const escena = new Scene();
-  const pmrem = new PMREMGenerator(render);
-  escena.environment = pmrem.fromScene(new RoomEnvironment(), 0.03).texture;
-  escena.environmentIntensity = 0.9;
-
-  // Luz de ventana: cálida, desde arriba a la izquierda, con sombra larga y suave
-  const sol = new DirectionalLight(new Color('#fff0dc'), 2.6);
-  sol.position.set(-2.6, 9, 4.2);
-  sol.castShadow = true;
-  sol.shadow.mapSize.set(2048, 2048);
-  sol.shadow.radius = 12;
-  sol.shadow.blurSamples = 24;
-  sol.shadow.bias = -0.0004;
-  sol.shadow.normalBias = 0.02;
-  Object.assign(sol.shadow.camera, { left: -4, right: 4, top: 4, bottom: -4, near: 1, far: 20 });
-  escena.add(sol);
-  const relleno = new DirectionalLight(new Color('#e4ecff'), 0.4);
-  relleno.position.set(5, 3, 6);
-  escena.add(relleno);
-  // Luz de contorno desde atrás a la derecha: marca los bordes del teléfono y de la tapa
-  const contorno = new DirectionalLight(new Color('#ffffff'), 0.7);
-  contorno.position.set(4, 3.5, -5);
-  escena.add(contorno);
-
-  const piso = new Mesh(new PlaneGeometry(30, 30), new ShadowMaterial({ opacity: 0.1 }));
-  piso.rotation.x = -Math.PI / 2;
-  piso.receiveShadow = true;
-  escena.add(piso);
-
-  // ---------- Materiales ----------
-  // Ruido fino para que el aluminio no se vea plano (microtextura del arenado)
-  function texturaRuido(tam, min, max) {
-    const c = document.createElement('canvas'); c.width = c.height = tam;
-    const g = c.getContext('2d'), img = g.createImageData(tam, tam);
-    for (let i = 0; i < img.data.length; i += 4) {
-      const v = Math.round((min + Math.random() * (max - min)) * 255);
-      img.data[i] = img.data[i + 1] = img.data[i + 2] = v; img.data[i + 3] = 255;
-    }
-    g.putImageData(img, 0, 0);
-    const t = new CanvasTexture(c); t.wrapS = t.wrapT = RepeatWrapping; t.repeat.set(6, 6);
-    return t;
-  }
-  const ruido = texturaRuido(128, 0.82, 1);
-  const aluminio = new MeshPhysicalMaterial({ color: '#d9dcdf', metalness: 1, roughness: 0.34, roughnessMap: ruido,
-    clearcoat: 0.3, clearcoatRoughness: 0.35, anisotropy: 0.35 });
-  const aluminioTrackpad = new MeshPhysicalMaterial({ color: '#d2d5d9', metalness: 0.9, roughness: 0.22, clearcoat: 0.6, clearcoatRoughness: 0.2 });
-  const tecla = new MeshStandardMaterial({ color: '#141415', metalness: 0.05, roughness: 0.62 });
-  const ranura = new MeshStandardMaterial({ color: '#2a2b2d', metalness: 0.4, roughness: 0.6 });
-  const negro = new MeshStandardMaterial({ color: '#0b0b0c', metalness: 0.2, roughness: 0.5 });
-  const vidrioNegro = new MeshPhysicalMaterial({ color: '#060607', metalness: 0, roughness: 0.06, clearcoat: 1, clearcoatRoughness: 0.03 });
-  const marcoTelefono = new MeshPhysicalMaterial({ color: '#cfd2d6', metalness: 1, roughness: 0.2, clearcoat: 1, clearcoatRoughness: 0.12 });
-
-  const cargador = new TextureLoader();
-  const [texNotebook, texTelefono, gltfTelefono] = await Promise.all([
-    cargador.loadAsync(base + 'pantalla-notebook.webp'),
-    cargador.loadAsync(base + 'pantalla-telefono.webp'),
-    new GLTFLoader().loadAsync(base + 'telefono.glb')
+  // foto: el último cuadro tal cual. Los parches son trozos de la misma foto con los equipos
+  // borrados: se usan solo dentro de su rectángulo, para que al mover la cámara no aparezcan
+  // "fantasmas" (equipos de la foto pintados en el fondo, o el teléfono pintado en el notebook).
+  const cargar = (url) => new TextureLoader().loadAsync(base + url);
+  const [foto, parcheFondo, parcheNotebook, gltfTelefono] = await Promise.all([
+    cargar('img/hero-final.webp'), cargar('3d/parche-fondo.webp'), cargar('3d/parche-notebook.webp'),
+    new GLTFLoader().loadAsync(base + '3d/telefono.glb')
   ]);
-  for (const t of [texNotebook, texTelefono]) {
+  for (const t of [foto, parcheFondo, parcheNotebook]) {
     t.colorSpace = SRGBColorSpace;
+    t.minFilter = LinearFilter;
+    t.generateMipmaps = false;
     t.anisotropy = render.capabilities.getMaxAnisotropy();
   }
-  // Pantalla: brilla con su propia luz y además refleja el entorno como vidrio
-  function materialPantalla(tex) {
-    return new MeshPhysicalMaterial({ color: '#000', emissive: '#fff', emissiveMap: tex, emissiveIntensity: 1.0,
-      metalness: 0, roughness: 0.06, clearcoat: 1, clearcoatRoughness: 0.02 });
+
+  const escena = new Scene();
+
+  // ---------- Cámara de la foto (fija) y cámara que se ve (con parallax) ----------
+  function camaraCalzada() {
+    const c = new PerspectiveCamera(CAM.fov, 16 / 9, 0.05, 100);
+    c.position.set(...CAM.pos);
+    c.rotation.set(CAM.pitch, CAM.yaw, CAM.roll, 'YXZ');
+    c.updateMatrixWorld(true);
+    return c;
   }
-  // Rectángulo redondeado plano con UV de 0 a 1
+  const camFoto = camaraCalzada();
+  const camara = camaraCalzada();
+  const vpFoto = new Matrix4().multiplyMatrices(camFoto.projectionMatrix, camFoto.matrixWorldInverse);
+
+  // Material que pinta cada superficie con el píxel de la foto que le corresponde.
+  // rect: zona de la foto (en píxeles de 1920x1080: x0, y0, x1, y1) que se toma del parche.
+  const materialProyectado = (parche, rect) => new ShaderMaterial({
+    uniforms: {
+      uMapa: { value: foto }, uVP: { value: vpFoto }, uParche: { value: parche || foto },
+      uRect: { value: rect ? [rect[0] / 1920, 1 - rect[3] / 1080, rect[2] / 1920, 1 - rect[1] / 1080] : [2, 2, 2, 2] }
+    },
+    vertexShader: /* glsl */`
+      uniform mat4 uVP;
+      varying vec4 vFoto;
+      void main() {
+        vec4 p = vec4(position, 1.0);
+        #ifdef USE_INSTANCING
+          p = instanceMatrix * p;
+        #endif
+        vec4 w = modelMatrix * p;
+        vFoto = uVP * w;
+        gl_Position = projectionMatrix * viewMatrix * w;
+      }`,
+    fragmentShader: /* glsl */`
+      uniform sampler2D uMapa;
+      uniform sampler2D uParche;
+      uniform vec4 uRect;
+      varying vec4 vFoto;
+      void main() {
+        vec2 uv = clamp(vFoto.xy / vFoto.w * 0.5 + 0.5, 0.0, 1.0);
+        vec2 q = (uv - uRect.xy) / (uRect.zw - uRect.xy);
+        bool dentro = all(greaterThanEqual(q, vec2(0.0))) && all(lessThanEqual(q, vec2(1.0)));
+        // El parche trae transparencia: solo reemplaza dentro de la silueta de los equipos
+        vec4 base = texture2D(uMapa, uv);
+        if (dentro) { vec4 pa = texture2D(uParche, q); base.rgb = mix(base.rgb, pa.rgb, pa.a); }
+        gl_FragColor = base;
+        #include <colorspace_fragment>
+      }`
+  });
+  const proyeccion = materialProyectado(null);
+  const proyeccionFondo = materialProyectado(parcheFondo, [900, 302, 1801, 968]);
+  const proyeccionNb = materialProyectado(parcheNotebook, [1366, 440, 1622, 1004]);
+
+  // ---------- Fondo: mesa y pared ----------
+  const mesa = new Mesh(new PlaneGeometry(80, 80), proyeccionFondo);
+  mesa.rotation.x = -Math.PI / 2;
+  escena.add(mesa);
+  const pared = new Mesh(new PlaneGeometry(120, 60), proyeccionFondo);
+  pared.position.set(0, 30, -6);
+  escena.add(pared);
+
+  // ---------- Notebook ----------
   function rectRedondeado(x0, x1, y0, y1, r) {
     const f = new Shape();
     f.moveTo(x0 + r, y0); f.lineTo(x1 - r, y0); f.quadraticCurveTo(x1, y0, x1, y0 + r);
     f.lineTo(x1, y1 - r); f.quadraticCurveTo(x1, y1, x1 - r, y1); f.lineTo(x0 + r, y1);
     f.quadraticCurveTo(x0, y1, x0, y1 - r); f.lineTo(x0, y0 + r); f.quadraticCurveTo(x0, y0, x0 + r, y0);
-    const geo = new ShapeGeometry(f, 12);
-    const pos = geo.attributes.position, uv = geo.attributes.uv;
-    for (let i = 0; i < pos.count; i++) uv.setXY(i, (pos.getX(i) - x0) / (x1 - x0), (pos.getY(i) - y0) / (y1 - y0));
-    return geo;
+    return new ShapeGeometry(f, 12);
   }
-  function sombras(o) { o.traverse((m) => { if (m.isMesh) { m.castShadow = true; m.receiveShadow = true; } }); return o; }
-
-  // ---------- Notebook (medidas de un 14": 1 unidad ≈ 11,6 cm) ----------
-  const AN = 2.7, FO = 1.9, AL_BASE = 0.085, AL_TAPA = 1.8, GR_TAPA = 0.042;
   const notebook = new Group();
-
-  const baseNb = new Mesh(new RoundedBoxGeometry(AN, AL_BASE, FO, 6, 0.04), aluminio);
+  const baseNb = new Mesh(new RoundedBoxGeometry(AN, AL_BASE, FO, 6, 0.04), proyeccionNb);
   baseNb.position.y = AL_BASE / 2;
   notebook.add(baseNb);
-  const yCub = AL_BASE + 0.0006;   // superficie de la cubierta
-
-  // Teclado: filas de teclas con anchos relativos (1 = tecla normal)
+  // Teclas con relieve propio para que el parallax se note en el teclado
+  const yCub = AL_BASE;
   const filas = [
-    { alto: 0.55, teclas: Array(14).fill(1) },
-    { alto: 1, teclas: [...Array(13).fill(1), 1.45] },
-    { alto: 1, teclas: [1.45, ...Array(13).fill(1)] },
-    { alto: 1, teclas: [1.75, ...Array(11).fill(1), 1.75] },
-    { alto: 1, teclas: [2.3, ...Array(10).fill(1), 2.3] },
-    { alto: 1, teclas: [1, 1, 1, 1.25, 5.05, 1.25, 1, 1, 1, 1] }
+    { alto: 0.55, teclas: Array(14).fill(1) }, { alto: 1, teclas: [...Array(13).fill(1), 1.45] },
+    { alto: 1, teclas: [1.45, ...Array(13).fill(1)] }, { alto: 1, teclas: [1.75, ...Array(11).fill(1), 1.75] },
+    { alto: 1, teclas: [2.3, ...Array(10).fill(1), 2.3] }, { alto: 1, teclas: [1, 1, 1, 1.25, 5.05, 1.25, 1, 1, 1, 1] }
   ];
   const PASO = 0.164, HUECO = 0.026, ANCHO_TECLADO = 14.45 * PASO;
-  const geoTecla = new RoundedBoxGeometry(1, 1, 1, 2, 0.12);
-  const totalTeclas = filas.reduce((n, f) => n + f.teclas.length, 0);
-  const teclas = new InstancedMesh(geoTecla, tecla, totalTeclas);
+  const teclas = new InstancedMesh(new RoundedBoxGeometry(1, 1, 1, 2, 0.12), proyeccionNb, filas.reduce((n, f) => n + f.teclas.length, 0));
   const aux = new Object3D();
   let z = -FO / 2 + 0.14, n = 0;
   for (const fila of filas) {
-    const prof = fila.alto * PASO;
-    const suma = fila.teclas.reduce((a, b) => a + b, 0);
-    const escala = ANCHO_TECLADO / (suma * PASO);
+    const prof = fila.alto * PASO, suma = fila.teclas.reduce((a, b) => a + b, 0), k = ANCHO_TECLADO / (suma * PASO);
     let x = -ANCHO_TECLADO / 2;
     for (const w of fila.teclas) {
-      const ancho = w * PASO * escala;
-      aux.position.set(x + ancho / 2, yCub + 0.004, z + prof / 2);
-      aux.scale.set(ancho - HUECO, 0.008, prof - HUECO);
-      aux.updateMatrix();
-      teclas.setMatrixAt(n++, aux.matrix);
-      x += ancho;
+      const an = w * PASO * k;
+      aux.position.set(x + an / 2, yCub + 0.004, z + prof / 2); aux.scale.set(an - HUECO, 0.008, prof - HUECO);
+      aux.updateMatrix(); teclas.setMatrixAt(n++, aux.matrix); x += an;
     }
     z += prof;
   }
-  teclas.castShadow = true; teclas.receiveShadow = true;
   notebook.add(teclas);
-  // Fondo oscuro del teclado (la ranura entre teclas)
-  const fondoTeclado = new Mesh(rectRedondeado(-ANCHO_TECLADO / 2 - 0.02, ANCHO_TECLADO / 2 + 0.02, 0, z - (-FO / 2 + 0.14) + 0.04, 0.03), ranura);
-  fondoTeclado.rotation.x = -Math.PI / 2;
-  fondoTeclado.position.set(0, yCub, z + 0.02);
-  notebook.add(fondoTeclado);
-
-  // Trackpad con un borde fino más oscuro
-  const tpAn = 1.3, tpFo = 0.7, tpZ = z + 0.07;
-  const bordeTp = new Mesh(rectRedondeado(-tpAn / 2 - 0.008, tpAn / 2 + 0.008, 0, tpFo + 0.016, 0.06), ranura);
-  bordeTp.rotation.x = -Math.PI / 2; bordeTp.position.set(0, yCub, tpZ + tpFo + 0.008);
-  notebook.add(bordeTp);
-  const trackpad = new Mesh(rectRedondeado(-tpAn / 2, tpAn / 2, 0, tpFo, 0.055), aluminioTrackpad);
-  trackpad.rotation.x = -Math.PI / 2; trackpad.position.set(0, yCub + 0.0005, tpZ + tpFo);
-  trackpad.receiveShadow = true;
-  notebook.add(trackpad);
-
-  // Tapa: gira desde la bisagra en el borde trasero
   const bisagra = new Group();
   bisagra.position.set(0, AL_BASE, -FO / 2 + 0.035);
-  bisagra.rotation.x = -0.27;
+  bisagra.rotation.x = -ALFA;
   notebook.add(bisagra);
-  const tapa = new Mesh(new RoundedBoxGeometry(AN, AL_TAPA, GR_TAPA, 6, 0.02), aluminio);
-  tapa.position.set(0, AL_TAPA / 2 + 0.012, -GR_TAPA / 2);
+  // La tapa baja un poco bajo la bisagra para que no quede ranura entre tapa y base
+  const tapa = new Mesh(new RoundedBoxGeometry(AN, AL_TAPA + 0.07, GR_TAPA, 6, 0.02), proyeccionNb);
+  tapa.position.set(0, 0.012 + AL_TAPA - (AL_TAPA + 0.07) / 2, -GR_TAPA / 2);
   bisagra.add(tapa);
-  const cilindro = new Mesh(new RoundedBoxGeometry(AN * 0.78, 0.05, 0.05, 4, 0.024), ranura);
-  cilindro.position.set(0, 0.01, -0.02);
-  bisagra.add(cilindro);
-  const zFrente = 0.0004;
-  const vidrioTapa = new Mesh(rectRedondeado(-AN / 2 + 0.015, AN / 2 - 0.015, 0.03, AL_TAPA - 0.005, 0.035), vidrioNegro);
-  vidrioTapa.position.set(0, 0.012, zFrente);
-  bisagra.add(vidrioTapa);
-  const PAN_AN = 2.56, PAN_AL = PAN_AN / 1.6;
-  const panel = new Mesh(new PlaneGeometry(PAN_AN, PAN_AL), materialPantalla(texNotebook));
-  panel.position.set(0, 0.012 + 0.11 + PAN_AL / 2, zFrente + 0.0006);
-  bisagra.add(panel);
-  const camaraWeb = new Mesh(rectRedondeado(-0.012, 0.012, -0.012, 0.012, 0.012), negro);
-  camaraWeb.position.set(0, 0.012 + AL_TAPA - 0.05, zFrente + 0.0007);
-  bisagra.add(camaraWeb);
-
-  sombras(notebook);
-  teclas.receiveShadow = true;
-  notebook.rotation.y = -0.42;          // la pantalla mira hacia el texto
+  // Un poco más grande que el calce (error ~7 px) para cubrir por completo el equipo de la foto:
+  // en reposo el borde extra muestra los mismos píxeles de la foto, así que no se nota
+  notebook.scale.setScalar(1.012);
   escena.add(notebook);
 
-  // ---------- Teléfono (glTF) ----------
+  // ---------- Teléfono (forma del glTF) ----------
   const telefono = gltfTelefono.scene;
-  const ESC_TEL = 1.85;
-  // A la derecha del notebook, con aire entre ambos, para que no se confundan
-  const TEL_X = 1.92, TEL_Z = 1.1, TEL_ROT = -0.36;
   telefono.traverse((o) => {
     if (!o.isMesh) return;
-    if (o.name === 'group1808723591') o.visible = false;            // muesca que sobresale
-    else if (o.material.name === 'mat23') { o.material = marcoTelefono; o.castShadow = true; }
-    else o.visible = false;                                         // pantalla, íconos y barra del modelo
+    if (o.material.name === 'mat23' && o.name !== 'group1808723591') o.material = proyeccion;
+    else o.visible = false;      // muesca, pantalla e íconos del modelo
   });
-  // El frente del cuerpo está en z = -0.011: vidrio negro, pantalla al ras e isla negra
-  const vidrioTel = new Mesh(rectRedondeado(-0.167, 0.166, -0.443, 0.257, 0.046), vidrioNegro);
-  vidrioTel.position.z = -0.0104;
-  telefono.add(vidrioTel);
-  const pantallaTel = new Mesh(rectRedondeado(-0.156, 0.155, -0.432, 0.246, 0.036), materialPantalla(texTelefono));
-  pantallaTel.position.z = -0.0099;
-  telefono.add(pantallaTel);
-  const isla = new Mesh(rectRedondeado(-0.042, 0.041, 0.213, 0.236, 0.0115), negro);
-  isla.position.z = -0.0094;
-  telefono.add(isla);
-  telefono.scale.setScalar(ESC_TEL);
-  telefono.position.y = 0.448 * ESC_TEL + 0.002;
-  const grupoTelefono = new Group();
-  grupoTelefono.add(telefono);
-  grupoTelefono.position.set(TEL_X, 0, TEL_Z);
-  grupoTelefono.rotation.y = TEL_ROT;
-  escena.add(grupoTelefono);
+  const frente = new Mesh(rectRedondeado(-0.167, 0.166, -0.443, 0.257, 0.046), proyeccion);
+  frente.position.z = -0.0104;
+  telefono.add(frente);
+  telefono.scale.setScalar(TEL.esc * 1.025);
+  telefono.position.y = 0.448 * TEL.esc * 1.025;
+  const grupoTel = new Group();
+  grupoTel.add(telefono);
+  grupoTel.position.set(TEL.x, 0, TEL.z);
+  grupoTel.rotation.y = TEL.yaw;
+  escena.add(grupoTel);
 
-  // ---------- Sombra de contacto ----------
-  // Huella de cada equipo dibujada en un canvas y difuminada: oscura justo en el borde
-  // de apoyo y más suave alrededor. La escena no se mueve, así que se dibuja una sola vez.
-  const SC = 6, SC_X = 0.35, SC_Z = 0.45, PX = 1024;
-  function sombraContacto() {
-    const c = document.createElement('canvas'); c.width = c.height = PX;
-    const g = c.getContext('2d');
-    const aPx = (x, z) => [((x - SC_X) / SC + 0.5) * PX, ((z - SC_Z) / SC + 0.5) * PX];
-    function huella(cx, cz, ancho, fondo, rot, desenfoque, color, crecer) {
-      g.save();
-      g.filter = 'blur(' + desenfoque + 'px)';
-      g.fillStyle = color;
-      const [px, pz] = aPx(cx, cz);
-      g.translate(px, pz);
-      g.rotate(-rot);
-      const w = (ancho + crecer) / SC * PX, h = (fondo + crecer) / SC * PX;
-      g.beginPath(); g.roundRect(-w / 2, -h / 2, w, h, Math.min(w, h) * 0.08); g.fill();
-      g.restore();
-    }
-    // Notebook: halo amplio + contacto definido
-    huella(0, 0.05, AN, FO, -0.42, 48, 'rgba(70,46,28,.42)', 0.55);
-    huella(0, 0.02, AN, FO, -0.42, 14, 'rgba(50,32,20,.55)', 0.12);
-    // Teléfono parado: una franja fina y oscura en su base
-    huella(TEL_X, TEL_Z + 0.02, 0.62, 0.14, TEL_ROT, 22, 'rgba(70,46,28,.45)', 0.3);
-    huella(TEL_X, TEL_Z, 0.62, 0.1, TEL_ROT, 4, 'rgba(40,26,16,.55)', 0);
-    const t = new CanvasTexture(c); t.colorSpace = SRGBColorSpace;
-    const plano = new Mesh(new PlaneGeometry(SC, SC), new MeshBasicMaterial({ map: t, transparent: true, depthWrite: false, toneMapped: false }));
-    plano.rotation.x = -Math.PI / 2;
-    plano.position.set(SC_X, 0.0015, SC_Z);
-    plano.renderOrder = 1;
-    escena.add(plano);
-  }
-  sombraContacto();
-
-  // ---------- Cámara ----------
-  const camara = new PerspectiveCamera(24, 1, 0.1, 100);
-  const objetivo = new Vector3(0.75, 0.9, 0.35);
-  const posBase = new Vector3(-1.2, 1.75, 7.6);
-  let ancho = 1, alto = 1;
-
+  // ---------- Tamaño: el lienzo ocupa la misma caja 16:9 que la foto ----------
   function ajustar() {
-    ancho = contenedor.clientWidth || 1; alto = contenedor.clientHeight || 1;
-    render.setSize(ancho, alto, false);
-    camara.aspect = ancho / alto;
-    // Los equipos ocupan la mitad derecha: se corre el encuadre hacia la izquierda
-    const corrimiento = ancho >= 900 ? -0.23 : 0;
-    camara.setViewOffset(ancho, alto, corrimiento * ancho, 0, ancho, alto);
-    const factor = MathUtils.clamp(2.7 / camara.aspect, 1.5, 2.4);
-    camara.position.copy(posBase).sub(objetivo).multiplyScalar(factor).add(objetivo);
-    camara.updateProjectionMatrix();
+    const an = contenedor.clientWidth || 1, al = contenedor.clientHeight || 1;
+    render.setSize(an, al, false);
     pedirCuadro();
   }
 
-  // ---------- Movimiento: entrada suave y parallax con el mouse ----------
-  let mx = 0, my = 0, sx = 0, sy = 0, inicio = performance.now();
-  const ENTRADA = 1800;
+  // ---------- Parallax: la cámara gira levemente alrededor del notebook ----------
+  const pivote = new Vector3(0.4, 0.9, 0.2);
+  const rel = new Vector3().copy(camFoto.position).sub(pivote);
+  let mx = 0, my = 0, sx = 0, sy = 0;
   if (!quieto) {
     window.addEventListener('pointermove', (e) => {
       mx = (e.clientX / window.innerWidth) * 2 - 1;
@@ -287,39 +193,27 @@ export async function iniciarEscena3D(contenedor, opciones = {}) {
       pedirCuadro();
     }, { passive: true });
   }
-
   let pendiente = false, visible = true;
   function pedirCuadro() { if (!pendiente && visible) { pendiente = true; requestAnimationFrame(cuadro); } }
-  const guardada = new Vector3(), dir = new Vector3();
-  function cuadro(ahora) {
+  const ejeY = new Vector3(0, 1, 0), ejeX = new Vector3(), p = new Vector3();
+  function cuadro() {
     pendiente = false;
-    let seguir = false;
-    guardada.copy(camara.position);
-    if (!quieto) {
-      sx += (mx - sx) * 0.06; sy += (my - sy) * 0.06;
-      const p = Math.min(1, (ahora - inicio) / ENTRADA), e = 1 - Math.pow(1 - p, 3);
-      // la cámara llega desde un poco más lejos y más baja
-      dir.copy(camara.position).sub(objetivo);
-      const r = dir.length() * (1 + 0.12 * (1 - e));
-      const ang = Math.atan2(dir.x, dir.z) + sx * 0.07;
-      const elev = Math.asin(dir.y / dir.length()) - sy * 0.05 - 0.06 * (1 - e);
-      camara.position.set(objetivo.x + r * Math.cos(elev) * Math.sin(ang), objetivo.y + r * Math.sin(elev), objetivo.z + r * Math.cos(elev) * Math.cos(ang));
-      seguir = p < 1 || Math.abs(mx - sx) > 0.001 || Math.abs(my - sy) > 0.001;
-    }
-    camara.lookAt(objetivo);
+    sx += (mx - sx) * 0.07; sy += (my - sy) * 0.07;
+    // giro pequeño: los bordes revelados quedan casi invisibles
+    const giroY = -sx * 0.026, giroX = sy * 0.013;
+    p.copy(rel).applyAxisAngle(ejeY, giroY);
+    ejeX.set(1, 0, 0).applyAxisAngle(ejeY, CAM.yaw + giroY);
+    p.applyAxisAngle(ejeX, giroX);
+    camara.position.copy(pivote).add(p);
+    camara.rotation.set(CAM.pitch + giroX, CAM.yaw + giroY, CAM.roll, 'YXZ');
     render.render(escena, camara);
-    camara.position.copy(guardada);
-    if (seguir) pedirCuadro();
+    if (Math.abs(mx - sx) > 0.0005 || Math.abs(my - sy) > 0.0005) pedirCuadro();
   }
 
   new ResizeObserver(ajustar).observe(contenedor);
   new IntersectionObserver((e) => { visible = e[0].isIntersecting; if (visible) pedirCuadro(); }).observe(contenedor);
-
-  contenedor.appendChild(lienzo);
+  contenedor.insertBefore(lienzo, contenedor.querySelector('.tarjetas'));   // bajo las tarjetas
   ajustar();
-  // Primer cuadro dibujado: recién ahí se muestra el lienzo (la foto queda debajo hasta entonces)
-  await new Promise((ok) => requestAnimationFrame(() => { camara.lookAt(objetivo); render.render(escena, camara); ok(); }));
-  inicio = performance.now();
-  pedirCuadro();
+  await new Promise((ok) => requestAnimationFrame(() => { cuadro(); ok(); }));
   return { lienzo, render };
 }
