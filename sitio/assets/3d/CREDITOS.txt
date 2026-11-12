@@ -1,8 +1,8 @@
-Modelos 3D usados en la escena del hero (licencia Creative Commons Atribución 3.0, CC-BY 3.0):
+Modelo 3D usado en la escena del hero (licencia Creative Commons Atribución 3.0, CC-BY 3.0):
 
-- "Laptop / MacBook Pro" de Alex Safayan — https://poly.pizza/m/27hcX_w47Jb
 - "NotchPhone" de Sal Blrm — https://poly.pizza/m/1fhwylgLb6I
+  Licencia: https://creativecommons.org/licenses/by/3.0/
+  Cambios: se reemplazaron los materiales, la pantalla y la muesca; la forma del cuerpo no se modificó.
 
-Licencia: https://creativecommons.org/licenses/by/3.0/
-Cambios: se reemplazaron los materiales y las pantallas; la forma no se modificó.
+El notebook es geometría propia generada en código (fuente/escena3d.js).
 Las texturas de pantalla (pantalla-*.webp) se obtuvieron de imágenes propias del proyecto.
