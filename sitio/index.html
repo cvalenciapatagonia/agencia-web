@@ -9,8 +9,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,400..800;1,400..800&display=swap" rel="stylesheet">
-<link rel="preload" as="image" href="assets/img/hero-final.webp" fetchpriority="high">
-<link rel="stylesheet" href="css/estilos.css">
+<link rel="preload" as="image" href="assets/img/hero-computador-nuevo.png" fetchpriority="high">
+<link rel="stylesheet" href="css/lenis.css">
+<link rel="stylesheet" href="css/estilos.css?v=ritmo-28">
 <script>document.documentElement.classList.add('js')</script>
 </head>
 <body>
@@ -18,6 +19,15 @@
 
 <!-- Íconos y logotipos. Google, Google Maps y WhatsApp son marcas de sus dueños. -->
 <svg class="sprite" width="0" height="0" aria-hidden="true" focusable="false">
+  <symbol id="logo-constructora-kai" viewBox="0 0 64 64">
+    <circle cx="32" cy="32" r="32" fill="#f3e9dd"/>
+    <path d="M18 27 13 12c6-1 11 2 14 6h10c3-4 8-7 14-6l-5 15 1 10c-1 10-8 17-15 19-7-2-14-9-15-19z" fill="#86553b"/>
+    <path d="M16 14c5 0 8 3 10 6l-7 8zm32 0c-5 0-8 3-10 6l7 8z" fill="#60402f"/>
+    <path d="M28 18h8l-2 10 3 9 5 6c-2 6-6 9-10 11-4-2-8-5-10-11l5-6 3-9z" fill="#fffaf3"/>
+    <path d="M24 34h4m8 0h4" stroke="#30251f" stroke-width="2.7" stroke-linecap="round"/>
+    <path d="M28 43q4-3 8 0l-4 4z" fill="#30251f"/>
+    <path d="M32 47v3m-4 1q4 3 8 0" fill="none" stroke="#30251f" stroke-width="1.5" stroke-linecap="round"/>
+  </symbol>
   <symbol id="logo-google" viewBox="0 0 48 48">
     <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
     <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
@@ -45,12 +55,28 @@
   <symbol id="ico-web" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.800"/><path d="M3 12h18M12 3c2.500 2.600 3.700 5.600 3.700 9s-1.200 6.400-3.700 9c-2.500-2.600-3.700-5.600-3.700-9S9.500 5.600 12 3z" fill="none" stroke="currentColor" stroke-width="1.800"/></symbol>
   <symbol id="ico-doc" viewBox="0 0 24 24"><path d="M7 3.5h7l4 4V20a.5.5 0 0 1-.5.5h-10A.5.5 0 0 1 7 20zM14 3.5v4h4M9.500 12h6M9.500 15.500h4" fill="none" stroke="currentColor" stroke-width="1.600" stroke-linejoin="round" stroke-linecap="round"/></symbol>
   <symbol id="ico-bolsa" viewBox="0 0 24 24"><path d="M5 8h14l-1 12.500H6zM9 8V6.500a3 3 0 0 1 6 0V8" fill="none" stroke="currentColor" stroke-width="1.700" stroke-linejoin="round" stroke-linecap="round"/></symbol>
+  <symbol id="pieza-cartucho" viewBox="0 0 100 100">
+    <defs><linearGradient id="laton" x1="0" x2="1"><stop offset="0" stop-color="#e8c977"/><stop offset=".5" stop-color="#c9a24b"/><stop offset="1" stop-color="#8a6a1e"/></linearGradient></defs>
+    <rect x="41" y="6" width="18" height="26" rx="4" fill="#8e9aa6"/><rect x="44" y="6" width="5" height="26" fill="#bcc6cf"/>
+    <rect x="26" y="30" width="48" height="12" rx="3" fill="url(#laton)"/>
+    <rect x="30" y="42" width="40" height="38" rx="4" fill="url(#laton)"/>
+    <rect x="30" y="52" width="40" height="3" fill="#6d5214" opacity=".45"/><rect x="30" y="62" width="40" height="3" fill="#6d5214" opacity=".45"/>
+    <rect x="34" y="80" width="32" height="8" rx="2" fill="#2b2b2b"/><circle cx="42" cy="91" r="3.5" fill="#2b2b2b"/><circle cx="58" cy="91" r="3.5" fill="#2b2b2b"/>
+  </symbol>
+  <symbol id="pieza-gastada" viewBox="0 0 100 100">
+    <rect x="41" y="8" width="18" height="24" rx="4" fill="#7d8791"/>
+    <rect x="26" y="30" width="48" height="12" rx="3" fill="#8f8a7e"/>
+    <rect x="30" y="42" width="40" height="38" rx="4" fill="#837d70"/>
+    <circle cx="42" cy="56" r="5" fill="#9a5b32"/><circle cx="60" cy="68" r="6" fill="#9a5b32"/><circle cx="54" cy="48" r="3" fill="#9a5b32"/>
+    <path d="M30 62L70 58" stroke="#5a5448" stroke-width="2"/>
+    <rect x="34" y="80" width="32" height="8" rx="2" fill="#4a4a44"/><path d="M40 84L48 82L52 86" stroke="#2b2b2b" stroke-width="2" fill="none"/>
+  </symbol>
   <symbol id="ico-ticks" viewBox="0 0 18 12"><path d="M1 6.500 4.500 10 11 2.500M7.500 10 14 2.500" fill="none" stroke="currentColor" stroke-width="1.600" stroke-linecap="round" stroke-linejoin="round"/></symbol>
 </svg>
 
 <header class="cabecera">
   <div class="cabecera-in">
-    <a class="marca" href="#inicio" aria-label="Estudio, ir al inicio">Estudio<span class="marca-punto" aria-hidden="true"></span></a>
+    <a class="marca" href="#inicio" aria-label="Agencia KAI, ir al inicio"><img class="marca-logo" src="assets/img/logo-kai.webp" width="303" height="120" alt=""></a>
     <nav class="menu" aria-label="Principal">
       <button class="menu-btn" type="button" aria-expanded="false" aria-controls="menu-lista">
         <span class="menu-btn-txt">Menú</span>
@@ -70,11 +96,11 @@
 <main id="contenido">
 
   <!-- ============ HERO ============ -->
-  <section class="hero" id="inicio" aria-labelledby="hero-titulo">
+  <section class="hero hs-hero" id="inicio" aria-labelledby="hero-titulo">
     <div class="hero-texto">
       <p class="etiqueta">Desarrollo web y apps · Chile</p>
       <h1 id="hero-titulo">Tu negocio tiene algo que <em>contar</em>.</h1>
-      <p class="hero-sub">Sitios web y apps a medida para pymes.</p>
+      <p class="hero-sub"><span class="hs-marca">Sitios web y apps a medida para pymes y emprendedores</span>.</p>
       <div class="hero-acciones">
         <a class="btn btn-wa" href="#contacto" data-whatsapp>
           <span class="btn-wa-ico" aria-hidden="true"><svg><use href="#logo-whatsapp"/></svg></span>Cotizar por WhatsApp
@@ -82,206 +108,356 @@
         <a class="enlace" href="#proyectos">Ver trabajos <span aria-hidden="true">→</span></a>
       </div>
       <ul class="chips-canales" aria-label="Dónde te encuentran tus clientes">
-        <li><a href="#paso-google" data-canal="google" data-gana="3.95"><svg aria-hidden="true"><use href="#logo-google"/></svg><span class="chip-txt"><span class="chip-nom">Búsqueda en Google</span><small>Sitio optimizado para búsquedas</small></span></a></li>
-        <li><a href="#paso-mapa" data-canal="mapa" data-gana="6.75"><svg aria-hidden="true" class="chip-maps"><use href="#logo-maps"/></svg><span class="chip-txt"><span class="chip-nom">Mapa y ubicación</span><small>Cómo llegar a tu local</small></span></a></li>
-        <li><a href="#paso-mapa" data-canal="resenas" data-gana="6.9"><svg aria-hidden="true" class="chip-gbp"><use href="#logo-gbp"/></svg><span class="chip-txt"><span class="chip-nom">Reseñas</span><small>En tu perfil de empresa</small></span></a></li>
-        <li><a href="#paso-whatsapp" data-canal="whatsapp" data-gana="10.55"><svg aria-hidden="true" class="chip-wa"><use href="#logo-whatsapp"/></svg><span class="chip-txt"><span class="chip-nom">WhatsApp</span><small>Contacto directo con un toque</small></span></a></li>
-        <li><a href="#paso-ia" data-canal="ia" data-gana="15.25"><svg aria-hidden="true" class="chip-ia"><use href="#ico-chispa"/></svg><span class="chip-txt"><span class="chip-nom">Búsqueda con IA</span><small>Negocio identificable para IA</small></span></a></li>
+        <li><a href="#servicios" data-canal="google" data-gana="3.75"><svg aria-hidden="true"><use href="#logo-google"/></svg><span class="chip-txt"><span class="chip-nom">Búsqueda en Google</span><small>Sitio optimizado para búsquedas</small></span></a></li>
+        <li><a href="#servicios" data-canal="mapa" data-gana="9.15"><svg aria-hidden="true" class="chip-maps"><use href="#logo-maps"/></svg><span class="chip-txt"><span class="chip-nom">Mapa y ubicación</span><small>Cómo llegar a tu local</small></span></a></li>
+        <li><a href="#servicios" data-canal="resenas" data-gana="6.3"><svg aria-hidden="true" class="chip-gbp"><use href="#logo-gbp"/></svg><span class="chip-txt"><span class="chip-nom">Reseñas</span><small>En tu perfil de empresa</small></span></a></li>
+        <li><a href="#servicios" data-canal="whatsapp" data-gana="12.55"><svg aria-hidden="true" class="chip-wa"><use href="#logo-whatsapp"/></svg><span class="chip-txt"><span class="chip-nom">WhatsApp</span><small>Contacto directo con un toque</small></span></a></li>
+        <li><a href="#servicios" data-canal="ia" data-gana="15.95"><svg aria-hidden="true" class="chip-ia"><use href="#ico-chispa"/></svg><span class="chip-txt"><span class="chip-nom">Búsqueda con IA</span><small>Negocio identificable para IA</small></span></a></li>
       </ul>
     </div>
 
     <div class="hero-media">
-      <div class="escena">
-        <img class="escena-img" src="assets/img/hero-final.webp" width="1920" height="1080" alt="Un notebook y un teléfono sobre una mesa clara muestran el sitio web de un negocio.">
-        <video class="escena-video" muted playsinline preload="none" poster="assets/img/hero-final.webp" aria-hidden="true" tabindex="-1" disablepictureinpicture></video>
-
-        <!-- Tarjetas demostrativas: decorativas, fuera del lector de pantalla -->
-        <!-- Tiempos en segundos del video. Al final la escena queda limpia. -->
-        <div class="tarjetas" aria-hidden="true">
-          <!-- Constructora -->
-          <div class="tarjeta tarjeta-google demo" data-desde="0.8" data-hasta="3.2">
-            <p class="tg-barra"><svg class="tg-g" data-vuela="google"><use href="#logo-google"/></svg><span class="tg-q" data-escribe="1" data-texto="constructora de galpones cerca de mí"></span></p>
-            <div class="tg-res" data-en="2.1">
-              <span class="tg-url">constructoranorte-ejemplo.cl</span>
-              <strong>Galpones industriales llave en mano</strong>
-            </div>
+      <div class="hs-esc">
+        <img src="assets/img/hero-computador-nuevo.png" width="1672" height="941" fetchpriority="high" alt="Un notebook muestra tres sitios web: una constructora, un almacén y una consulta de kinesiología.">
+        <div class="hs-pc" aria-hidden="true">
+          <div class="hs-menu"><b></b><b>Chrome</b><span>Archivo</span><span>Editar</span><span>Ver</span><span>Historial</span><span>Marcadores</span><span>Pestaña</span><span>Ventana</span><span>Ayuda</span><span class="der">Jue 19 nov  9:41</span></div>
+          <div class="hs-tabs">
+            <span class="hs-luces"><i></i><i></i><i></i></span>
+            <div class="hs-tab on" data-t="0"><span class="fav" style="background:#e8772e">K</span><span>Constructora KAI · Galpones</span><span class="x">×</span></div>
+            <div class="hs-tab" data-t="1"><span class="fav" style="background:#141815;color:#c8a46a">B</span><span>Buen Vecino · Almacén y botillería</span><span class="x">×</span></div>
+            <div class="hs-tab" data-t="2"><span class="fav" style="background:#3f7f8c">K</span><span>Kinesiología Vital · Daniela Rojas</span><span class="x">×</span></div>
+            <span class="hs-mas">+</span>
           </div>
-          <div class="tarjeta tarjeta-resena" data-desde="3.4" data-hasta="6">
-            <p class="tr-cab"><svg class="logo-gbp" data-vuela="resenas"><use href="#logo-gbp"/></svg><span>Perfil de Empresa en Google · <b>Nueva reseña</b></span></p>
-            <p class="tr-autor"><span class="tr-avatar">RM</span><span><strong>Rodrigo M.</strong><span class="estrellas" data-en="3.9">★★★★★</span></span></p>
-            <p class="tr-texto" data-en="4.3">Cumplieron cada etapa de la obra y siempre supimos cómo iba el avance.</p>
-            <p class="tr-lugar" data-en="4.8"><svg class="tr-pin" data-vuela="mapa"><use href="#logo-maps"/></svg>Constructora Norte · Rancagua</p>
-          </div>
-
-          <!-- Botillería -->
-          <div class="tarjeta tarjeta-chat demo demo-wa" data-desde="6.4" data-hasta="9.8">
-            <div class="wa-cabecera">
-              <span class="wa-avatar">C</span>
-              <span class="wa-quien"><strong>Camila</strong><span class="wa-estado"><span>en línea</span><span class="wa-escribe" data-en="6.7" data-sale="7.7">escribiendo…</span></span></span>
-              <svg class="wa-logo" data-vuela="whatsapp"><use href="#logo-whatsapp"/></svg>
+          <div class="hs-barra"><span>←</span><span>→</span><span>↻</span><div class="hs-omni"><i>🔒</i><span class="hs-url">constructorakai.cl</span></div><span>☆</span><span>⋮</span></div>
+          <div class="hs-vista">
+            <!-- 0 · Constructora: cotizar -->
+            <div class="hs-pag" data-p="0"><div class="hs-lienzo">
+              <img src="assets/img/hero-sitio-constructora.webp" width="1024" height="1536" alt="">
+              <span class="hs-campo hs-campo--sel" style="left:76px;top:1210px">Galpón industrial</span>
+              <span class="hs-campo" style="left:82px;top:1282px">1.200</span>
+              <span class="hs-campo" style="left:545px;top:1282px">Quilicura</span>
+              <span class="hs-campo" style="left:83px;top:1347px">Rodrigo Muñoz</span>
+              <span class="hs-campo" style="left:545px;top:1347px">+56 9 1234 5678</span>
+            </div></div>
+            <!-- 1 · Almacén: comprar -->
+            <div class="hs-pag" data-p="1"><div class="hs-lienzo">
+              <img src="assets/img/hero-sitio-mercado.webp" width="1024" height="1336" alt="">
+              <span class="hs-agregado hs-agr-1" style="left:69px;top:822px;width:88px;height:25px">Agregado ✓</span>
+              <span class="hs-agregado hs-agr-2" style="left:306px;top:822px;width:88px;height:25px">Agregado ✓</span>
             </div>
-            <div class="wa-chat">
-              <p class="wa-msg wa-entra" data-en="7.7">Hola, ¿tienen despacho hoy a Ñuñoa?<span class="wa-hora">20:14</span></p>
-              <p class="wa-msg wa-sale" data-en="8.9">¡Hola! Sí, despachamos hasta las 22:00.<span class="wa-hora">20:15<svg class="wa-ticks" data-efecto="9.5"><use href="#ico-ticks"/></svg></span></p>
-            </div>
-          </div>
-          <div class="tarjeta tarjeta-ia-h demo demo-ia" data-desde="10" data-hasta="14.3">
-            <p class="demo-app"><span class="ia-icono" data-vuela="ia"><svg><use href="#ico-chispa"/></svg></span>Asistente IA</p>
-            <p class="ia-pregunta" data-en="10.2">¿Botillería abierta cerca de mí?</p>
-            <div class="ia-zona">
-              <span class="ia-pensando" data-en="10.6" data-sale="11.6"><i></i><i></i><i></i></span>
-              <div class="ia-respuesta" data-en="11.6">
-                <p>Te recomiendo <strong>Botillería La Esquina</strong>: a 6 min, abierta hasta las 23:00 y con muy buenas reseñas.</p>
-                <p class="ia-ficha-mini" data-en="12.2"><svg class="logo-gbp"><use href="#logo-gbp"/></svg><strong>Botillería La Esquina</strong><span class="estrellas">★★★★★</span></p>
+              <div class="hs-carro">
+                <h4>Tu carrito (2)</h4>
+                <ul><li><span>Vino tinto reserva</span><span>$6.990</span></li><li><span>Espumante brut</span><span>$8.990</span></li></ul>
+                <div class="tot"><span>Total</span><span>$15.980</span></div>
+                <span class="pagar">Comprar</span>
               </div>
             </div>
-          </div>
+            <!-- 2 · Consulta: agendar -->
+            <div class="hs-pag" data-p="2"><div class="hs-lienzo">
+              <img src="assets/img/hero-sitio-consulta.webp" width="1024" height="1536" alt="">
+              <span class="hs-sel hs-sel--chip" style="left:77px;top:864px;width:235px;height:37px">Evaluación</span>
+              <span class="hs-sel hs-sel--dia" style="left:498px;top:936px;width:27px;height:27px">19</span>
+              <span class="hs-sel hs-sel--hora" style="left:803px;top:855px;width:69px;height:31px">10:30</span>
+            </div></div>
 
+            <div class="hs-modal" data-m="0"><div class="hs-caja hs-caja--obra"><div class="ok">✓</div><h3>¡Solicitud enviada!</h3><p>Galpón industrial · 1.200 m² · Quilicura<br>Te contactaremos hoy con tu cotización.</p></div></div>
+            <div class="hs-modal" data-m="1"><div class="hs-caja hs-caja--almacen"><div class="ok">✓</div><h3>¡Compra confirmada!</h3><p>2 productos · $15.980<br>Despacho hoy en Ñuñoa, entre 18:00 y 20:00.</p></div></div>
+            <div class="hs-modal" data-m="2"><div class="hs-caja hs-caja--kine"><div class="ok">✓</div><h3>¡Hora agendada!</h3><p>Evaluación · Jueves 19 de noviembre, 10:30<br>con Daniela Rojas · Av. Irarrázaval 2350</p></div></div>
+          </div>
+          <svg class="hs-cursor" viewBox="0 0 18 26"><path d="M1 1v20l5-5 3.6 8 3-1.4L9 15h7z" fill="#111" stroke="#fff" stroke-width="1.4" stroke-linejoin="round"/></svg>
+          <span class="hs-clic"></span>
         </div>
       </div>
-      <button class="video-control" type="button" hidden>
-        <svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16"><path class="ico-play" d="M8 5.5v13l11-6.500z" fill="currentColor"/><path class="ico-pausa" d="M7 5.500h3.500v13H7zM13.500 5.500H17v13h-3.500z" fill="currentColor"/><path class="ico-repetir" d="M6 12a6 6 0 1 0 2-4.500M8 4v3.700h3.700" fill="none" stroke="currentColor" stroke-width="1.700" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        <span class="video-control-txt">Reproducir animación</span>
-      </button>
+    </div>
+    <svg class="hs-estela" aria-hidden="true"><path class="hs-estela-halo"/><path class="hs-estela-luz"/></svg>
+  </section>
+
+  <section class="intro-recorrido" aria-labelledby="intro-recorrido-titulo">
+    <div class="relato-caja">
+      <p class="relato-cierre-antes">Todo comienza con una búsqueda.</p>
+      <h2 class="relato-h" id="intro-recorrido-titulo"><em>Hagamos que lo encuentren.</em></h2>
+      <p class="relato-p">Descubre el camino que recorre un cliente desde su primera búsqueda hasta contactar un negocio.</p>
+      <div class="relato-cierre-linea" aria-hidden="true"></div>
     </div>
   </section>
 
-  <!-- ============ HISTORIA CON SCROLL ============ -->
-  <section class="historia" id="recorrido" aria-labelledby="historia-titulo">
-    <div class="ancho">
-      <header class="seccion-cab">
-        <p class="etiqueta">El recorrido de un cliente</p>
-        <h2 id="historia-titulo">Así llega un cliente a <em>tu negocio</em>.</h2>
-        <p class="seccion-intro">Un ejemplo de punta a punta con una botillería ficticia. Tu sitio web es la pieza que une cada paso.</p>
-      </header>
-
-      <div class="historia-cuerpo">
-        <ol class="historia-pasos">
-
-          <!-- 1. Google -->
-          <li class="hpaso" id="paso-google">
-            <span class="hpaso-num" aria-hidden="true">01</span>
-            <h3>Te buscan en Google</h3>
-            <p>Alguien escribe lo que necesita. Tu sitio aparece con un título y una descripción que dicen qué vendes y dónde estás.</p>
-            <div class="hpaso-demo" aria-hidden="true">
-              <div class="demo demo-google">
-                <p class="demo-app"><svg class="logo"><use href="#logo-google"/></svg>Google</p>
-                <div class="g-barra">
-                  <svg class="g-lupa"><use href="#ico-lupa"/></svg>
-                  <span class="g-consulta" data-t="250" data-escribir="botillería abierta cerca de mí">botillería abierta cerca de mí</span>
+  <!-- ============ RELATO CON VIDEO (el scroll controla la cámara: ver js/relato.js) ============
+       Video aprobado (relato-scroll-1080.mp4, 1920×1080 · 48 fps) con su posición ligada linealmente
+       al scroll. Debajo de 900px o con "reducir movimiento" nunca se pide el .mp4: estas mismas tres
+       fotos (AVIF) con su tarjeta de texto son la página entera, en flujo normal. -->
+  <section class="relato" id="relato" aria-labelledby="relato-titulo">
+    <!-- Entrada: titular sobre el crema; con JS, la ventana de video se abre detrás hasta llenar la pantalla -->
+    <div class="relato-cap relato-intro">
+      <p class="relato-eti">Una mañana cualquiera</p>
+      <h2 class="relato-h" id="relato-titulo">Tu negocio ya <em>trabaja duro</em>.</h2>
+    </div>
+    <div class="relato-pin">
+      <div class="relato-marco">
+        <!-- Dos columnas (solo en modo activo, ≥900px): la historia a la izquierda, el video a la
+             derecha. Las tarjetas se van apilando sin desaparecer; nada cambia de lado según el rubro. -->
+        <div class="relato-split">
+          <div class="relato-historia">
+            <p class="relato-rol relato-rol-cliente"><strong>Tu cliente</strong><span>Busca, compara y pregunta.</span></p>
+            <!-- Título breve por escena: en modo activo se muestra uno a la vez (no se apilan, ver CSS);
+                 bajo 900px o con "reducir movimiento" vuelven a su flujo normal con foto y párrafo. -->
+            <div class="relato-rotulos">
+              <div class="relato-cap" data-cap="0">
+                <img src="assets/img/relato-constructora.avif" alt="Una constructora instala la cubierta de un centro deportivo." loading="lazy">
+                <div class="relato-voz">
+                  <h3 class="relato-h">Un cliente busca una constructora y encuentra tu trabajo.</h3>
+                  <p class="relato-p">Si no encuentran tu trabajo, llaman a otro.</p>
                 </div>
-                <div class="g-resultado" data-t="2000">
-                  <div class="g-sitio">
-                    <span class="g-favicon">LE</span>
-                    <span><span class="g-nombre">Botillería La Esquina</span><span class="g-url">https://laesquina-ejemplo.cl</span></span>
-                  </div>
-                  <p class="g-titulo">Vinos, cervezas y destilados con despacho a domicilio</p>
-                  <p class="g-texto">Revisa el catálogo, consulta por WhatsApp y recibe tu pedido el mismo día.</p>
-                  <p class="g-enlaces"><span>Catálogo</span><span>Despacho</span><span>Contacto</span></p>
-                </div>
-                <div class="g-resultado g-tenue" data-t="2500"><i></i><i></i><i></i></div>
               </div>
-            </div>
-          </li>
-
-          <!-- 2. Maps y reseñas -->
-          <li class="hpaso" id="paso-mapa">
-            <span class="hpaso-num" aria-hidden="true">02</span>
-            <h3>Te encuentran en el mapa</h3>
-            <p>Tu perfil de empresa muestra dirección, horario y lo que opinan otros clientes. Tu sitio y tu perfil dicen lo mismo, y eso da confianza.</p>
-            <div class="hpaso-demo" aria-hidden="true">
-              <div class="demo demo-maps">
-                <p class="demo-app"><svg class="logo logo-maps"><use href="#logo-maps"/></svg>Google Maps</p>
-                <div class="m-mapa">
-                  <span class="m-calle m-calle-a"></span><span class="m-calle m-calle-b"></span><span class="m-calle m-calle-c"></span>
-                  <span class="m-parque"></span>
-                  <span class="m-ruta" data-t="900"></span>
-                  <span class="m-yo"></span>
-                  <svg class="m-pin" data-t="350"><use href="#ico-pin"/></svg>
+              <div class="relato-cap relato-idea-cap" data-idea="0">
+                <div class="relato-voz">
+                  <h3 class="relato-h">Quiere visitar el local y encuentra cómo llegar.</h3>
+                  <p class="relato-p">El mismo instante perdido.</p>
                 </div>
-                <p class="m-nombre">Botillería La Esquina</p>
-                <p class="m-info">Botillería · <span class="m-abierto">Abierto</span> · Cierra a las 23:00</p>
-                <p class="m-dir">Av. Los Aromos 456, Ñuñoa · a 6 min a pie</p>
-                <div class="m-acciones" data-t="1100">
-                  <span class="m-acc m-principal"><span class="m-acc-ico"><svg><use href="#ico-ruta"/></svg></span>Cómo llegar</span>
-                  <span class="m-acc"><span class="m-acc-ico"><svg><use href="#ico-tel"/></svg></span>Llamar</span>
-                  <span class="m-acc m-pulso" data-efecto="2000"><span class="m-acc-ico"><svg><use href="#ico-web"/></svg></span>Sitio web</span>
-                  <span class="m-acc"><span class="m-acc-ico m-acc-wa"><svg><use href="#logo-whatsapp"/></svg></span>WhatsApp</span>
+              </div>
+              <div class="relato-cap" data-cap="1">
+                <img src="assets/img/relato-minimarket.avif" alt="Interior iluminado de un minimarket de barrio." loading="lazy">
+                <div class="relato-voz">
+                  <h3 class="relato-h">Después de su visita, comparte su experiencia.</h3>
+                  <p class="relato-p">No saben qué vendes, a qué hora abres ni si despachas. Y lo primero que hacen es buscarte en el teléfono.</p>
                 </div>
-                <div class="m-resenas" data-t="2700">
-                  <p class="m-resenas-tit"><svg class="logo-gbp"><use href="#logo-gbp"/></svg>Reseñas recientes</p>
-                  <p class="r-autor"><span class="tr-avatar r-av1">VR</span><span><strong>Valentina R.</strong><span class="r-meta"><span class="estrellas">★★★★★</span> hace 2 días</span></span></p>
-                  <p class="r-texto">Me ayudaron a elegir un vino para regalar y el pedido llegó el mismo día.</p>
+              </div>
+              <div class="relato-cap relato-idea-cap" data-idea="1">
+                <div class="relato-voz">
+                  <h3 class="relato-h">Tiene una pregunta y puede escribirte directamente.</h3>
+                  <p class="relato-p">Tu sitio web.</p>
+                </div>
+              </div>
+              <div class="relato-cap" data-cap="2">
+                <img src="assets/img/relato-kinesiologia.avif" alt="Sala de atención de una clínica de kinesiología." loading="lazy">
+                <div class="relato-voz">
+                  <h3 class="relato-h">Pregunta por un servicio y descubre información de tu negocio.</h3>
+                  <p class="relato-p">Quieren saber quién los atiende, dónde estás y cómo reservar.</p>
                 </div>
               </div>
             </div>
-          </li>
 
-          <!-- 3. Asistente IA -->
-          <li class="hpaso" id="paso-ia">
-            <span class="hpaso-num" aria-hidden="true">03</span>
-            <h3>Le preguntan a la IA</h3>
-            <p>Cada vez más personas le preguntan a un asistente de IA. Un sitio con información clara y ordenada es más fácil de entender para ellos.</p>
-            <div class="hpaso-demo" aria-hidden="true">
-              <div class="demo demo-ia">
-                <p class="demo-app"><span class="ia-icono"><svg><use href="#ico-chispa"/></svg></span>Asistente IA</p>
-                <p class="ia-pregunta" data-t="250">¿Dónde queda una botillería abierta cerca de mí?</p>
-                <div class="ia-zona">
-                  <span class="ia-pensando" data-t="900" data-fin="2300"><i></i><i></i><i></i></span>
-                  <div class="ia-respuesta" data-t="2300">
-                    <p>La más cercana es <strong>Botillería La Esquina</strong>, a unos 6 minutos a pie. Abre hasta las 23:00, tiene muy buenas reseñas y atiende por WhatsApp.</p>
-                    <div class="ia-ficha" data-t="2900">
-                      <span class="ia-ficha-pin"><svg><use href="#ico-pin"/></svg></span>
-                      <span><strong>Botillería La Esquina</strong><span>Av. Los Aromos 456, Ñuñoa</span><span class="m-abierto">Abierto · Cierra a las 23:00</span></span>
+            <!-- iPhone del CLIENTE (solo ≥900px, sin reducir movimiento): abre una app desde su ícono
+                 por cada uno de los 5 resultados del sitio — los mismos de los chips del hero — y hace
+                 la acción real (buscar, pedir ruta, reseñar, escribir, preguntar a la IA). -->
+            <div class="relato-telefono" aria-hidden="true">
+              <span class="relato-telefono-boton relato-telefono-boton--accion"></span>
+              <span class="relato-telefono-boton relato-telefono-boton--vol1"></span>
+              <span class="relato-telefono-boton relato-telefono-boton--vol2"></span>
+              <span class="relato-telefono-boton relato-telefono-boton--encendido"></span>
+              <div class="relato-telefono-chasis">
+                <div class="relato-telefono-pantalla">
+                  <span class="relato-telefono-isla"></span>
+                  <div class="rp-estado"><span>9:41</span><i class="rp-bateria"></i></div>
+
+                  <!-- Pantalla de inicio: las apps se abren y se cierran desde su ícono -->
+                  <div class="rp-home">
+                    <span class="rp-app rp-app--google" data-app="0" data-nombre="Google"><svg><use href="#logo-google"/></svg></span>
+                    <span class="rp-app rp-app--maps" data-app="1" data-nombre="Maps"><svg><use href="#logo-maps"/></svg></span>
+                    <span class="rp-app rp-app--perfil" data-app="2" data-nombre="Perfil"><svg><use href="#logo-gbp"/></svg></span>
+                    <span class="rp-app rp-app--wa" data-app="3" data-nombre="WhatsApp"><svg><use href="#logo-whatsapp"/></svg></span>
+                    <span class="rp-app rp-app--ia" data-app="4" data-nombre="IA"><svg><use href="#ico-chispa"/></svg></span>
+                    <span class="rp-app rp-app--notas" data-app="5" data-nombre="Notas"><svg><use href="#ico-doc"/></svg></span>
+                    <span class="rp-app rp-app--tienda" data-app="6" data-nombre="Compras"><svg><use href="#ico-bolsa"/></svg></span>
+                    <span class="rp-app rp-app--web" data-app="7" data-nombre="Navegador"><svg><use href="#ico-web"/></svg></span>
+                    <div class="rp-dock">
+                      <span class="rp-app rp-app--tel"><svg><use href="#ico-tel"/></svg></span>
+                      <span class="rp-app rp-app--lupa"><svg><use href="#ico-lupa"/></svg></span>
+                      <span class="rp-app rp-app--pin"><svg><use href="#ico-pin"/></svg></span>
                     </div>
-                    <p class="ia-botones" data-t="3400"><span><svg><use href="#ico-ruta"/></svg>Cómo llegar</span><span><svg class="ia-wa"><use href="#logo-whatsapp"/></svg>Escribir por WhatsApp</span></p>
+                  </div>
+
+                  <!-- 0 · Google: escribe la búsqueda y entra al sitio -->
+                  <div class="relato-pantalla" data-pantalla="0">
+                    <div class="rp-barra rp-barra--buscar"><svg class="rp-ico"><use href="#logo-google"/></svg><span class="rp-escribe">constructora kai</span></div>
+                    <div class="rp-resultados">
+                      <article class="rp-lemsg" aria-label="Perfil de ejemplo de Constructora KAI">
+                        <img class="rp-lemsg-foto" src="assets/img/relato-constructora.avif" alt="">
+                        <svg class="kai-logo rp-kai-logo" aria-label="Logo de Constructora KAI: border collie café"><use href="#logo-constructora-kai"/></svg>
+                        <div class="rp-lemsg-contenido"><strong>Constructora KAI</strong>
+                        <p>4,9 <span>★★★★★</span> <small>(24) · Constructora</small></p>
+                        <p class="rp-lemsg-horario">Abierto <small>· Cierra a las 18:00</small></p>
+                        <div class="rp-lemsg-acciones"><span>↗ <small>Sitio web</small></span><span>➤ <small>Cómo llegar</small></span><span>☎ <small>Llamar</small></span></div></div>
+                      </article>
+                      <div class="rp-fila rp-fila--tuyo">
+                        <p class="rp-url">constructorakai-ejemplo.cl</p>
+                        <p class="rp-titulo">Constructora KAI</p>
+                        <p class="rp-snippet">Estructuras metálicas para recintos deportivos y naves industriales.</p>
+                      </div>
+                      <div class="rp-fila"><p class="rp-url">guiaempresas.cl › construcción</p><p class="rp-titulo">Directorio de constructoras</p><p class="rp-snippet">Empresas constructoras y proyectos en Chile.</p></div>
+                      <div class="rp-fila"><p class="rp-url">obras.cl › empresas</p><p class="rp-titulo">Constructoras y proyectos industriales</p><p class="rp-snippet">Encuentra profesionales de la construcción.</p></div>
+                      <div class="rp-fila"><p class="rp-url">proyectosurbanos.cl</p><p class="rp-titulo">Construcción de espacios deportivos</p></div>
+                    </div>
+                  </div>
+                  <!-- 1 · Maps: cae el pin, sube la ficha y pide la ruta -->
+                  <div class="relato-pantalla" data-pantalla="1">
+                    <div class="rp-maps-buscar"><span class="rp-maps-lupa">⌕</span><span class="rp-maps-consulta">minimarket cerca de mí</span><span class="rp-maps-perfil">C</span></div>
+                    <div class="rp-mapa">
+                      <svg class="rp-maps-plano" viewBox="0 0 300 360" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+                        <rect width="300" height="360" fill="#eeeae2"/>
+                        <path d="M0 55 L300 55 M0 128 L300 128 M0 207 L300 207 M0 290 L300 290 M42 0 L42 360 M120 0 L120 360 M207 0 L207 360 M275 0 L275 360" fill="none" stroke="#fff" stroke-width="10"/>
+                        <path d="M0 234 L300 143 M79 0 L258 360" fill="none" stroke="#fff" stroke-width="9"/>
+                        <path d="M2 57 L300 57 M2 128 L300 128 M2 207 L300 207 M42 0 L42 360 M120 0 L120 360 M207 0 L207 360" fill="none" stroke="#d8d4cc" stroke-width="1"/>
+                        <path d="M10 7h27v41H10z M130 67h66v51h-66z M215 216h47v61h-47z" fill="#d5e8cc"/>
+                        <text x="48" y="118">Av. Irarrázaval</text><text x="125" y="196">Los Alerces</text><text x="207" y="283">Ñuñoa</text>
+                        <path class="rp-ruta-linea" d="M69 301 L69 254 L121 238 L121 204 L206 204 L206 155" fill="none" stroke="#fff" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path class="rp-ruta-linea rp-ruta-azul" d="M69 301 L69 254 L121 238 L121 204 L206 204 L206 155" fill="none" stroke="#4285f4" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+                        <circle class="rp-ruta-origen" cx="69" cy="301" r="7" fill="#4285f4" stroke="white" stroke-width="3"/>
+                      </svg>
+                      <span class="rp-maps-localidad">Ñuñoa</span>
+                      <svg class="rp-pin"><use href="#logo-maps"/></svg>
+                      <span class="rp-maps-ubicacion" aria-hidden="true">◎</span>
+                    </div>
+                    <div class="rp-ficha">
+                      <span class="rp-maps-tirador"></span>
+                      <p class="rp-ficha-nombre">Minimarket Buen Vecino</p>
+                      <p class="rp-maps-estrellas">4,8 <span>★★★★★</span> <small>(128) · Minimarket</small></p>
+                      <p class="rp-ficha-meta">Abierto <span>· Cierra a las 22:00</span></p>
+                      <p class="rp-maps-direccion">Av. Irarrázaval 2350, Ñuñoa</p>
+                      <span class="rp-boton">➤ &nbsp;Cómo llegar</span>
+                    </div>
+                    <div class="rp-ruta-panel"><span class="rp-ruta-volver">‹</span><div><small>Tu ubicación</small><strong>Minimarket Buen Vecino</strong></div><div class="rp-ruta-opciones"><b>🚶 &nbsp; 4 min</b><span>🚗 &nbsp; 2 min</span></div><p><b>4 min</b> · 300 m<br><small>Por Av. Irarrázaval</small></p><span class="rp-ruta-iniciar">➤ &nbsp; Iniciar</span></div>
+                  </div>
+                  <!-- 2 · Perfil de empresa: el cliente deja su reseña -->
+                  <div class="relato-pantalla" data-pantalla="2">
+                    <div class="rp-barra rp-barra--perfil"><svg class="rp-ico"><use href="#logo-gbp"/></svg><span>Minimarket Buen Vecino</span></div>
+                    <div class="rp-resenas">
+                      <div class="rp-perfil-foto"><img src="assets/img/relato-minimarket.avif" alt=""></div>
+                      <p class="rp-perfil-nombre">Minimarket Buen Vecino</p>
+                      <p class="rp-perfil-calificacion">4,8 <span>★★★★★</span> <small>(128) · Minimarket</small></p>
+                      <p class="rp-perfil-estado">Abierto <span>· Cierra a las 22:00</span></p>
+                      <div class="rp-perfil-acciones"><span>➤<small>Cómo llegar</small></span><span>☎<small>Llamar</small></span><span>↗<small>Sitio web</small></span></div>
+                      <div class="rp-perfil-tabs"><b>Opiniones</b><span>Información</span><span>Fotos</span></div>
+                      <div class="rp-perfil-comentario"><b>María P.</b><span>★★★★★</span><small>Muy buena atención y todo ordenado.</small></div>
+                      <p class="rp-resena-tit">Califica tu visita</p>
+                      <p class="rp-estrellas-in"><i>★</i><i>★</i><i>★</i><i>★</i><i>★</i></p>
+                      <p class="rp-campo"><span class="rp-escribe">Muy buena atención.</span></p>
+                      <span class="rp-boton rp-boton--publicar">Publicar</span>
+                    </div>
+                  </div>
+                  <!-- 3 · WhatsApp: escribe y envía -->
+                  <div class="relato-pantalla" data-pantalla="3">
+                    <div class="rp-wa-cabecera"><span class="rp-wa-volver">‹</span><span class="rp-wa-avatar">KV</span><span class="rp-wa-datos"><b>Kinesiología Vital</b><small>Cuenta de empresa</small></span><span class="rp-wa-acciones">⌕ &nbsp; ⋮</span></div>
+                    <div class="rp-chat rp-wa-chat">
+                      <p class="rp-wa-seguridad">Los mensajes y las llamadas están cifrados de extremo a extremo.</p>
+                      <p class="rp-wa-fecha">HOY</p>
+                      <p class="rp-burbuja rp-burbuja--yo rp-enviado">Hola, vi su página. ¿Tienen hora para hoy? <small class="rp-wa-hora">9:41</small> <svg class="rp-ticks"><use href="#ico-ticks"/></svg></p>
+                    </div>
+                    <div class="rp-envio"><span class="rp-campo-chat"><span class="rp-escribe">Hola, vi su página. ¿Tienen hora para hoy?</span></span><i class="rp-envio-boton"></i></div>
+                  </div>
+                  <!-- 4 · Búsqueda con IA: el agente busca, lee el sitio y responde citándolo -->
+                  <div class="relato-pantalla" data-pantalla="4">
+                    <div class="rp-barra rp-barra--ia"><span class="rp-chatgpt-menu">☰</span><strong>ChatGPT</strong><span class="rp-chatgpt-desplegar">⌄</span><span class="rp-chatgpt-nuevo">✎</span></div>
+                    <div class="rp-ia-compositor"><span class="rp-escribe">¿Dónde puedo hacer kinesiología cerca de Ñuñoa?</span></div>
+                    <div class="rp-chat rp-chatgpt">
+                      <p class="rp-burbuja rp-burbuja--yo">¿Dónde puedo hacer kinesiología cerca de Ñuñoa?</p>
+                      <p class="rp-agente"><svg class="rp-agente-ico"><use href="#ico-chispa"/></svg><span class="rp-paso rp-paso--1">Buscando en la web…</span><span class="rp-paso rp-paso--2">Leyendo kinesiologiavital.cl…</span></p>
+                      <div class="rp-burbuja rp-burbuja--ia">
+                        <span class="rp-stream">Kinesiología Vital es una consulta en Ñuñoa que nació para acompañar a personas a recuperar su movilidad y volver a las actividades que disfrutan.</span>
+                        <div class="rp-ia-detalles">
+                          <strong>¿Cómo te puede ayudar?</strong>
+                          <p>Evaluación personalizada, rehabilitación deportiva y recuperación de lesiones.</p>
+                          <div class="rp-ia-fotos"><img src="assets/cuadros/relato-1600/c265.avif" alt=""><img src="assets/img/relato-kinesiologia.avif" alt=""></div>
+                          <p><b>Atención:</b> consulta por horarios y reserva.</p>
+                          <span class="rp-fuente"><svg><use href="#ico-web"/></svg>kinesiologiavital.cl</span>
+                          <small class="rp-ia-ejemplo">Respuesta y negocio de ejemplo</small>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </li>
+          </div>
 
-          <!-- 4. WhatsApp y pedido -->
-          <li class="hpaso" id="paso-whatsapp">
-            <span class="hpaso-num" aria-hidden="true">04</span>
-            <h3>Te escriben y llega el pedido</h3>
-            <p>Un botón abre el chat con el mensaje listo. Tu cliente pregunta, revisa el catálogo en tu sitio y te envía su pedido.</p>
-            <div class="hpaso-demo" aria-hidden="true">
-              <div class="demo demo-combo">
-                <div class="demo-wa">
-                <div class="wa-cabecera">
-                  <span class="wa-avatar">LE</span>
-                  <span class="wa-quien">
-                    <strong>Botillería La Esquina</strong>
-                    <span class="wa-estado"><span>en línea</span><span class="wa-escribe" data-t="1500" data-fin="2700">escribiendo…</span></span>
-                  </span>
-                  <svg class="wa-logo"><use href="#logo-whatsapp"/></svg>
+          <!-- iPad del DUEÑO: el video corre en su pantalla y, en el mismo instante en que el cliente
+               actúa en su iPhone, le llega la notificación real de lo que pasó. -->
+          <p class="relato-rol relato-rol-negocio"><strong>Tu negocio</strong><span>Trabaja mientras lo descubren.</span></p>
+          <div class="relato-escena">
+            <span class="relato-ipad-camara" aria-hidden="true"></span>
+            <div class="relato-ipad-pantalla">
+              <video class="relato-film" aria-hidden="true" muted playsinline disablepictureinpicture preload="none" poster="assets/img/relato-poster.jpg"></video>
+              <div class="relato-ipad-estado" aria-hidden="true"><span>9:41</span><i class="rp-bateria"></i></div>
+              <div class="relato-respuesta" aria-hidden="true"><strong>WhatsApp · Camila</strong><p>Hola, vi su página. ¿Tienen hora para hoy?</p><span>Responder</span></div>
+              <!-- Controles del reproductor: aparecen cada vez que llega una notificación, como cuando
+                   el dueño toca el video para leerla. La barra avanza con el video real. -->
+              <div class="relato-reproductor" aria-hidden="true">
+                <div class="rr-centro">
+                  <span class="rr-boton rr-salto"><svg viewBox="0 0 24 24"><path d="M12 4a8 8 0 1 1-7.4 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M4.4 4.3v4.9h4.9" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><text x="12" y="15.4" font-size="7" font-weight="700" text-anchor="middle" fill="currentColor">10</text></svg></span>
+                  <span class="rr-boton rr-pausa"><i></i><i></i></span>
+                  <span class="rr-boton rr-salto"><svg viewBox="0 0 24 24"><g transform="matrix(-1 0 0 1 24 0)"><path d="M12 4a8 8 0 1 1-7.4 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M4.4 4.3v4.9h4.9" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></g><text x="12" y="15.4" font-size="7" font-weight="700" text-anchor="middle" fill="currentColor">10</text></svg></span>
                 </div>
-                <div class="wa-chat">
-                  <p class="wa-dia">Hoy</p>
-                  <p class="wa-msg wa-sale" data-t="300">Hola, ¿tienen despacho hoy a Ñuñoa?<span class="wa-hora">20:14<svg class="wa-ticks" data-efecto="1200"><use href="#ico-ticks"/></svg></span></p>
-                  <p class="wa-msg wa-entra" data-t="2700">¡Hola! Sí, despachamos hasta las 22:00. Aquí está el catálogo:<span class="wa-enlace"><svg><use href="#ico-web"/></svg>laesquina-ejemplo.cl/catalogo</span><span class="wa-hora">20:15</span></p>
-                  <p class="wa-msg wa-sale" data-t="3900">¡Perfecto, gracias! Hago el pedido ahí.<span class="wa-hora">20:15<svg class="wa-ticks" data-efecto="4600"><use href="#ico-ticks"/></svg></span></p>
+                <div class="rr-barra">
+                  <span class="rr-tiempo rr-tiempo--actual">0:00</span>
+                  <span class="rr-pista"><b></b></span>
+                  <span class="rr-tiempo rr-tiempo--resta">-0:15</span>
                 </div>
+              </div>
+              <div class="relato-notifs" aria-hidden="true">
+                <div class="rn-banner" data-notif="0">
+                  <span class="rn-ico rn-ico--web"><svg><use href="#ico-web"/></svg></span>
+                  <div class="rn-txt">
+                    <p class="rn-app">Tu sitio web</p>
+                    <p class="rn-cab"><b>Búsqueda en Google</b><span>ejemplo</span></p>
+                    <p class="rn-cuerpo">Una persona buscó «constructora kai», encontró tu sitio en los resultados y entró a ver tus proyectos.</p>
+                    <p class="rn-meta">Visita desde iPhone · Ñuñoa</p>
+                    <p class="rn-acciones"><span>Ver visita</span><span>Más tarde</span></p>
+                  </div>
                 </div>
-                <div class="aviso" data-t="5000">
-                  <span class="aviso-icono"><svg><use href="#ico-bolsa"/></svg></span>
-                  <span class="aviso-texto"><span class="aviso-meta">Tu sitio web <b>ahora</b></span><strong>Nuevo pedido recibido</strong><span>Camila · 3 productos · Despacho hoy a Ñuñoa</span></span>
+                <div class="rn-banner" data-notif="1">
+                  <span class="rn-ico rn-ico--maps"><svg><use href="#logo-maps"/></svg></span>
+                  <div class="rn-txt">
+                    <p class="rn-app">Perfil de empresa</p>
+                    <p class="rn-cab"><b>Ficha en Google Maps</b><span>ejemplo</span></p>
+                    <p class="rn-cuerpo">Un cliente encontró la ubicación del minimarket y pidió la ruta para llegar: está a 4 minutos caminando.</p>
+                    <p class="rn-meta">Ruta solicitada · Av. Irarrázaval</p>
+                    <p class="rn-acciones"><span>Ver en el mapa</span><span>Más tarde</span></p>
+                  </div>
+                </div>
+                <div class="rn-banner" data-notif="2">
+                  <span class="rn-ico rn-ico--perfil"><svg><use href="#logo-gbp"/></svg></span>
+                  <div class="rn-txt">
+                    <p class="rn-app">Perfil de empresa</p>
+                    <p class="rn-cab"><b>Nueva reseña ★★★★★</b><span>ahora</span></p>
+                    <p class="rn-cuerpo">«Lo encontré apenas me mudé al barrio. Muy buena atención.»</p>
+                    <p class="rn-meta">Minimarket Buen Vecino · 4,8 de promedio</p>
+                    <p class="rn-acciones"><span>Responder reseña</span><span>Ver perfil</span></p>
+                  </div>
+                </div>
+                <div class="rn-banner" data-notif="3">
+                  <span class="rn-ico rn-ico--wa"><svg><use href="#logo-whatsapp"/></svg></span>
+                  <div class="rn-txt">
+                    <p class="rn-app">WhatsApp Business</p>
+                    <p class="rn-cab"><b>Camila</b><span>ahora</span></p>
+                    <p class="rn-cuerpo">Hola, vi su página. ¿Tienen hora para hoy?</p>
+                    <p class="rn-meta">Escribió desde el botón de tu sitio web</p>
+                    <p class="rn-acciones"><span>Responder</span><span>Marcar como leído</span></p>
+                  </div>
+                </div>
+                <div class="rn-banner" data-notif="4">
+                  <span class="rn-ico rn-ico--ia"><svg><use href="#ico-chispa"/></svg></span>
+                  <div class="rn-txt">
+                    <p class="rn-app">Tu sitio web</p>
+                    <p class="rn-cab"><b>Búsqueda con ChatGPT</b><span>ejemplo</span></p>
+                    <p class="rn-cuerpo">Un cliente preguntó por kinesiología en Ñuñoa y la respuesta recomendó tu consulta con datos de tu sitio.</p>
+                    <p class="rn-meta">Fuente citada: kinesiologiavital.cl</p>
+                    <p class="rn-acciones"><span>Ver consulta</span><span>Más tarde</span></p>
+                  </div>
                 </div>
               </div>
             </div>
-          </li>
-        </ol>
-
-        <!-- Escenario fijo (escritorio): main.js copia aquí las demostraciones -->
-        <div class="historia-escena" aria-hidden="true">
-          <img class="escena-fondo" src="assets/img/hero-final.webp" width="1920" height="1080" alt="" loading="lazy">
-          <div class="escena-demos"></div>
-          <div class="escena-progreso"><i></i><i></i><i></i><i></i></div>
+          </div>
         </div>
+        <div class="relato-cap relato-final" data-cap="3">
+          <div class="relato-caja">
+            <p class="relato-cierre-antes">Cada interacción puede acercar un cliente a tu negocio.</p>
+            <h2 class="relato-h">Que encuentren<br>lo que hace <em>único</em><br>a tu negocio.</h2>
+            <p class="relato-p">Tu web conecta lo que ofreces con las personas que lo están buscando.</p>
+            <div class="relato-cierre-linea" aria-hidden="true"></div>
+          </div>
+        </div>
+        <div class="relato-sombra" aria-hidden="true"></div>
+        <div class="relato-progreso" aria-hidden="true"><i><b></b></i><i><b></b></i><i><b></b></i></div>
       </div>
-
-      <p class="historia-nota">Ejemplo ilustrativo con un negocio ficticio. Google, Google Maps y WhatsApp son marcas de sus respectivos dueños. No garantizo posiciones en buscadores ni recomendaciones de asistentes de IA.</p>
     </div>
   </section>
 
@@ -478,7 +654,14 @@
   </div>
 </footer>
 
+<script src="js/vendor/gsap.min.js"></script>
+<script src="js/vendor/ScrollTrigger.min.js"></script>
+<script src="js/vendor/SplitText.min.js"></script>
+<script src="js/vendor/lenis.min.js"></script>
+<script src="js/suave.js"></script>
 <script src="js/config.js"></script>
-<script src="js/main.js"></script>
+<script src="js/main.js?v=notebook-25"></script>
+<script src="js/hero.js?v=sitios-1"></script>
+<script src="js/relato.js?v=ritmo-25"></script>
 </body>
 </html>

@@ -80,6 +80,7 @@
   var video = document.querySelector('.escena-video');
   var control = document.querySelector('.video-control');
   var controlTxt = document.querySelector('.video-control-txt');
+  var saltar = document.querySelector('.video-saltar');
   var tarjetas = Array.prototype.slice.call(document.querySelectorAll('.tarjeta[data-desde]'));
 
   if (hero && video && control) iniciarVideo();
@@ -104,6 +105,14 @@
     });
     video.addEventListener('error', fallo);
 
+    // Velocidad del video. Las tarjetas dependen del tiempo del video, así que al bajarla
+    // todas se estiran juntas y siguen sincronizadas. Se reafirma al cargar los metadatos
+    // porque algunos navegadores la reinician al cambiar de fuente.
+    var VELOCIDAD = 1;
+    video.defaultPlaybackRate = VELOCIDAD;
+    video.playbackRate = VELOCIDAD;
+    video.addEventListener('loadedmetadata', function () { video.playbackRate = VELOCIDAD; });
+
     // modoFinal: no hay reproducción y se muestra la imagen del último fotograma
     // con la composición final de tarjetas (movimiento reducido, ahorro de datos,
     // reproducción automática bloqueada o video que no carga).
@@ -125,8 +134,9 @@
       whatsapp: ['#25D366', '#128C7E', '#25D366'],
       ia: ['#3E5870', '#7F97AD', '#B9CBDC']
     };
-    var vuelos = [], animando = false;
     var VIDA_ESTELA = 450;   // ms que dura cada punto de la estela
+    var DUR_VUELO = 950;     // ms que tarda un logo en llegar a su chip
+    var MUESTRAS = 48;       // puntos de la trayectoria precalculada
 
     function mezclar(c1, c2, f) {
       var a = parseInt(c1.slice(1), 16), b = parseInt(c2.slice(1), 16);
@@ -141,22 +151,24 @@
     }
     function suavizar(x) { return x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2; }
 
-    // Un punto de la estela: un círculo pequeño que se encoge y se desvanece solo (compositor).
-    function punto(x, y, color, tam) {
-      var d = document.createElement('span');
-      d.className = 'estela-punto';
-      d.style.cssText = 'width:' + tam + 'px;height:' + tam + 'px;background:' + color +
-        ';transform:translate(' + (x - tam / 2) + 'px,' + (y - tam / 2) + 'px)';
-      document.body.appendChild(d);
-      var mover = 'translate(' + (x - tam / 2) + 'px,' + (y - tam / 2) + 'px)';
-      d.animate([{ transform: mover + ' scale(1)', opacity: 0.95 }, { transform: mover + ' scale(.15)', opacity: 0 }],
-        { duration: VIDA_ESTELA, easing: 'ease-out', fill: 'forwards' }).onfinish = function () { d.remove(); };
-    }
-
+    /* El vuelo se calcula una sola vez al despegar: la curva, la escala y la estela quedan como
+       animaciones Web Animations (transform y opacity), que el navegador corre en el compositor
+       aunque el hilo principal esté ocupado sincronizando tarjetas. Las coordenadas son de la
+       página (position:absolute), así el vuelo no se descuadra si se hace scroll a medio camino. */
     function volar(origen, destino, retraso, canal) {
       var a = origen.getBoundingClientRect();
       var b = destino.getBoundingClientRect();
       if (!a.width || !b.width || !document.body.animate) return;
+      var sx = window.scrollX, sy = window.scrollY;
+      var x0 = a.left + a.width / 2 + sx, y0 = a.top + a.height / 2 + sy;
+      var x2 = b.left + b.width / 2 + sx, y2 = b.top + b.height / 2 + sy;
+      // Curva con dos puntos de control: si el logo viene de arriba, baja por el espacio entre
+      // el texto y el notebook; si viene de abajo, baja junto al teléfono y pasa bajo los equipos.
+      var x1, y1, x3, y3;
+      if (y0 < y2 - 300) { x1 = x0; y1 = y2; x3 = x0; y3 = y2; }
+      else { var fondo = Math.max(y0, y2) + 150; x1 = x0; y1 = fondo; x3 = (x0 + x2) / 2; y3 = fondo; }
+      var escalaFin = b.width / a.width, paleta = COLORES[canal] || COLORES.ia;
+
       var caja = document.createElement('div');
       caja.className = 'vuelo';
       caja.setAttribute('aria-hidden', 'true');
@@ -164,48 +176,40 @@
       copia.removeAttribute('data-vuela');
       caja.appendChild(copia);
       var est = getComputedStyle(origen);
-      caja.style.cssText = 'left:0;top:0;width:' + a.width + 'px;height:' + a.height + 'px;color:' + est.color +
-        ';border-radius:' + est.borderRadius + ';opacity:0' +
+      caja.style.cssText = 'position:absolute;left:0;top:0;width:' + a.width + 'px;height:' + a.height + 'px;color:' + est.color +
+        ';border-radius:' + est.borderRadius + ';opacity:0;will-change:transform,opacity' +
         (est.backgroundImage !== 'none' ? ';background:' + est.backgroundImage : '');
-      document.body.appendChild(caja);
-      var x0 = a.left + a.width / 2, y0 = a.top + a.height / 2;
-      var x2 = b.left + b.width / 2, y2 = b.top + b.height / 2;
-      // Curva con dos puntos de control: si el logo viene de arriba, baja por el espacio entre
-      // el texto y el notebook; si viene de abajo, baja junto al teléfono y pasa bajo los equipos.
-      var x1, y1, x3, y3;
-      if (y0 < y2 - 300) { x1 = x0; y1 = y2; x3 = x0; y3 = y2; }
-      else { var fondo = Math.max(y0, y2) + 150; x1 = x0; y1 = fondo; x3 = (x0 + x2) / 2; y3 = fondo; }
-      vuelos.push({ caja: caja, w: a.width, h: a.height, escala: b.width / a.width, inicio: performance.now() + retraso, dur: 950,
-        x0: x0, y0: y0, x1: x1, y1: y1, x3: x3, y3: y3, x2: x2, y2: y2, paleta: COLORES[canal] || COLORES.ia, n: 0, destino: destino });
-      if (!animando) { animando = true; requestAnimationFrame(cuadroVuelo); }
-    }
 
-    function cuadroVuelo(ahora) {
-      vuelos = vuelos.filter(function (v) {
-        var p = (ahora - v.inicio) / v.dur;
-        if (p < 0) return true;
-        var r = v.destino.getBoundingClientRect();   // el chip puede moverse si la página se desplaza
-        if (r.width) {
-          var nx = r.left + r.width / 2, ny = r.top + r.height / 2;
-          v.x3 += nx - v.x2; v.y3 += ny - v.y2; v.x2 = nx; v.y2 = ny;
+      var cuadros = [], estela = document.createDocumentFragment(), puntos = [];
+      for (var i = 0; i <= MUESTRAS; i++) {
+        var t = i / MUESTRAS, k = suavizar(t), u = 1 - k;
+        var x = u * u * u * x0 + 3 * u * u * k * x1 + 3 * u * k * k * x3 + k * k * k * x2;
+        var y = u * u * u * y0 + 3 * u * u * k * y1 + 3 * u * k * k * y3 + k * k * k * y2;
+        var esc = k < 0.45 ? 1 + 0.4 * (k / 0.45) : 1.4 + (escalaFin - 1.4) * ((k - 0.45) / 0.55);
+        cuadros.push({ offset: t, opacity: t === 0 ? 0 : 1,
+          transform: 'translate(' + (x - a.width / 2) + 'px,' + (y - a.height / 2) + 'px) scale(' + esc + ')' });
+        if (i > 0 && t < 0.97) {
+          var d = document.createElement('span');
+          d.className = 'estela-punto';
+          var mover = 'translate(' + (x - 3.5) + 'px,' + (y - 3.5) + 'px)';
+          d.style.cssText = 'position:absolute;width:7px;height:7px;opacity:0;background:' +
+            colorEn(paleta, (i % 18) / 17) + ';transform:' + mover;
+          estela.appendChild(d);
+          puntos.push({ el: d, mover: mover, demora: retraso + t * DUR_VUELO });
         }
-        var k = suavizar(Math.min(p, 1)), u = 1 - k;
-        var x = u * u * u * v.x0 + 3 * u * u * k * v.x1 + 3 * u * k * k * v.x3 + k * k * k * v.x2;
-        var y = u * u * u * v.y0 + 3 * u * u * k * v.y1 + 3 * u * k * k * v.y3 + k * k * k * v.y2;
-        var esc = k < 0.45 ? 1 + 0.4 * (k / 0.45) : 1.4 + (v.escala - 1.4) * ((k - 0.45) / 0.55);
-        v.caja.style.opacity = 1;
-        v.caja.style.transform = 'translate(' + (x - v.w / 2) + 'px,' + (y - v.h / 2) + 'px) scale(' + esc + ')';
-        if (p < 0.97) punto(x, y, colorEn(v.paleta, (v.n++ % 18) / 17), 7);
-        if (p >= 1) {
-          v.caja.remove();
-          var chip = v.destino.closest('a');
-          if (chip) { chip.classList.remove('llega'); void chip.offsetWidth; chip.classList.add('llega'); }
-          return false;
-        }
-        return true;
+      }
+      document.body.appendChild(estela);
+      document.body.appendChild(caja);
+
+      puntos.forEach(function (p) {
+        p.el.animate([{ transform: p.mover + ' scale(1)', opacity: 0.95 }, { transform: p.mover + ' scale(.15)', opacity: 0 }],
+          { duration: VIDA_ESTELA, delay: p.demora, easing: 'ease-out', fill: 'forwards' }).onfinish = function () { p.el.remove(); };
       });
-      if (vuelos.length) requestAnimationFrame(cuadroVuelo);
-      else animando = false;
+      caja.animate(cuadros, { duration: DUR_VUELO, delay: retraso, easing: 'linear', fill: 'both' }).onfinish = function () {
+        caja.remove();
+        var chip = destino.closest('a');
+        if (chip) { chip.classList.remove('llega'); void chip.offsetWidth; chip.classList.add('llega'); }
+      };
     }
     function lanzarVuelos(tarjeta) {
       tarjeta.querySelectorAll('[data-vuela]').forEach(function (el, i) {
@@ -218,6 +222,7 @@
       // Sin video: queda la imagen fija con la composición final.
       hero.classList.add('sin-video');
       control.hidden = true;
+      if (saltar) saltar.hidden = true;
       cancelAnimationFrame(cuadro);
       iniciado = false;
       modoFinal = true;
@@ -228,6 +233,8 @@
     function estado(nombre, texto) {
       control.dataset.estado = nombre;
       controlTxt.textContent = texto;
+      // "Saltar animación" solo se ofrece mientras la animación está en curso (o en pausa a medias).
+      if (saltar) saltar.hidden = !(iniciado && !modoFinal && !video.ended);
     }
 
     /* Las tarjetas y todo lo que pasa dentro de ellas dependen solo del
@@ -242,6 +249,8 @@
     }
     function sincronizar() {
       var t = tiempo();
+      // El teléfono aparece después en el video original: mantenemos el último cuadro sin él.
+      hero.classList.toggle('hero-notebook-final', t >= 11.2);
       // Solo hay vuelos cuando el video avanza normalmente (no al adelantar o retroceder).
       var avanza = iniciado && !video.paused && previo >= 0 && t > previo && t - previo < 1.5;
       tarjetas.forEach(function (c) {
@@ -306,6 +315,18 @@
       }
     });
 
+    // Saltar: salta directo a la escena final (misma composición que al terminar el video).
+    if (saltar) saltar.addEventListener('click', function () {
+      video.pause();
+      cancelAnimationFrame(cuadro);
+      hero.classList.add('video-terminado');
+      iniciado = false; modoFinal = true; sinColeccion();
+      try { video.currentTime = 0; } catch (e) {}   // así "Volver a reproducir" parte desde el inicio
+      estado('terminado', 'Volver a reproducir');
+      sincronizar();
+      control.focus();
+    });
+
     control.hidden = false;
     estado('pausado', 'Reproducir animación');
 
@@ -349,7 +370,7 @@
       intento.catch(function () {
         // El navegador bloqueó la reproducción automática: queda la composición final y el botón.
         if (iniciado) return;
-        video.poster = 'assets/img/hero-final.webp';
+        video.poster = 'assets/img/hero-notebook-sin-telefono.webp';
         modoFinal = true;
         sinColeccion();
         estado('pausado', 'Reproducir animación');
@@ -358,71 +379,194 @@
     }
   }
 
-  /* ---------- Recorrido del cliente (historia con scroll) ---------- */
+  /* ---------- Recorrido del cliente: de la vitrina al primer mensaje ---------- */
   iniciarHistoria();
 
   function iniciarHistoria() {
-    var pasos = Array.prototype.slice.call(document.querySelectorAll('.hpaso'));
-    var escena = document.querySelector('.historia-escena');
-    var contenedor = document.querySelector('.escena-demos');
-    var barras = document.querySelectorAll('.escena-progreso i');
-    if (!pasos.length || !escena || !contenedor) return;
-
-    var sinMovimiento = window.matchMedia('(prefers-reduced-motion: reduce)');
-    var escritorio = window.matchMedia('(min-width: 900px)');
-
-    // Cada paso tiene su demostración dentro (móvil y sin JS).
-    // En escritorio se usa una copia en el escenario fijo.
-    var enLinea = pasos.map(function (p) { return p.querySelector('.demo'); });
-    var enEscena = enLinea.map(function (d) {
-      var copia = d.cloneNode(true);
-      contenedor.appendChild(copia);
-      return copia;
-    });
-    enLinea.concat(enEscena).forEach(reiniciar);
-
-    // Índice fijo (escritorio): títulos de los pasos como enlaces, con el activo resaltado.
     var cuerpo = document.querySelector('.historia-cuerpo');
-    var indice = document.createElement('nav');
-    indice.className = 'historia-indice';
-    indice.setAttribute('aria-label', 'Pasos del recorrido');
-    var lista = document.createElement('ol');
-    var enlaces = pasos.map(function (p) {
-      var li = document.createElement('li');
-      var a = document.createElement('a');
-      a.href = '#' + p.id;
-      a.innerHTML = '<span class="hi-num" aria-hidden="true"></span><span class="hi-tit"></span>' +
-        '<span class="hi-desc" aria-hidden="true"><span><span class="hi-p"></span></span></span>';
-      a.querySelector('.hi-num').textContent = p.querySelector('.hpaso-num').textContent;
-      a.querySelector('.hi-tit').textContent = p.querySelector('h3').textContent;
-      a.querySelector('.hi-p').textContent = p.querySelector('h3 + p').textContent;
-      li.appendChild(a);
-      lista.appendChild(li);
-      return a;
+    var escena = document.getElementById('escenario');
+    var pasos = Array.prototype.slice.call(document.querySelectorAll('.hpaso'));
+    if (!cuerpo || !escena || !pasos.length) return;
+
+    var reducir = window.matchMedia('(prefers-reduced-motion: reduce)');
+    var escritorio = window.matchMedia('(min-width: 900px)');
+    var q = function (s) { return escena.querySelector(s); };
+
+    var elN = q('.esc-n'), elCuerpo = q('.esc-cuerpo'), elTitulo = q('.esc-titulo'), elFrase = q('.esc-frase');
+    var contIndice = q('.esc-indice');
+    // Un solo origen para el relato: los textos de cada paso del HTML.
+    var textos = pasos.map(function (p) {
+      return { t: p.querySelector('h3').textContent, f: p.querySelector('h3 + p').textContent };
     });
-    indice.appendChild(lista);
-    cuerpo.insertBefore(indice, cuerpo.firstChild);
 
-    var actual = -1;
+    // Interfaces simuladas
+    var P = { web: q('.u-web'), google: q('.pant-google'), ficha: q('.pant-ficha'), mapa: q('.pant-mapa'), chat: q('.pant-chat'), ia: q('.pant-ia') };
+    var todas = Object.keys(P).map(function (k) { return P[k]; });
+    // Cuadro final de cada escena cuando se muestra en línea (móvil o movimiento reducido)
+    var finales = [null, null, P.web, P.google, P.mapa, P.ia, P.chat];
+    var padres = finales.map(function (el) { return el ? el.parentNode : null; });
 
-    function activar(i) {
-      if (i === actual) return;
-      if (actual > -1) {
-        pasos[actual].classList.remove('activo');
-        enlaces[actual].classList.remove('activo');
-        enlaces[actual].removeAttribute('aria-current');
-        reiniciar(enLinea[actual]);
-        reiniciar(enEscena[actual]);
-      }
-      actual = i;
-      pasos[i].classList.add('activo');
-      enlaces[i].classList.add('activo');
-      enlaces[i].setAttribute('aria-current', 'step');
-      for (var b = 0; b < barras.length; b++) barras[b].classList.toggle('on', b <= i);
-      reproducir(escritorio.matches ? enEscena[i] : enLinea[i]);
+    var botones = pasos.map(function (p, i) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.textContent = String(i + 1);
+      b.setAttribute('aria-label', 'Ir a la escena ' + (i + 1) + ': ' + textos[i].t);
+      b.addEventListener('click', function () {
+        p.scrollIntoView({ behavior: reducir.matches ? 'auto' : 'smooth', block: 'center' });
+      });
+      contIndice.appendChild(b);
+      return b;
+    });
+
+    var relojes = [], tTexto = null, actual = -1, estatico = null;
+    function t(ms, fn) { relojes.push(setTimeout(fn, ms)); }
+    function d(k, v) { escena.dataset[k] = v; }
+    function toque(el) {
+      if (!el) return;
+      el.classList.remove('toque'); void el.offsetWidth; el.classList.add('toque');
     }
 
-    // Línea de activación: el centro de la pantalla.
+    /* Secuencia interna de cada interfaz:
+       data-t="ms"        aparece en ese momento (desde que se reproduce la interfaz)
+       data-fin="ms"      desaparece en ese momento
+       data-escribir="…"  se escribe letra por letra (data-vel = ms por letra) */
+    function reiniciar(el) {
+      el.querySelectorAll('.ver, .fuera, .tecleando, .toque').forEach(function (x) {
+        x.classList.remove('ver', 'fuera', 'tecleando', 'toque');
+      });
+      el.querySelectorAll('[data-escribir]').forEach(function (x) { x.textContent = ''; });
+      el.classList.remove('toque');
+    }
+    function reproducir(el) {
+      reiniciar(el);
+      el.querySelectorAll('[data-t]').forEach(function (x) {
+        t(+x.dataset.t, function () {
+          x.classList.add('ver');
+          if (x.dataset.escribir) escribir(x);
+        });
+        if (x.dataset.fin) t(+x.dataset.fin, function () { x.classList.add('fuera'); });
+      });
+    }
+    function escribir(x) {
+      var texto = x.dataset.escribir, v = +x.dataset.vel || 55, n = 0;
+      x.classList.add('tecleando');
+      (function letra() {
+        x.textContent = texto.slice(0, ++n);
+        if (n < texto.length) t(v * (0.6 + Math.random() * 0.8), letra);
+        else t(400, function () { x.classList.remove('tecleando'); });
+      })();
+    }
+    // Estado final legible de una interfaz (sin animar)
+    function final(el) {
+      el.querySelectorAll('[data-t]').forEach(function (x) {
+        x.classList.add(x.dataset.fin ? 'fuera' : 'ver');
+        if (x.dataset.escribir) x.textContent = x.dataset.escribir;
+      });
+    }
+    function limpiar() {
+      relojes.forEach(clearTimeout);
+      relojes = [];
+      todas.forEach(reiniciar);
+      document.querySelectorAll('.vuelo-pieza').forEach(function (x) { x.remove(); });
+    }
+    function reposo() { d('ia', 'off'); d('pieza', 'off'); d('mostrador', 'off'); d('ui', ''); }
+
+    // El repuesto de la estantería viaja y se convierte en la foto de la ficha.
+    function volarPieza() {
+      var a = q('#pieza-estante'), b = P.web.querySelector('.foto-grande svg');
+      if (!a || !b || !document.body.animate) return;
+      // Con la maqueta 3D, el origen es la proyección en pantalla del repuesto 3D.
+      var ra = window.Diorama3D ? window.Diorama3D.rectPieza() : a.getBoundingClientRect(), rb = b.getBoundingClientRect();
+      if (!ra.width || !rb.width) return;
+      var v = document.createElement('div');
+      v.className = 'vuelo-pieza';
+      v.innerHTML = '<svg viewBox="0 0 100 100" aria-hidden="true"><use href="#pieza-cartucho"/></svg>';
+      v.style.cssText = 'width:' + ra.width + 'px;height:' + ra.height + 'px';
+      document.body.appendChild(v);
+      v.animate([
+        { transform: 'translate(' + ra.left + 'px,' + ra.top + 'px) scale(1)' },
+        { transform: 'translate(' + rb.left + 'px,' + rb.top + 'px) scale(' + (rb.width / ra.width) + ')' }
+      ], { duration: 800, easing: 'cubic-bezier(.65,0,.25,1)', fill: 'forwards' }).onfinish = function () { v.remove(); };
+    }
+
+    /* Las siete escenas. Cada una fija su estado inicial (para poder entrar desde la anterior
+       o desde la siguiente al hacer scroll) y programa sus acciones en milisegundos. */
+    var ESC = [
+      // 1 · ¿Es tu negocio? Cámara fija; el mobiliario cambia dos veces.
+      function () {
+        reposo(); d('cam', 'tienda'); d('rubro', '0'); d('vec', 'repuesto');
+        t(1600, function () { d('rubro', '1'); });
+        t(4300, function () { d('rubro', '2'); });
+      },
+      // 2 · Una necesidad a pocas cuadras: el encuadre se abre y vemos a la vecina.
+      function () {
+        reposo(); d('cam', 'abre'); d('rubro', '2'); d('vec', 'repuesto');
+        t(2400, function () { d('vec', 'telefono'); });
+      },
+      // 3 · Primero, tu página web: el marco de la vitrina se vuelve la ventana del navegador.
+      function () {
+        reposo(); d('cam', 'vitrina'); d('rubro', '2'); d('vec', 'telefono');
+        t(1300, function () { d('ui', 'web'); reproducir(P.web); });
+        t(2000, volarPieza);
+      },
+      // 4 · Cómo te encuentran en Google: búsqueda simulada y toque al resultado.
+      function () {
+        reposo(); d('cam', 'vecina'); d('rubro', '2'); d('vec', 'telefono'); d('pant', 'google'); d('ui', 'tel');
+        t(800, function () { reproducir(P.google); });
+        t(4400, function () { toque(P.google.querySelector('.t-res-ok')); });
+        t(5000, function () { d('pant', 'ficha'); reproducir(P.ficha); });
+      },
+      // 5 · ¿Me queda cerca? Desde la ficha, "Ver ubicación" abre el mapa y el perfil de empresa.
+      function () {
+        reposo(); d('cam', 'vecina'); d('rubro', '2'); d('vec', 'telefono'); d('pant', 'ficha'); d('ui', 'tel');
+        final(P.ficha);
+        t(900, function () { toque(P.ficha.querySelector('.t-enlace')); });
+        t(1500, function () { d('pant', 'mapa'); reproducir(P.mapa); });
+        t(7000, function () { d('pieza', 'on'); });
+      },
+      // 6 · Otra forma de encontrarte: el asistente de IA entra por el borde del teléfono y se retira.
+      function () {
+        reposo(); d('cam', 'vecina'); d('rubro', '2'); d('vec', 'telefono'); d('pant', 'ficha'); d('ui', 'tel');
+        final(P.ficha);
+        t(800, function () { d('ia', 'on'); reproducir(P.ia); });
+        t(7000, function () { d('ia', 'off'); });
+      },
+      // 7 · Del teléfono al mostrador: WhatsApp, la cámara cruza la calle y el mensaje llega al local.
+      function () {
+        reposo(); d('cam', 'vecina'); d('rubro', '2'); d('vec', 'telefono'); d('pant', 'ficha'); d('ui', 'tel');
+        final(P.ficha);
+        t(800, function () { toque(P.ficha.querySelector('.t-btn-wa')); });
+        t(1400, function () {
+          d('pant', 'chat'); reproducir(P.chat);
+          t(2750, function () { toque(P.chat.querySelector('.wa-enviar')); });
+        });
+        t(6000, function () { d('ui', ''); d('cam', 'cruce'); });
+        t(7500, function () { d('cam', 'mostrador'); });
+        t(9100, function () { d('mostrador', 'on'); });
+      }
+    ];
+
+    function ponerTexto(i) {
+      elN.textContent = '0' + (i + 1);
+      elTitulo.textContent = textos[i].t;
+      elFrase.textContent = textos[i].f;
+    }
+    function cambiarTexto(i) {
+      clearTimeout(tTexto);
+      elCuerpo.classList.add('sale');
+      tTexto = setTimeout(function () { ponerTexto(i); elCuerpo.classList.remove('sale'); }, 200);
+    }
+    function activar(i) {
+      if (estatico || i === actual) return;
+      actual = i;
+      limpiar();
+      botones.forEach(function (b, k) { b.classList.toggle('on', k === i); b.classList.toggle('hecho', k < i); });
+      cambiarTexto(i);
+      ESC[i]();
+    }
+
+    // Se activa la escena cuyo texto cruza el centro de la pantalla. Al volver hacia arriba,
+    // cada escena recupera su estado porque todo parte del estado inicial de la escena.
     var obs = new IntersectionObserver(function (entradas) {
       entradas.forEach(function (e) {
         if (e.isIntersecting) activar(pasos.indexOf(e.target));
@@ -430,65 +574,40 @@
     }, { rootMargin: '-48% 0px -48% 0px' });
     pasos.forEach(function (p) { obs.observe(p); });
 
-    // Al cambiar de escritorio a móvil (o al revés) se repite la escena activa.
-    var alCambiar = function () {
-      if (actual < 0) return;
-      reiniciar(enLinea[actual]);
-      reiniciar(enEscena[actual]);
-      reproducir(escritorio.matches ? enEscena[actual] : enLinea[actual]);
-    };
-    if (escritorio.addEventListener) escritorio.addEventListener('change', alCambiar);
-
-    /* Secuencia interna de cada demostración:
-       data-t="ms"        aparece en ese momento
-       data-fin="ms"      se oculta en ese momento
-       data-escribir="…"  se escribe letra por letra
-       data-efecto="ms"   recibe la clase .efecto (ticks azules, pulso) */
-    function reiniciar(demo) {
-      (demo._relojes || []).forEach(clearTimeout);
-      demo._relojes = [];
-      demo.classList.remove('activo');
-      demo.querySelectorAll('.ver, .fuera, .efecto, .tecleando').forEach(function (el) {
-        el.classList.remove('ver', 'fuera', 'efecto', 'tecleando');
+    /* Móvil o movimiento reducido: sin escenario fijo. Cada paso muestra su texto y,
+       debajo, el cuadro final de su interfaz, en orden. */
+    function modo() {
+      var si = reducir.matches || !escritorio.matches;
+      if (si === estatico) return;
+      var antes = actual;
+      estatico = si;
+      cuerpo.classList.toggle('estatico', si);
+      limpiar();
+      finales.forEach(function (el, i) {
+        if (!el) return;
+        if (si) { el.classList.add('suelta'); pasos[i].querySelector('.hpaso-demo').appendChild(el); final(el); }
+        else { el.classList.remove('suelta'); padres[i].appendChild(el); }
       });
-      demo.querySelectorAll('[data-escribir]').forEach(function (el) { el.textContent = ''; });
+      actual = -1;
+      if (!si && antes >= 0) activar(antes);
     }
+    [reducir, escritorio].forEach(function (m) {
+      if (m.addEventListener) m.addEventListener('change', modo);
+    });
+    ponerTexto(0);
+    modo();
 
-    function reproducir(demo) {
-      reiniciar(demo);
-      demo.classList.add('activo');
-      if (sinMovimiento.matches) { estadoFinal(demo); return; }
-
-      var programar = function (ms, fn) { demo._relojes.push(setTimeout(fn, ms)); };
-      demo.querySelectorAll('[data-t]').forEach(function (el) {
-        programar(+el.dataset.t, function () {
-          el.classList.add('ver');
-          if (el.dataset.escribir) escribir(el, programar);
-        });
-        if (el.dataset.fin) programar(+el.dataset.fin, function () { el.classList.add('fuera'); });
-      });
-      demo.querySelectorAll('[data-efecto]').forEach(function (el) {
-        programar(+el.dataset.efecto, function () { el.classList.add('efecto'); });
-      });
-    }
-
-    function escribir(el, programar) {
-      var texto = el.dataset.escribir;
-      var n = 0;
-      el.classList.add('tecleando');
-      (function letra() {
-        el.textContent = texto.slice(0, ++n);
-        if (n < texto.length) programar(38 + Math.random() * 40, letra);
-        else programar(500, function () { el.classList.remove('tecleando'); });
-      })();
-    }
-
-    function estadoFinal(demo) {
-      demo.querySelectorAll('[data-t]').forEach(function (el) {
-        el.classList.add(el.dataset.fin ? 'fuera' : 'ver');
-        if (el.dataset.escribir) el.textContent = el.dataset.escribir;
-      });
-      demo.querySelectorAll('[data-efecto]').forEach(function (el) { el.classList.add('efecto'); });
+    /* Maqueta 3D: solo en escritorio y sin "reducir movimiento". Se carga cuando el recorrido
+       se acerca a la pantalla; si no hay WebGL o falla, queda la ilustración SVG. */
+    if (escritorio.matches && !reducir.matches && 'IntersectionObserver' in window) {
+      var cerca = new IntersectionObserver(function (es) {
+        if (!es.some(function (e) { return e.isIntersecting; })) return;
+        cerca.disconnect();
+        import(new URL('js/diorama3d.min.js', document.baseURI).href)
+          .then(function (m) { m.iniciar(escena); })
+          .catch(function (err) { if (window.console) console.warn('Maqueta 3D no disponible:', err); });
+      }, { rootMargin: '1200px 0px' });
+      cerca.observe(escena);
     }
   }
 

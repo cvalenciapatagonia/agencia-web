@@ -1,0 +1,12 @@
+{
+  "name": "agencia-web",
+  "private": true,
+  "scripts": {
+    "build:3d": "esbuild fuente/diorama3d.js --bundle --minify --format=esm --target=es2020 --outfile=sitio/js/diorama3d.min.js"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.2",
+    "lenis": "^1.3.27",
+    "three": "^0.187.0"
+  }
+}

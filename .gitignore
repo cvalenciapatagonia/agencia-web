@@ -15,3 +15,7 @@ Thumbs.db
 
 # Video original sin uso en la página (se conserva solo en disco)
 sitio/assets/video/hero-construccion2.mp4
+
+# Material de referencia y de trabajo (queda solo en disco)
+docs/chatgpt/
+work/
