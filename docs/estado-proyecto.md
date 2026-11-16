@@ -1,5 +1,127 @@
 # Estado del proyecto · 2026-11-15
 
+> **Relato y hero actuales (hechos en la rama `relato-panel`, carpeta `C:\dev\Personales\Agencia_web-panel`; ya en main)**:
+> relato **sin video**. El usuario lo pidió porque el video, el reproductor y las notificaciones abrumaban.
+> Descartado: un panel inventado ("se ve muy falso").
+> **iPad = apps reales del dueño** (elección del usuario). Cada acción del cliente llega donde la vería el dueño:
+>   - Google (constructora) → Google Analytics en tiempo real: sube usuarios activos, `google` y la página Proyectos.
+>   - Maps (minimarket) → Perfil de Empresa: sube Solicitudes de indicaciones (41→42) e interacciones.
+>   - Reseña → Perfil de Empresa: aparece la reseña de María con "Responder" (128→129).
+>   - WhatsApp (kinesiología) → WhatsApp Business: Camila entra a la lista y se abre su chat.
+>   - ChatGPT → Analytics de kinesiologiavital.cl: nueva fila `chatgpt.com` (GA4 sí registra esas visitas).
+> La app anterior queda en pantalla mientras el cliente actúa y cambia justo antes del resultado.
+> **Foco**: un velo crema (`.relato-velo`) cubre al dispositivo que no habla; solo se anima su opacidad.
+> El título de cada escena es un subtítulo centrado bajo los dispositivos. Medido en Chrome visible: 142 fps;
+> queda un cuadro de 132 ms al aparecer el escenario. `relato.js` funciona con o sin video.
+> **Integrado en main el 16-11-2026** (el usuario aprobó "Sí, a main"): main avanzó al commit de esta rama, sin mezcla.
+> **Ronda 2 ("versión rápida", mismas fotos)**: diálogo en dos escenas. En la **reseña**, baja un aviso de iPadOS,
+> el dueño lo toca, responde y publica, y María ve en su iPhone "Minimarket Buen Vecino respondió a tu reseña".
+> En **WhatsApp**, baja el aviso, se abre el chat, el dueño responde "Tengo a las 17:30", Camila lo recibe,
+> contesta "¡Sí, por favor!" y el dueño lo ve. Google, Maps e IA quedan como "solo mirar o aviso".
+> Ritmo más lento: `TOTAL` 21,4 y escenas en 0,75 · 3,4 · 6,3 · 10,8 · 15,7. El foco sigue los turnos de habla.
+> iPadOS: letra Inter dentro de los equipos, barra de estado con fecha, wifi y %, indicador de inicio, avisos
+> que se tocan, Perfil de Empresa dentro de Safari y riel lateral en WhatsApp Business.
+> Equipos "apoyados": iPad girado -7° en Y, iPhone inclinado -2,5° y sombras de contacto.
+> Medido en Chrome visible: 143 fps; sigue un cuadro de 160 ms al aparecer el escenario.
+> **Ronda 3 (explicación paso a paso, aprobada por el usuario)**:
+>   - Columna izquierda `.relato-guion` sobre una franja crema, con un capítulo por canal y tres pasos cada uno
+>     (Te encuentran en Google · Llegan a tu local · Te recomiendan · Te escriben directo · La IA te recomienda).
+>     Cada paso dice quién actúa (Tu cliente / Tu negocio / Los dos) y el anterior queda atenuado.
+>     Reemplaza a los subtítulos pequeños y a las etiquetas "Tu cliente / Tu negocio".
+>   - Índice arriba con los 5 íconos alineados; se enciende el capítulo en curso.
+>   - Equipos juntos a la derecha: iPad atrás y iPhone delante, apenas sobre su esquina.
+>   - Google: búsqueda "constructora en curicó" con varias constructoras; KAI destaca con foto y el cliente la toca.
+>   - Ritmo: `ENTRADA_APP` 0,75 · 3,8 · 7,0 · 12,1 · 17,5; `PASOS` en relato.js; `TOTAL` 23,6 (unas 42 pantallas).
+>   - Al final, "Vuelve a ver un paso": 5 botones que saltan al inicio de cada capítulo (`data-repetir`).
+>   - Medido en Chrome visible: 143 fps; sigue un cuadro de ~160 ms al aparecer el escenario.
+> **Ronda 4**:
+>   - El índice (`nav.relato-indice`, botones) tiene tres estados: gris = viene, oscuro y algo más grande = en curso,
+>     en color = ya pasó. Queda encima del cierre y al final muestra "Toca un paso para volver a verlo".
+>     Cada botón salta a su capítulo (`data-repetir`). Se quitó la fila duplicada del cierre.
+>   - Dos espacios a la derecha (`.relato-zona--cliente` / `--negocio`) con su rótulo. El iPhone y un iPad más chico
+>     van centrados en cada uno. El rótulo y el espacio de quien no habla se atenúan.
+>   - Medido en Chrome visible: 142 fps; sigue el cuadro de ~160 ms al aparecer el escenario.
+> **Ronda 5**: explicación más angosta (`min(23vw,390px)`) e índice solo con íconos (el nombre va en `title`/
+> `aria-label`). El espacio del cliente se ensancha a 21vw y los dos equipos quedan más grandes.
+> **Ronda 6**: sin la foto de fondo, como algo provisorio hasta tener la foto. Tres columnas planas de borde a borde:
+> explicación (#f4ebe2), cliente (#eadccd) y negocio (#dccbb8), con una línea divisoria fina.
+> La columna de quien no habla se atenúa.
+> **Ronda 7 (fotos reales)**: `assets/img/relato-cliente.webp` (mano con iPhone, living) y `relato-negocio.webp`
+> (iPad en soporte sobre un mesón de almacén), generadas por el usuario en ChatGPT. Cada foto cubre su columna, y
+> `colocarFotos()` en relato.js calcula dónde queda el blanco de cada pantalla (medido en px de la foto: iPhone
+> 319,333 · 394×840 · radio 48; iPad 116,435 · 891×600 · radio 18) y lo deja en `--f-cliente-*` / `--f-negocio-*`.
+> Sin carcasas CSS ni inclinación; las pantallas solo aparecen con un fundido. La foto del iPad tiene fondo de
+> almacén: sirve como "tu negocio" genérico; más adelante podría haber una por rubro.
+> **Arreglo (16-11)**: al subir desde el relato quedaba una pantalla crema vacía (la frase de la introducción
+> se iba antes de que apareciera el escenario). Ahora la frase se queda y el escenario se funde sobre ella
+> (marco con autoAlpha en 0,12). El hero queda fijado 1,7 pantallas.
+> Además, la capa «intro-recorrido» tapaba los botones del hero, aunque no se viera:
+> `.hero .intro-recorrido{pointer-events:none}`. **Main tiene el mismo bloqueo de clics**: corregirlo al integrar.
+> **Apps a medida (16-11, recomendación aprobada)**: en el hero, un rótulo bajo el notebook (`.hs-rotulo`) cambia con
+> cada pestaña: Cotizador en línea · Carro de compras · Agenda de horas (se anima en `pestana()` de js/hero.js).
+> En el cierre del relato, el puente `.relato-puente`: "Y cuando llegan, tu sitio puede cotizar, vender o agendar
+> por ti" + enlace "Ver qué desarrollamos" a #servicios. El marketplace se deja para servicios ("plataformas a
+> medida"). Los chips del hero se cambiaron (aprobado) a "qué desarrollamos" (`ul.chips-desarrollo`):
+> Sitio web · Cotizador · Tienda online · Reservas · Plataformas a medida (marketplace, intranet y más), con
+> íconos nuevos `ico-calendario` e `ico-capas` en el sprite. Los 5 canales quedan solo en el relato.
+> **Chips que se ganan (aprobado)**: los chips de "qué desarrollamos" empiezan apagados (clase `coleccion`).
+> Sitio web se enciende con la primera página (0,6 s). Tras cada demostración, el rótulo de la pestaña vuela en
+> curva con una estela fina hasta su chip y lo enciende (`volar()` en js/hero.js; Cotizador 4,6 · Tienda 10,6 ·
+> Reservas 16,6). Plataformas a medida se enciende al final (18,25). Si el hero se repite, lo encendido sigue
+> encendido; con "reducir movimiento" están todos encendidos desde el inicio.
+> El prototipo `pruebas/hero-sitios.html` NO tiene el rótulo todavía.
+> **Arreglos (16-11)**: (1) a veces las pantallas del iPhone y del iPad perdían las esquinas redondeadas (Chrome no
+> recorta capas animadas con border-radius + overflow): ahora llevan `clip-path: inset(0 round …)`. (2) El notebook
+> del hero se corrió a la derecha (`--corre:4.5cqw` en `.hs-esc`) y el bloque de chips quedó en
+> `max-width:min(700px,40vw)`, para que no se toquen (revisado a 1366, 1600 y 1920 de ancho).
+> **Constructora: estimación referencial (aprobado)**: tras "Enviar cotización" aparece `.hs-estimacion` con 4 partidas
+> de ejemplo, el total "$229.000.000 aprox.", la nota "Valores referenciales… Sujeto a visita técnica." y el botón
+> "Solicitar cotización formal" (el cursor lo toca y sigue "¡Solicitud enviada!"). En js/hero.js se usa
+> `tl.shiftChildren(2.1, true, 3.9)` para correr el resto. En el sitio no se promete una "API": se habla de
+> "precios de proveedores actualizados". La estela de los vuelos mide solo lo que ocupa la curva (antes, al ser
+> de pantalla completa, costaba un cuadro de 83 ms).
+> **Chips en dos filas y con color (pedido del usuario)**: `.chips-desarrollo` usa una grilla de 3 columnas (3 + 2)
+> y la letra baja un poco en pantallas chicas. Cada chip tiene su color (`--c`): Sitio web azul, Cotizador naranjo,
+> Tienda dorado, Reservas turquesa y Plataformas violeta apagado. Encendido = ícono lleno de su color + borde suave.
+> Ya no se tocan con el notebook: revisado a 1366, 1600 y 1920 de ancho (distancia mínima ~30 px a 1366).
+> **Pregunta y respuesta (aprobado)**: la introducción dice "Ya tienes tu sitio. / ¿Basta con *tenerlo*? / No. Un sitio
+> que nadie encuentra no trae clientes. Te mostramos, paso a paso, cómo hacemos que te encuentren." Cada capítulo
+> del relato termina con una caja `.rg-como` "Cómo lo logramos" (indexación en Google con Search Console y mapa del
+> sitio · Perfil de Empresa verificado · enlace para pedir reseñas · botón de WhatsApp con mensaje listo y WhatsApp
+> Business · datos estructurados y preguntas frecuentes para la IA). Cada capítulo dura 0,5 más:
+> ENTRADA_APP 0,75 · 4,3 · 8,0 · 13,6 · 19,5; cierre en 23,0; TOTAL 25,6.
+> **Rótulo del hero (aprobado)**: centrado bajo el notebook, con una barra de 3 tramos que se llena mientras dura
+> cada demostración (colores de los chips), un título que entra desde abajo con recorte y su frase. El vuelo a los
+> chips sale desde ese título. El prototipo `pruebas/hero-sitios.html` NO tiene estos cambios.
+> **Altura (16-11)**: en escritorio el navbar quedó a tope, arriba y a los lados (barra completa, `--nav-h:64px`), y la
+> columna de explicación ajusta sus medidas a la altura (vh). La caja "Cómo lo logramos" cabe con aire en 1366×768,
+> 1600×800, 1600×900 y 1920×1080 (peor caso: sobran 83 px). El rótulo del hero se sacó de `.hs-esc` y quedó anclado
+> al borde inferior del hero (`.hero-media>.hs-rotulo`), así no se corta en pantallas bajas.
+> **Hero centrado en altura (16-11)**: las medidas de la foto se definen en `.hs-hero .hero-media` (--wf, --hf, --topf).
+> La foto se ubica para que el notebook (28,6 %–85,3 % del alto de la foto) y su rótulo queden centrados bajo el
+> navbar; si queda una franja abajo, se rellena con el color del mesón (#d6c4b2) y la foto se funde con una máscara.
+> El ancho no cambió. Medido: el texto y el grupo del notebook quedan centrados ±8 px en 1366, 1600 y 1920.
+> **Capítulo 6 · Instagram (aprobado)**: perfil de Constructora KAI en el iPhone (ícono "Notas" → Instagram), con un
+> pequeño scroll por las obras (cuadros del video) y un toque en "Ver sitio web". En el iPad vuelve el Analytics de la
+> constructora: instagram.com 1→2 y usuarios 3→4→5 (cifra con tercer número, `data-escena2`). Hay 6 botones en el índice
+> y los capítulos dicen "de 6". TOTAL 29,8; cierre en 27,2.
+> **Introducción con motion graphics (aprobado)**: `.ib` dentro de `.intro-recorrido` (clase `.ib-activo`; el texto
+> original queda para lectores de pantalla). El hero queda fijado 4,6 pantallas: "Ya tienes tu sitio." + ventana de
+> sitio → "¿Basta con tenerlo?" palabra a palabra → la pregunta sube, entra "No." y el sitio se pierde entre puntos
+> (canvas) → 6 canales unidos al sitio + "Te mostramos…" → los canales vuelan a su botón del índice y el escenario del
+> relato aparece en el mismo lugar. Medido: la introducción no tiene cuadros lentos.
+> **Saltar / leer en resumen (aprobado)**: `aside.relato-saltar`, fijo. Al comenzar la introducción aparece abajo al centro
+> ("Animación explicativa · ~1 min de scroll" + Saltar + Leer en resumen); dentro del relato se reduce a "Saltar" en la
+> esquina. Saltar lleva al cierre (27,6 de la línea de tiempo). El resumen es un `<dialog>` con pestañas: un capítulo
+> a la vez, sin scroll (3 pasos + "Cómo lo logramos"), con flechas del teclado, Anterior/Siguiente y Esc para cerrar.
+> El contenido se arma desde los textos de la columna de explicación (una sola fuente). Probado a 1366×768, 1600×800 y 1920×1080.
+> **Pendiente para la sección de servicios/precios y contacto**: el texto sobre la Ley 21.719 de Protección de
+> Datos Personales (vigente desde el 1-12-2026; confirmar la fecha). La recomendación es no hacerlo pasar por
+> sello oficial: "Desarrollado conforme a la Ley 21.719" + "Incluye política de privacidad redactada según la
+> ley", detallando lo que entrega la agencia (política, consentimiento en formularios, aviso de cookies, datos
+> mínimos, HTTPS). Va en servicios o precios ("Incluido en todos los planes") y junto al formulario de contacto.
+> Que lo revise alguien con formación legal.
+
 Resumen para continuar en una sesión nueva. Nada de lo descrito aquí está en commit todavía (rama `main`).
 Servidor: `node servidor.mjs 5181` → http://localhost:5181/
 

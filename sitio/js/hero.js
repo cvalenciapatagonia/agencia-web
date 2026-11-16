@@ -41,6 +41,15 @@
       $('.hs-url').textContent = URLS[i];
     }, null, t);
     $$('.hs-pag').forEach(function (p, j) { tl.set(p, { opacity: j === i ? 1 : 0 }, t); });
+    // Rótulo bajo el notebook: el título entra desde abajo con recorte y luego la frase; el anterior sale
+    $$('.hs-rotulo [data-r]').forEach(function (r, j) {
+      var tit = r.querySelector('.hs-ro-tit span'), txt = r.querySelector('.hs-ro-txt'), t1 = t + (t ? 0.12 : 0.3);
+      if (j === i) {
+        tl.set(r, { autoAlpha: 1, y: 0 }, t1)
+          .fromTo(tit, { yPercent: 110 }, { yPercent: 0, duration: 0.55, ease: 'power4.out' }, t1)
+          .fromTo(txt, { autoAlpha: 0, y: 8 }, { autoAlpha: 1, y: 0, duration: 0.4, ease: 'power3.out' }, t1 + 0.16);
+      } else if (j === i - 1) tl.to(r, { autoAlpha: 0, y: -6, duration: 0.18, ease: 'power2.in' }, t);
+    });
   }
   function modal(tl, i, t, sale) {
     var m = $('.hs-modal[data-m="' + i + '"]');
@@ -96,6 +105,35 @@
   ir(tl, conf, 15.3, 0.45); pulsar(tl, conf, 15.8);
   modal(tl, 2, 15.95, 17.6);
   tl.to(cursor, { opacity: 0, duration: 0.3 }, 17.4);
+
+  // Estimación referencial de la constructora (entre "Enviar cotización" y la confirmación)
+  var EST = 2.1;
+  tl.shiftChildren(EST, true, 3.9);
+  var est = $('.hs-estimacion');
+  if (est) {
+    var caja = est.firstElementChild;
+    tl.set(est, { autoAlpha: 0 }, 0)
+      .to(est, { autoAlpha: 1, duration: 0.2 }, 3.95)
+      .fromTo(caja, { scale: 0.95, y: 12 }, { scale: 1, y: 0, duration: 0.35, ease: 'power3.out' }, 3.95)
+      .fromTo(est.querySelectorAll('.hs-est-fila'), { autoAlpha: 0, x: -10 }, { autoAlpha: 1, x: 0, duration: 0.25, stagger: 0.18, ease: 'power2.out' }, 4.15)
+      .fromTo(est.querySelectorAll('.hs-est-total, .hs-est-nota, .hs-est-boton'), { autoAlpha: 0, y: 6 }, { autoAlpha: 1, y: 0, duration: 0.25, stagger: 0.12, ease: 'power2.out' }, 4.95);
+    // Posición del botón dentro de la pantalla virtual (sin la proyección): suma de offsets hasta .hs-pc
+    var boton = est.querySelector('.hs-est-boton');
+    var bx = boton.offsetWidth / 2, by = boton.offsetHeight / 2, e = boton;
+    while (e && e !== pc) { bx += e.offsetLeft; by += e.offsetTop; e = e.offsetParent; }
+    var formal = { x: bx, y: by };
+    ir(tl, formal, 5.3, 0.5);
+    pulsar(tl, formal, 5.85);
+    tl.to(est, { autoAlpha: 0, duration: 0.2 }, 6.0);
+  }
+  var tramos = $$('.hs-ro-barra b');
+  if (tramos.length === 3) {
+    tl.set(tramos, { scaleX: 0 }, 0)
+      .to(tramos[0], { scaleX: 1, duration: 7.9, ease: 'none' }, 0.3)
+      .to(tramos[1], { scaleX: 1, duration: 5.9, ease: 'none' }, 8.2)
+      .to(tramos[2], { scaleX: 1, duration: 5.5, ease: 'none' }, 14.1);
+  }
+  tl.set($$('.hs-rotulo [data-r]'), { autoAlpha: 0 }, 0);
 
   // ---- Estela final: un trazo de luz sale del borde de la pantalla y llega al inicio del subtítulo,
   //      donde se dibuja un subrayado tipo marcador (un rectángulo por línea, solo scaleX).
@@ -156,12 +194,66 @@
 
   // Solo corre mientras el hero está a la vista. Una sola vez; se repite (sin estela) al volver al hero
   // o al pasar el mouse sobre el notebook. Con "reducir movimiento": estado final y subrayado por fundido.
+  // ---- Chips «qué desarrollamos»: empiezan apagados y se encienden cuando el notebook demuestra cada cosa.
+  //      Al terminar cada demostración, el rótulo de esa pestaña vuela en curva hasta su chip (con una estela
+  //      fina) y lo enciende. Sitio web se enciende con la primera página; Plataformas a medida, al final.
+  var listaChips = document.querySelector('.chips-desarrollo');
+  var chips = listaChips ? Array.prototype.slice.call(listaChips.querySelectorAll('a')) : [];
+  var GANA = [[0, 0.6, null], [1, 6.7, 0], [2, 12.7, 1], [3, 18.7, 2], [4, 20.35, null]];   // [chip, momento, rótulo que vuela]
+  function encender(i) {
+    var c = chips[i];
+    if (!c || c.classList.contains('ganado')) return;
+    c.classList.add('ganado', 'llega');
+    setTimeout(function () { c.classList.remove('llega'); }, 800);
+  }
+  function volar(i, r) {
+    var c = chips[i];
+    if (!c || c.classList.contains('ganado')) return;          // al repetir el hero, lo encendido queda encendido
+    var origen = r == null ? null : $('.hs-rotulo [data-r="' + r + '"] .hs-ro-tit span');
+    var destino = c.querySelector('svg');
+    var a = origen && origen.getBoundingClientRect(), b = destino && destino.getBoundingClientRect();
+    if (!a || !b || !a.width || !b.width) { encender(i); return; }
+    var x0 = a.left + a.width / 2, y0 = a.top + a.height / 2, x1 = b.left + b.width / 2, y1 = b.top + b.height / 2;
+    var cx = (x0 + x1) / 2, cy = Math.min(y0, y1) - Math.max(80, Math.abs(x0 - x1) * 0.18);
+    var copia = origen.cloneNode(true);
+    copia.className = 'hs-vuelo';          // el título se vuelve una píldora oscura que vuela
+    var NS = 'http://www.w3.org/2000/svg', traza = document.createElementNS(NS, 'svg'), camino = document.createElementNS(NS, 'path');
+    traza.setAttribute('class', 'hs-vuelo-estela');
+    traza.setAttribute('aria-hidden', 'true');
+    // La capa de la estela mide solo lo que ocupa la curva (una capa de pantalla completa cuesta un cuadro)
+    var mx = Math.min(x0, x1, cx) - 6, my = Math.min(y0, y1, cy) - 6;
+    var ancho = Math.max(x0, x1, cx) + 6 - mx, alto = Math.max(y0, y1, cy) + 6 - my;
+    traza.setAttribute('width', ancho); traza.setAttribute('height', alto);
+    traza.setAttribute('viewBox', '0 0 ' + ancho + ' ' + alto);
+    traza.style.left = mx + 'px'; traza.style.top = my + 'px';
+    camino.setAttribute('d', 'M' + (x0 - mx) + ' ' + (y0 - my) + 'Q' + (cx - mx) + ' ' + (cy - my) + ' ' + (x1 - mx) + ' ' + (y1 - my));
+    traza.appendChild(camino);
+    document.body.appendChild(traza);
+    document.body.appendChild(copia);
+    var cw = copia.offsetWidth / 2, chh = copia.offsetHeight / 2;
+    var largo = camino.getTotalLength(), k = { t: 0 };
+    gsap.set(camino, { strokeDasharray: largo, strokeDashoffset: largo });
+    gsap.set(copia, { x: x0 - cw, y: y0 - chh });
+    gsap.timeline({ onComplete: function () { copia.remove(); traza.remove(); encender(i); } })
+      .to(k, { t: 1, duration: 0.9, ease: 'power2.inOut', onUpdate: function () {
+        var t = k.t, u = 1 - t;
+        gsap.set(copia, { x: u * u * x0 + 2 * u * t * cx + t * t * x1 - cw,
+                          y: u * u * y0 + 2 * u * t * cy + t * t * y1 - chh, scale: 1 - 0.45 * t });
+      } }, 0)
+      .to(camino, { strokeDashoffset: 0, duration: 0.9, ease: 'power2.inOut' }, 0)
+      .to(copia, { opacity: 0, duration: 0.18, ease: 'power2.in' }, 0.74)
+      .to(traza, { opacity: 0, duration: 0.35, ease: 'power2.out' }, 0.82);
+  }
+  GANA.forEach(function (g) { tl.call(volar, [g[0], g[2]], g[1]); });
+
   var reducido = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var conMouse = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
   var fijo = location.hash.match(/t=([\d.]+)/);
   function repetir() { if (tl.progress() === 1 && (!tlEstela || !tlEstela.isActive())) tl.restart(); }
+  if (listaChips && !reducido) listaChips.classList.add('coleccion');
   function listo() {
-    if (fijo) {                                     // #t=segundos congela ese instante (incluye la estela)
+    if (fijo) {
+      GANA.forEach(function (g) { if (g[1] <= parseFloat(fijo[1])) chips[g[0]] && chips[g[0]].classList.add('ganado'); });                                     // #t=segundos congela ese instante (incluye la estela)
       var t = parseFloat(fijo[1]), D = tl.duration();
       if (t <= D) tl.pause(t);
       else {                                        // termina la entrada del texto para medir en su lugar final

@@ -5,6 +5,10 @@ Estado detallado y pendientes: `docs/estado-proyecto.md`.
 
 ## Reglas obligatorias de trabajo
 
+0. **Idioma: TODO en español, también el razonamiento interno (thinking).** El usuario no habla inglés y ve el
+   razonamiento en pantalla. Pensar, planificar, escribir avisos, descripciones de comandos, resúmenes y botones
+   siempre en español, sin excepción.
+
 1. **Skills antes de proponer.** Antes de cualquier tarea de diseño, animación, scroll o transición, leer
    `C:\dev\Skills_rep\INDEX.md`, cargar las skills que correspondan y **nombrarlas en la primera respuesta**,
    antes de proponer nada. Para leer skills largas, usar el agente `lector-de-skills` (devuelve solo las reglas aplicables).
@@ -23,8 +27,9 @@ Estado detallado y pendientes: `docs/estado-proyecto.md`.
    (`video-fondo-negro`, carpeta `C:\dev\Personales\Agencia_web-video`) solo se toca si el usuario lo pide explícitamente.
    Cambiar solo lo pedido; antes de cambios de diseño grandes, explicar en corto y preguntar.
 5. **Revisión de diseño solo en escritorio**; móvil va al final, en etapa aparte.
-6. **Mostrar resultados**: abrir en Chrome (`Start-Process chrome "<url>"`) y dar siempre el enlace clicable,
-   por ejemplo [http://localhost:5181/](http://localhost:5181/).
+6. **Mostrar resultados**: NO abrir ningún navegador (ni Chrome ni el navegador interno). Al terminar, enviar una
+   notificación y dejar el enlace clicable para que el usuario lo abra en Chrome, por ejemplo
+   [http://localhost:5181/](http://localhost:5181/). Para verificar y medir: Chrome sin ventana con Playwright.
 
 ## Servidores locales
 

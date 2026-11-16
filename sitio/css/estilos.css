@@ -1469,3 +1469,577 @@ h3{font-family:var(--serif);font-weight:700;font-size:26px;line-height:1.08;lett
 .hs-hero .hero-sub{position:relative;isolation:isolate}
 .hs-trazo{position:absolute;z-index:-1;border-radius:.12em;background:rgba(62,88,112,.2);transform:scaleX(0);transform-origin:0 50%;pointer-events:none}
 .hs-clic{position:absolute;z-index:19;width:44px;height:44px;margin:-22px 0 0 -22px;border-radius:50%;background:rgba(120,120,120,.35);opacity:0;transform:scale(0)}
+
+
+/* ===================== Rama relato-panel: el iPad del dueño muestra sus apps reales (sin video) =====================
+   Cada acción del cliente llega a la app donde el dueño la vería: Google Analytics en tiempo real (visita
+   desde Google o desde ChatGPT), Perfil de Empresa en Google (ruta pedida, reseña nueva) y WhatsApp Business.
+   Animación en js/relato.js, bloque 5. */
+.relato-panel{position:absolute;inset:0;z-index:1;background:#fff;color:#1f1f1f;
+  font-family:-apple-system,"SF Pro Text","Segoe UI",Roboto,system-ui,sans-serif;-webkit-font-smoothing:antialiased;
+  font-size:clamp(10px,calc(var(--ipad-w) * .0145),17px);line-height:1.3;letter-spacing:0}
+.relato-panel p{margin:0}
+.relato-ipad-pantalla:has(.relato-panel) .relato-ipad-estado{color:#1f1f1f;z-index:6}
+.rpa-vista{position:absolute;inset:0;padding-top:3.4%;display:flex;flex-direction:column;background:#f8f9fa}
+.rpa-avatar{flex:none;display:grid;place-items:center;width:2.3em;height:2.3em;border-radius:50%;background:#8a6d5a;color:#fff;
+  font-style:normal;font-size:.8em;font-weight:600}
+.rpa-avatar--b{background:#5b7fa6}.rpa-avatar--c{background:#7a9a62}.rpa-avatar--d{background:#c06c84}
+.rpa-barra{display:flex;align-items:center;gap:.8em;padding:.7em 1.4em;background:#fff;border-bottom:1px solid #e3e5e8}
+.rpa-barra p{flex:1;display:flex;align-items:baseline;gap:.7em}
+.rpa-barra b{font-size:1.15em;font-weight:500;color:#202124}
+.rpa-barra span{color:#5f6368;font-size:.9em}
+.rpa-ga-logo,.rpa-gbp-logo{width:1.7em;height:1.7em;flex:none}
+.rpa-card{background:#fff;border:1px solid #e3e5e8;border-radius:.8em;padding:1em 1.1em;min-width:0}
+.rpa-eti{color:#5f6368;font-size:.78em;font-weight:500;letter-spacing:.01em}
+.rpa-h{font-size:1.4em;color:#202124;margin-bottom:.8em!important}
+.rpa-h span{margin-left:.6em;color:#5f6368;font-size:.6em}
+.rpa-numero{margin:.15em 0 .6em!important;font-size:2.6em;font-weight:400;color:#202124;line-height:1}
+.rpa-fila{display:flex;justify-content:space-between;gap:1em;padding:.55em 0;border-top:1px solid #eef0f2;font-size:.88em;color:#3c4043}
+.rpa-tabla-cab{display:flex;justify-content:space-between;padding-bottom:.4em}
+/* Cifra que sube: dos números apilados; el nuevo entra desde abajo (js) */
+.rpa-cifra{position:relative;display:inline-block;overflow:hidden;vertical-align:bottom;line-height:1.15}
+.rpa-cifra b{display:block;font-weight:inherit}
+.rpa-cifra b+b{position:absolute;left:0;top:100%}
+.rpa-resalta{outline:2px solid rgba(26,115,232,0);outline-offset:-2px}
+
+/* Analytics */
+.rpa-ga-cuerpo{flex:1;padding:1.2em 1.4em}
+.rpa-ga-grilla{display:grid;grid-template-columns:1.1fr 1fr 1fr;gap:1em}
+.rpa-barras{display:flex;align-items:flex-end;gap:2px;height:4.5em;margin-top:.6em;border-bottom:1px solid #dadce0}
+.rpa-barras i{flex:1;min-height:0;background:#1a73e8;border-radius:1px 1px 0 0}
+.rpa-barras .rpa-barra-nueva{height:75%;transform:scaleY(0);transform-origin:50% 100%}
+.rpa-ga .rpa-fila.rpa-resalta{border-radius:.4em;padding-left:.4em;padding-right:.4em;color:#202124;font-weight:600}
+
+/* Perfil de Empresa */
+.rpa-chips{display:flex;gap:.6em;padding:.8em 1.4em;background:#fff}
+.rpa-chips span{padding:.35em .9em;border:1px solid #dadce0;border-radius:999px;font-size:.82em;color:#3c4043}
+.rpa-chips .on{background:#e8f0fe;border-color:#e8f0fe;color:#1967d2;font-weight:600}
+.rpa-gbp-grilla{flex:1;display:grid;grid-template-columns:1fr 1.15fr;gap:1em;padding:1em 1.4em}
+.rpa-fila--ico span:first-child{display:flex;align-items:center;gap:.6em}
+.rpa-ico{width:.7em;height:.7em;border-radius:50%;flex:none}
+.rpa-filas-grandes .rpa-fila{font-size:.95em;padding:.75em 0}
+.rpa-nota{display:flex;align-items:center;gap:.4em;margin:.3em 0 .8em!important;color:#5f6368;font-size:.9em}
+.rpa-nota>b{font-size:2em;font-weight:400;color:#202124}
+.rpa-estrellas{color:#fbbc04;letter-spacing:.05em}
+.rpa-resena{padding:.8em .9em;border-radius:.6em;border:1px solid #eef0f2;margin-top:.6em;font-size:.88em;color:#3c4043}
+.rpa-resena-cab{display:flex;align-items:center;gap:.5em;margin-bottom:.4em!important}
+.rpa-resena-cab .rpa-avatar{width:1.9em;height:1.9em}
+.rpa-tenue{color:#80868b;font-size:.9em}
+.rpa-boton{display:inline-block;margin-top:.6em!important;padding:.35em 1em;border-radius:999px;background:#1a73e8;color:#fff;font-weight:600;font-size:.9em}
+.rpa-respondida{margin-top:.5em!important;color:#5f6368;font-size:.9em}
+
+/* WhatsApp Business (iPad) */
+.rpa-wa{flex-direction:row;background:#fff}
+.rpa-wa-lista{width:36%;flex:none;padding:0 0 0;border-right:1px solid #e9edef;background:#fff}
+.rpa-wa-titulo{padding:.5em 1em .2em;font-size:1.6em;font-weight:700;color:#111b21}
+.rpa-wa-buscar{margin:.3em 1em .6em!important;padding:.45em .8em;border-radius:.6em;background:#f0f2f5;color:#667781;font-size:.88em}
+.rpa-chips--wa{padding:0 1em .5em}
+.rpa-chips--wa span{border:none;background:#f0f2f5}
+.rpa-chips--wa .on{background:#d9fdd3;color:#008069}
+.rpa-wa-hueco{display:grid;grid-template-rows:0fr}
+.rpa-wa-hueco>.rpa-wa-chat{overflow:hidden;min-height:0}
+.rpa-wa-chat{display:flex;align-items:center;gap:.7em;padding:.65em 1em;border-bottom:1px solid #f0f2f5}
+.rpa-wa-chat>p:not(.rpa-wa-meta){flex:1;min-width:0;display:flex;flex-direction:column}
+.rpa-wa-chat b{font-weight:500;color:#111b21}
+.rpa-wa-chat span{color:#667781;font-size:.85em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rpa-wa-meta{display:flex;flex-direction:column;align-items:flex-end;gap:.3em;font-size:.75em;color:#667781}
+.rpa-wa-meta i{display:grid;place-items:center;min-width:1.6em;height:1.6em;border-radius:999px;background:#25d366;color:#fff;font-style:normal;font-weight:700}
+.rpa-wa-chat--nuevo .rpa-wa-meta span{color:#1fa855;font-weight:600}
+.rpa-wa-chat--nuevo{background:#f5f6f6}
+.rpa-wa-conversa{position:relative;flex:1}
+.rpa-wa-vacio{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.3em;background:#f0f2f5;color:#41525d}
+.rpa-wa-vacio p{font-size:1.5em;font-weight:300}
+.rpa-wa-vacio span{color:#667781;font-size:.9em}
+.rpa-wa-abierto{position:absolute;inset:0;display:flex;flex-direction:column;background:#efeae2}
+.rpa-wa-abierto header{display:flex;align-items:center;gap:.7em;padding:.6em 1em;background:#f0f2f5;border-left:1px solid #e9edef}
+.rpa-wa-abierto header p{display:flex;flex-direction:column}
+.rpa-wa-abierto header span{color:#667781;font-size:.8em}
+.rpa-wa-fondo{flex:1;padding:1em 6%;display:flex;flex-direction:column;align-items:flex-start;gap:.8em;
+  background-color:#efeae2;background-image:radial-gradient(rgba(0,0,0,.035) 1px,transparent 1.2px);background-size:1.4em 1.4em}
+.rpa-wa-aviso{align-self:center;padding:.35em .8em;border-radius:.5em;background:#fff7d6;color:#54656f;font-size:.78em}
+.rpa-wa-burbuja{position:relative;max-width:70%;padding:.5em .7em 1.3em;border-radius:0 .6em .6em .6em;background:#fff;color:#111b21;
+  box-shadow:0 1px .5px rgba(11,20,26,.13)}
+.rpa-wa-burbuja span{position:absolute;right:.6em;bottom:.3em;color:#667781;font-size:.7em}
+.rpa-wa-escribir{padding:.6em 1em;background:#f0f2f5}
+.rpa-wa-escribir span{display:block;padding:.5em .9em;border-radius:.6em;background:#fff;color:#8696a0;font-size:.88em}
+/* Sin video, el título de cada escena es un subtítulo centrado bajo los dos dispositivos; los
+   dispositivos ceden ~60px de alto para dejarle espacio. */
+.relato-activo .relato-marco:has(.relato-panel){
+  --dev-h:max(260px,min(820px,calc(100svh - var(--nav-h) - 132px),calc((35.5vw - 28px) * 19.1 / 9)));
+}
+.relato-activo .relato-marco>.relato-rotulos{position:absolute;z-index:4;left:0;right:0;bottom:clamp(8px,1.4vh,18px);
+  width:auto;height:2em;margin:0;font-size:clamp(16px,1.4vw,22px);pointer-events:none}
+.relato-activo .relato-marco>.relato-rotulos .relato-cap{position:absolute;inset:0;margin:0;width:auto;max-width:none;height:auto;
+  display:flex;align-items:center;justify-content:center;background:none;box-shadow:none;visibility:hidden;opacity:0}
+.relato-activo .relato-marco>.relato-rotulos img,
+.relato-activo .relato-marco>.relato-rotulos .relato-p{display:none}
+.relato-activo .relato-marco>.relato-rotulos .relato-voz{display:inline-block;padding:.45em 1em;border-radius:999px;
+  background:rgba(250,245,239,.92);box-shadow:0 10px 30px -18px rgba(58,40,24,.5)}
+.relato-activo .relato-marco>.relato-rotulos .relato-h{margin:0;font-size:1em;font-weight:650;line-height:1.2;letter-spacing:-.02em;
+  color:#16120f;text-shadow:none;white-space:nowrap}
+.relato-activo .relato-marco>.relato-rotulos .relato-h br{display:none}
+/* Velo de foco: cubre al dispositivo que "no habla" (js/relato.js, bloque 6). */
+.relato-velo{position:absolute;inset:0;z-index:20;border-radius:inherit;background:rgba(244,235,226,.62);opacity:0;pointer-events:none}
+.relato-activo .relato-telefono>.relato-velo{border-radius:calc(var(--telf-w) * .16)}
+
+/* ---------- Rama relato-panel · iPadOS más real, diálogo y equipos apoyados ---------- */
+/* Letra: Inter (lo más parecido a SF Pro, que no existe en Windows) en todo lo que pasa dentro de los equipos */
+.relato-telefono-pantalla,.relato-panel,.relato-ipad-estado{font-family:"Inter",-apple-system,"SF Pro Text",system-ui,sans-serif;letter-spacing:-.006em}
+/* Barra de estado de iPadOS */
+.relato-ipad-pantalla:has(.relato-panel) .relato-ipad-estado{padding:0 2.2%;height:3.4%;font-size:clamp(9px,calc(var(--ipad-w) * .0118),14px);font-weight:500}
+.rpa-hora b{font-weight:600}
+.rpa-estado-der{display:flex;align-items:center;gap:.45em}
+.rpa-estado-der b{font-weight:500}
+.rpa-wifi{width:1.25em;height:1em}
+.rpa-inicio{position:absolute;z-index:7;left:50%;bottom:.9%;width:22%;height:.42%;min-height:3px;translate:-50% 0;border-radius:999px;background:rgba(0,0,0,.72)}
+/* Avisos de iPadOS: bajan arriba al centro, el dueño los toca */
+.rpa-aviso{position:absolute;z-index:8;top:4.4%;left:50%;width:min(46%,30em);translate:-50% 0;display:flex;gap:.8em;align-items:flex-start;
+  padding:.85em 1em;border-radius:1.4em;background:rgba(246,246,248,.96);color:#111;
+  box-shadow:0 10px 34px -10px rgba(0,0,0,.32),0 0 0 .5px rgba(0,0,0,.08);visibility:hidden;opacity:0}
+.rpa-aviso>div{flex:1;min-width:0}
+.rpa-aviso-ico{flex:none;width:2.4em;height:2.4em;border-radius:.6em;background:#fff;box-shadow:0 0 0 .5px rgba(0,0,0,.1)}
+.rpa-aviso-ico--gbp{padding:.4em;box-sizing:border-box}
+.rpa-aviso-ico--wa{display:grid;place-items:center;background:#25d366;color:#fff}
+.rpa-aviso-ico--wa svg{width:62%;height:62%}
+.rpa-aviso-cab{display:flex;justify-content:space-between;font-size:.78em;color:#6b6b70}
+.rpa-aviso-cab b{font-weight:500;text-transform:uppercase;letter-spacing:.02em}
+.rpa-aviso-tit{margin-top:.1em!important;font-weight:600;font-size:.95em}
+.rpa-aviso-txt{font-size:.9em;color:#2b2b2e;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* Safari (Perfil de Empresa en iPad) */
+.rpa-safari{display:flex;align-items:center;justify-content:space-between;gap:1em;padding:.45em 1.2em;background:#f2f2f7;border-bottom:1px solid #dcdce0;color:#3a3a3c;font-size:.85em}
+.rpa-safari-url{flex:0 1 46%;text-align:center;padding:.35em 1em;border-radius:.6em;background:#e3e3e8;color:#1c1c1e}
+.rpa-safari-nav{color:#007aff;white-space:nowrap}
+/* Respuesta del dueño a la reseña */
+.rpa-respuesta{margin-top:.7em;padding:.7em .8em;border-radius:.5em;background:#f1f3f4;visibility:hidden;opacity:0}
+.rpa-respuesta-eti{font-size:.85em;font-weight:600;color:#202124}
+.rpa-respuesta-txt{position:relative;margin-top:.3em!important;min-height:1.35em;color:#3c4043}
+.rpa-respuesta .rpa-boton--publicar{margin-top:.6em!important}
+/* WhatsApp Business en iPad: riel lateral, burbujas propias, campo con texto que se escribe */
+.rpa-wa-riel{width:4.2%;flex:none;display:flex;flex-direction:column;align-items:center;gap:1.1em;padding-top:1.2em;background:#f0f2f5;border-right:1px solid #e9edef}
+.rpa-wa-riel i{width:1.3em;height:1.3em;border-radius:.4em;background:#aebac1}
+.rpa-wa-riel i.on{background:#00a884}
+.rpa-wa-lista{width:33%}
+.rpa-wa-burbuja--yo{align-self:flex-end;border-radius:.6em 0 .6em .6em;background:#d9fdd3}
+.rpa-wa-escribir{position:relative;display:flex;align-items:center;gap:.8em}
+.rpa-wa-escribir span{flex:1}
+.rpa-wa-escribir .rpa-teclea{position:absolute;left:1em;right:3.6em;top:.6em;background:#fff;color:#111b21}
+.rpa-wa-enviar{flex:none;width:2.2em;height:2.2em;border-radius:50%;background:#00a884}
+/* iPhone: respuesta del negocio a la reseña (tarjeta abajo) y segundo mensaje de Camila */
+.rp-resenas{position:relative}
+.rp-respuesta-dueno{position:absolute;left:5%;right:5%;bottom:3%;z-index:3;padding:.8em .9em;border-radius:1em;background:#fff;
+  box-shadow:0 12px 30px -12px rgba(0,0,0,.35),0 0 0 .5px rgba(0,0,0,.06);font-size:.88em;line-height:1.35;visibility:hidden;opacity:0}
+.rp-respuesta-dueno small{display:block;margin-top:.35em;color:#5f6368;font-size:.95em}
+.rp-wa-entrante{align-self:flex-start}
+.rp-campo-chat{position:relative}
+.rp-escribe--2{position:absolute;left:.9em;right:.9em;top:.55em}
+/* Equipos apoyados (versión rápida, mismas fotos): el iPad en leve ángulo, el iPhone inclinado como en la
+   mano, y sombras de contacto que los asientan en una superficie. "rotate" es independiente del transform
+   que anima GSAP. */
+.relato-activo .relato-split{perspective:2200px}
+.relato-activo .relato-escena{rotate:y -7deg;transform-origin:100% 50%}
+.relato-activo .relato-historia{rotate:-2.5deg;transform-origin:50% 100%}
+.relato-activo .relato-escena::after,.relato-activo .relato-telefono::after{content:"";position:absolute;z-index:-1;pointer-events:none;
+  left:6%;right:6%;bottom:-3.5%;height:7%;border-radius:50%;background:radial-gradient(closest-side,rgba(28,20,12,.42),rgba(28,20,12,0))}
+.relato-activo .relato-telefono::after{left:10%;right:10%;bottom:-2.2%;height:4.5%}
+.rpa-wa-escribir{padding-bottom:1.5em}
+
+/* ---------- Rama relato-panel · explicación paso a paso a la izquierda, equipos juntos a la derecha ---------- */
+.relato-guion{display:none}
+.relato-activo .relato-marco>.relato-rotulos,
+.relato-activo .relato-marco:has(.relato-guion) .relato-rol{display:none}
+.relato-activo .relato-guion{display:block;position:absolute;z-index:5;left:var(--lado);top:calc(var(--nav-h) + 26px);
+  bottom:5vh;width:min(31vw,520px);color:#16120f}
+/* Franja crema detrás del texto, para leer sobre la foto */
+.relato-activo .relato-guion::before{content:"";position:absolute;z-index:-1;pointer-events:none;
+  left:calc(-1 * var(--lado));top:calc(-1 * (var(--nav-h) + 26px));height:100svh;width:calc(100% + var(--lado) + 14vw);
+  background:linear-gradient(90deg,rgba(244,235,226,.97) 0%,rgba(244,235,226,.93) 62%,rgba(244,235,226,0) 100%)}
+/* Índice: los 5 canales alineados; se enciende el capítulo en curso */
+.relato-indice{display:flex;flex-wrap:wrap;gap:.45em;margin:0;padding:0;list-style:none;font-size:clamp(12px,.9vw,14px)}
+.relato-indice li{display:flex;align-items:center;gap:.45em;padding:.38em .8em .38em .45em;border-radius:999px;
+  background:rgba(255,255,255,.55);box-shadow:inset 0 0 0 1px rgba(62,88,112,.14);color:#5c544c;opacity:.45}
+.relato-indice svg{width:1.55em;height:1.55em;padding:.22em;box-sizing:border-box;border-radius:50%;background:#fff}
+/* Capítulos: uno a la vez en el mismo lugar */
+.rg-cap{position:absolute;left:0;right:0;top:clamp(70px,13vh,130px);visibility:hidden;opacity:0}
+.rg-eti{margin:0;color:#3e5870;font-size:clamp(13px,1vw,16px);font-weight:650;letter-spacing:.08em;text-transform:uppercase}
+.rg-titulo{margin:.35em 0 0;font-size:clamp(34px,3.3vw,56px);line-height:1;letter-spacing:-.04em;font-weight:750;color:#16120f}
+.rg-pasos{margin:clamp(22px,3.4vh,40px) 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:clamp(14px,2.4vh,24px)}
+.rg-paso{display:flex;gap:.9em;align-items:flex-start;visibility:hidden;opacity:0}
+.rg-n{flex:none;display:grid;place-items:center;width:2em;height:2em;margin-top:.15em;border-radius:50%;background:#16120f;color:#faf5ef;
+  font-size:clamp(13px,.95vw,15px);font-weight:700}
+.rg-quien{margin:0;font-size:clamp(11px,.8vw,13px);font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#3e5870}
+.rg-quien--negocio{color:#0f7a3e}
+.rg-quien--ambos{color:#16120f}
+.rg-txt{margin:.25em 0 0;font-size:clamp(18px,1.4vw,24px);line-height:1.32;letter-spacing:-.012em;color:#16120f;text-wrap:pretty}
+/* Equipos juntos a la derecha: el iPad atrás y el iPhone delante, sobre su esquina inferior izquierda */
+.relato-activo .relato-marco:has(.relato-guion){
+  --ipad-w:min(46vw,calc((100svh - var(--nav-h) - 150px) * 1.4));
+  --ipad-h:calc(var(--ipad-w) * .716);
+  --telf-w:calc(var(--ipad-h) * .5);
+  --borde-der:clamp(24px,2.5vw,48px);
+}
+.relato-activo .relato-marco:has(.relato-guion) .relato-escena{left:auto;right:var(--borde-der);
+  top:calc(var(--nav-h) + (100svh - var(--nav-h) - var(--ipad-h)) / 2 - 24px)}
+.relato-activo .relato-marco:has(.relato-guion) .relato-historia{left:auto;top:auto;
+  right:calc(var(--borde-der) + var(--ipad-w) - var(--telf-w) * .15);bottom:4vh;width:var(--telf-w)}
+.relato-activo .relato-marco:has(.relato-guion) .relato-historia>.relato-telefono{margin-top:0;width:var(--telf-w)}
+/* Al terminar: volver a ver un capítulo */
+.relato-repetir{display:none}
+.relato-activo .relato-repetir{display:block;margin-top:clamp(26px,4vh,46px)}
+.relato-repetir>p{margin:0 0 .9em;color:#3e5870;font-size:clamp(13px,1vw,16px);font-weight:650;letter-spacing:.08em;text-transform:uppercase}
+.rr-opciones{display:flex;flex-wrap:wrap;justify-content:center;gap:.6em}
+.rr-opciones button{display:inline-flex;align-items:center;gap:.5em;min-height:44px;padding:.45em 1.1em .45em .5em;border:0;border-radius:999px;
+  background:#fff;color:#16120f;font:600 clamp(14px,1.05vw,17px)/1 var(--sans);cursor:pointer;
+  box-shadow:0 1px 2px rgba(58,40,24,.1),0 10px 24px -16px rgba(58,40,24,.5);transition:transform .2s var(--suave),box-shadow .2s}
+.rr-opciones button svg{width:1.9em;height:1.9em;padding:.3em;box-sizing:border-box;border-radius:50%;background:#f4ebe2}
+@media (hover:hover){.rr-opciones button:hover{transform:translateY(-2px);box-shadow:0 2px 4px rgba(58,40,24,.12),0 16px 30px -16px rgba(58,40,24,.55)}}
+.rr-opciones button:focus-visible{outline:2px solid #3e5870;outline-offset:3px}
+.rpa-fila>span:last-child{flex:none}
+
+/* ---------- Rama relato-panel · ronda 4: índice con estados, dos espacios (cliente / negocio) ---------- */
+/* Índice: botones arriba a la izquierda, por encima de todo (también del cierre) */
+.relato-indice{display:none}
+.relato-activo .relato-indice{display:flex;flex-wrap:wrap;align-items:center;gap:.5em;position:absolute;z-index:9;
+  left:var(--lado);top:calc(var(--nav-h) + 26px);max-width:calc(100vw - 2 * var(--lado));font-size:clamp(12px,.9vw,14px)}
+.relato-indice button{display:inline-flex;align-items:center;gap:.45em;min-height:36px;padding:.32em .85em .32em .4em;border:0;border-radius:999px;
+  background:rgba(255,255,255,.5);box-shadow:inset 0 0 0 1px rgba(62,88,112,.16);color:#5c544c;font:600 1em/1 var(--sans);cursor:pointer;opacity:.55}
+.relato-indice button svg{width:1.7em;height:1.7em;padding:.24em;box-sizing:border-box;border-radius:50%;background:#fff;filter:grayscale(1)}
+.relato-indice button:focus-visible{outline:2px solid #3e5870;outline-offset:3px}
+@media (hover:hover){.relato-indice button:hover{opacity:1}}
+.ri-pista{margin:0 0 0 .4em;color:#3e5870;font-size:.95em;font-weight:600;visibility:hidden;opacity:0}
+/* La columna de texto ya no lleva el índice adentro */
+.relato-activo .relato-guion{width:min(28vw,470px)}
+/* Dos espacios a la derecha: el del cliente (iPhone) y el del negocio (iPad), cada uno con su rótulo */
+.relato-activo .relato-split{z-index:1}
+.relato-activo .relato-marco:has(.relato-guion){
+  --z-top:calc(var(--nav-h) + 26px);
+  --z-h:calc(100svh - var(--z-top) - 4vh);
+  --z1-left:calc(var(--lado) + min(28vw,470px) + 2.5vw);
+  --z1-w:19vw;
+  --z2-left:calc(var(--z1-left) + var(--z1-w) + 1.2vw);
+  --z2-w:calc(100vw - var(--z2-left) - clamp(24px,2.5vw,48px));
+  --ipad-w:min(calc(var(--z2-w) - 56px),calc((var(--z-h) - 120px) / .716));
+  --ipad-h:calc(var(--ipad-w) * .716);
+  --telf-w:min(calc(var(--z1-w) - 64px),calc((var(--z-h) - 120px) * 9 / 19.1));
+}
+.relato-zona{display:none}
+.relato-activo .relato-zona{display:block;position:absolute;z-index:0;top:var(--z-top);height:var(--z-h);border-radius:28px;
+  background:rgba(250,245,239,.42);box-shadow:inset 0 0 0 1px rgba(255,255,255,.55),0 30px 60px -40px rgba(40,28,16,.35)}
+.relato-activo .relato-zona--cliente{left:var(--z1-left);width:var(--z1-w)}
+.relato-activo .relato-zona--negocio{left:var(--z2-left);width:var(--z2-w)}
+.relato-zona p{position:absolute;left:18px;top:16px;margin:0;padding:.4em .85em;border-radius:999px;background:#fff;color:#16120f;
+  font:700 clamp(11px,.85vw,13px)/1 var(--sans);letter-spacing:.08em;text-transform:uppercase;box-shadow:0 6px 16px -10px rgba(40,28,16,.5)}
+.relato-zona--negocio p{background:#16120f;color:#faf5ef}
+/* Equipos centrados en su espacio (debajo del rótulo) */
+.relato-activo .relato-marco:has(.relato-guion) .relato-escena{right:auto;
+  left:calc(var(--z2-left) + (var(--z2-w) - var(--ipad-w)) / 2);
+  top:calc(var(--z-top) + 56px + (var(--z-h) - 56px - var(--ipad-h)) / 2)}
+.relato-activo .relato-marco:has(.relato-guion) .relato-historia{right:auto;bottom:auto;
+  left:calc(var(--z1-left) + (var(--z1-w) - var(--telf-w)) / 2);
+  top:calc(var(--z-top) + 56px + (var(--z-h) - 56px - var(--telf-w) * 19.1 / 9) / 2)}
+
+/* ---------- Ronda 5: explicación más angosta, índice solo con íconos, más espacio para los equipos ---------- */
+.relato-activo .relato-guion{width:min(23vw,390px)}
+.relato-activo .relato-guion .rg-titulo{font-size:clamp(28px,2.6vw,46px)}
+.relato-activo .relato-guion .rg-txt{font-size:clamp(16px,1.18vw,21px)}
+.relato-activo .relato-indice{gap:.4em}
+.relato-activo .relato-indice button{width:2.6em;height:2.6em;min-height:0;padding:0;justify-content:center;font-size:clamp(13px,1vw,15px)}
+.relato-activo .relato-indice button span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.relato-activo .relato-indice button svg{width:1.75em;height:1.75em}
+.relato-activo .relato-marco:has(.relato-guion){
+  --z1-left:calc(var(--lado) + min(23vw,390px) + 2.2vw);
+  --z1-w:21vw;
+}
+.relato-indice [data-indice="3"] svg{color:#1fa855}
+.relato-indice [data-indice="4"] svg{color:#3e5870}
+.relato-indice [data-indice="2"] svg{color:#1a73e8}
+
+/* ---------- Ronda 6: sin foto de fondo (provisorio hasta tener la foto). Tres columnas planas de borde a borde:
+   explicación · espacio del cliente (iPhone) · espacio del negocio (iPad). ---------- */
+.relato-activo .relato-marco:has(.relato-guion){background:#f4ebe2;
+  --col2-izq:calc(var(--z1-left) - 1.1vw);
+  --col3-izq:calc(var(--z2-left) - .6vw)}
+.relato-activo .relato-guion::before{display:none}
+.relato-activo .relato-zona{top:0;height:100%;border-radius:0;box-shadow:inset 1px 0 0 rgba(58,40,24,.09)}
+.relato-activo .relato-zona--cliente{left:var(--col2-izq);width:calc(var(--col3-izq) - var(--col2-izq));background:#ece1d5}
+.relato-activo .relato-zona--negocio{left:var(--col3-izq);width:auto;right:0;background:#e2d5c6}
+.relato-activo .relato-zona p{top:var(--z-top);left:1.4vw}
+.relato-activo .relato-zona--cliente{background:#eadccd}
+.relato-activo .relato-zona--negocio{background:#dccbb8}
+.relato-activo .relato-zona{box-shadow:inset 1px 0 0 rgba(58,40,24,.14)}
+
+/* ---------- Ronda 7: fotos reales en las columnas del cliente y del negocio ----------
+   La foto cubre su columna; js/relato.js (colocarFotos) calcula dónde queda el blanco de la pantalla y
+   lo deja en --f-cliente-* / --f-negocio-*. Aquí se quitan las carcasas dibujadas en CSS: la carcasa es la foto. */
+.relato-marco.con-fotos .relato-zona--cliente{background:#eadccd url(../assets/img/relato-cliente.webp) center / cover no-repeat}
+.relato-marco.con-fotos .relato-zona--negocio{background:#dccbb8 url(../assets/img/relato-negocio.webp) center / cover no-repeat}
+/* iPhone */
+.relato-marco.con-fotos .relato-historia{left:var(--f-cliente-x)!important;top:var(--f-cliente-y)!important;right:auto!important;bottom:auto!important;
+  width:var(--f-cliente-w)!important;rotate:none!important;--telf-w:calc(var(--f-cliente-w) / .91)}
+.relato-marco.con-fotos .relato-telefono{width:100%!important;height:var(--f-cliente-h)!important;aspect-ratio:auto!important;margin-top:0!important}
+.relato-marco.con-fotos .relato-telefono::after,
+.relato-marco.con-fotos .relato-telefono-chasis::before,
+.relato-marco.con-fotos .relato-telefono-chasis::after,
+.relato-marco.con-fotos .relato-telefono-boton{display:none}
+.relato-marco.con-fotos .relato-telefono-chasis{padding:0;background:none;box-shadow:none;border-radius:var(--f-cliente-r)}
+.relato-marco.con-fotos .relato-telefono-pantalla{border-radius:var(--f-cliente-r)}
+.relato-marco.con-fotos .relato-telefono>.relato-velo{border-radius:var(--f-cliente-r)}
+/* iPad */
+.relato-marco.con-fotos .relato-escena{left:var(--f-negocio-x)!important;top:var(--f-negocio-y)!important;right:auto!important;
+  width:var(--f-negocio-w)!important;height:var(--f-negocio-h)!important;padding:0;background:none;box-shadow:none;
+  border-radius:var(--f-negocio-r);rotate:none!important;--ipad-w:calc(var(--f-negocio-w) / .958);--ipad-h:calc(var(--f-negocio-h) / .94)}
+.relato-marco.con-fotos .relato-escena::after,
+.relato-marco.con-fotos .relato-ipad-camara{display:none}
+.relato-marco.con-fotos .relato-ipad-pantalla{border-radius:var(--f-negocio-r)}
+
+/* La capa de la introducción vive dentro del hero: nunca debe capturar clics (aunque esté invisible tapaba
+   los botones del hero). */
+.hero .intro-recorrido{pointer-events:none}
+
+/* ---------- Hero: rótulo bajo el notebook (Cotizador · Carro de compras · Agenda de horas) ---------- */
+.hs-rotulo{position:absolute;z-index:2;left:58%;width:37%;top:86.5%;height:2.6em;font-size:clamp(13px,1.05vw,17px);pointer-events:none}
+.hs-rotulo p{position:absolute;inset:0;margin:0;display:flex;justify-content:center;align-items:center;gap:.6em;visibility:hidden;opacity:0;white-space:nowrap}
+.hs-rotulo b{padding:.35em .85em;border-radius:999px;background:#16120f;color:#faf5ef;font-weight:650;letter-spacing:-.01em}
+.hs-rotulo span{color:#3a302a;font-weight:500}
+/* ---------- Relato: puente del cierre hacia servicios ---------- */
+.relato-puente{margin:clamp(18px,2.6vh,30px) auto 0;max-width:46ch;color:#3a302a;font-size:clamp(17px,1.3vw,21px);line-height:1.4}
+.relato-puente strong{color:#16120f}
+.relato-puente a{display:inline-block;margin-left:.3em;color:#3e5870;font-weight:650;text-decoration:underline;text-underline-offset:.2em}
+
+/* ---------- Hero: chips de "qué desarrollamos" (los canales ya se cuentan en el relato) ---------- */
+.chips-desarrollo .chip-dev{color:var(--acero)}
+
+/* ---------- Hero: el rótulo vuela a su chip y lo enciende (js/hero.js, volar) ---------- */
+.chips-desarrollo{--anillo:rgba(62,88,112,.5)}
+.hs-vuelo{position:fixed;left:0;top:0;z-index:41;margin:0;display:flex;align-items:center;justify-content:center;box-sizing:border-box;
+  padding:.35em .85em;border-radius:999px;background:#16120f;color:#faf5ef;font-family:var(--sans);font-weight:650;letter-spacing:-.01em;
+  white-space:nowrap;pointer-events:none;will-change:transform;transform-origin:50% 50%;box-shadow:0 10px 24px -10px rgba(22,18,15,.5)}
+.hs-vuelo-estela{position:fixed;left:0;top:0;width:100vw;height:100vh;z-index:40;pointer-events:none;overflow:visible}
+.hs-vuelo-estela path{fill:none;stroke:#3e5870;stroke-width:2;stroke-linecap:round;opacity:.55}
+
+/* Recorte firme de las pantallas: con capas animadas adentro, Chrome a veces no respeta border-radius +
+   overflow y se ven esquinas cuadradas. clip-path siempre recorta, también las capas compuestas. */
+.relato-activo .relato-telefono-pantalla{clip-path:inset(0 round calc(var(--telf-w) * .118))}
+.relato-activo .relato-ipad-pantalla{clip-path:inset(0 round calc(var(--ipad-w) * .025))}
+.relato-marco.con-fotos .relato-telefono-pantalla{clip-path:inset(0 round var(--f-cliente-r))}
+.relato-marco.con-fotos .relato-ipad-pantalla{clip-path:inset(0 round var(--f-negocio-r))}
+
+/* Hero: el notebook se corre a la derecha para no toparse con los chips. La foto se agranda lo mismo que se
+   corre, así sigue cubriendo el borde izquierdo y solo se recorta un poco a la derecha. */
+.hs-hero .hs-esc{--corre:4.5cqw;--w:calc(max(100cqw,177.778cqh) + var(--corre));left:calc(100cqw - var(--w) + var(--corre))}
+.chips-desarrollo{max-width:min(700px,40vw)}
+
+/* ---------- Hero · constructora: estimación referencial (en px de la pantalla virtual de 1512) ---------- */
+.hs-estimacion{position:absolute;inset:0;z-index:4;display:grid;place-items:center;background:rgba(0,0,0,.42);opacity:0;visibility:hidden}
+.hs-est-caja{position:relative;width:640px;padding:32px 38px 30px;border-radius:22px;background:#22262b;color:#f2f2f2;
+  font-family:-apple-system,"Segoe UI",system-ui,sans-serif;box-shadow:0 30px 70px -20px rgba(0,0,0,.55)}
+.hs-est-cab{display:flex;justify-content:space-between;align-items:center;margin:0}
+.hs-est-cab b{font-size:28px;font-weight:700}
+.hs-est-chip{padding:5px 11px;border-radius:999px;background:rgba(232,119,46,.16);color:#f0a066;font-size:13px;font-weight:600}
+.hs-est-sub{margin:6px 0 16px;color:#aab0b6;font-size:16px}
+.hs-est-fila{display:flex;justify-content:space-between;margin:0;padding:11px 0;border-bottom:1px solid rgba(255,255,255,.08);font-size:18px;color:#dfe2e5}
+.hs-est-fila span:last-child,.hs-est-total span:last-child{font-variant-numeric:tabular-nums}
+.hs-est-total{display:flex;justify-content:space-between;align-items:baseline;margin:16px 0 0;font-size:22px;font-weight:700}
+.hs-est-total span:last-child{color:#f0a066}
+.hs-est-total small{font-size:14px;font-weight:500;color:#aab0b6}
+.hs-est-nota{margin:10px 0 0;color:#8e959c;font-size:13.5px;line-height:1.4}
+.hs-est-boton{display:block;margin-top:20px;padding:15px;border-radius:12px;background:#e8772e;color:#151515;text-align:center;font-size:17px;font-weight:700}
+.hs-vuelo-estela{width:auto;height:auto}
+
+/* ---------- Hero · chips "qué desarrollamos" en dos filas (3 + 2) y con color propio ---------- */
+.chips-desarrollo{display:grid;grid-template-columns:repeat(3,max-content);justify-content:start;max-width:none;gap:8px}
+.chips-desarrollo a{gap:7px;padding:5px 12px 5px 5px}
+.chips-desarrollo svg{width:30px;height:30px;padding:7px}
+.chips-desarrollo li:nth-child(1) a{--c:#2f6fd6}
+.chips-desarrollo li:nth-child(2) a{--c:#e8772e}
+.chips-desarrollo li:nth-child(3) a{--c:#b8863b}
+.chips-desarrollo li:nth-child(4) a{--c:#3f7f8c}
+.chips-desarrollo li:nth-child(5) a{--c:#6b5b95}
+.chips-desarrollo a{--anillo:var(--c)}
+/* Encendido (o sin animación): ícono lleno con su color y borde suave del mismo tono */
+.chips-desarrollo:not(.coleccion) a,.chips-desarrollo.coleccion a.ganado{background:#fff;box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--c) 32%,transparent),0 8px 18px -12px rgba(58,40,24,.45)}
+.chips-desarrollo:not(.coleccion) .chip-dev,.chips-desarrollo.coleccion a.ganado .chip-dev{background:var(--c);color:#fff;box-shadow:none;filter:none;opacity:1}
+/* Apagado: gris, pero legible */
+.chips-desarrollo.coleccion a:not(.ganado) svg{opacity:.5}
+.chips-desarrollo .chip-dev{transition:background-color .4s,color .4s,filter .4s,opacity .4s}
+.chips-desarrollo a{font-size:clamp(11.5px,.86vw,15px)}
+.chips-desarrollo small{font-size:clamp(10.5px,.78vw,13.5px)}
+
+/* ---------- Hero · rótulo bajo el notebook: barra de 3 tramos, título con recorte y frase (centrado) ---------- */
+.hs-rotulo{left:47%;width:47%;top:83.5%;height:auto;font-size:clamp(13px,1vw,17px);text-align:center}
+.hs-ro-barra{display:flex;gap:6px;width:min(100%,26em);margin:0 auto .7em}
+.hs-ro-barra i{flex:1;height:3px;border-radius:3px;background:rgba(22,18,15,.12);overflow:hidden}
+.hs-ro-barra b{display:block;height:100%;border-radius:inherit;transform:scaleX(0);transform-origin:0 50%}
+.hs-ro-barra i:nth-child(1) b{background:#e8772e}
+.hs-ro-barra i:nth-child(2) b{background:#b8863b}
+.hs-ro-barra i:nth-child(3) b{background:#3f7f8c}
+.hs-ro-textos{position:relative;height:3.6em}
+.hs-ro-item{position:absolute;inset:0;visibility:hidden;opacity:0}
+.hs-ro-tit{margin:0;overflow:hidden;line-height:1.15}
+.hs-ro-tit span{display:inline-block;font-size:1.6em;font-weight:750;letter-spacing:-.03em;color:#16120f}
+.hs-ro-txt{margin:.3em 0 0;color:#3a302a;font-weight:500}
+/* Relato · "Cómo lo logramos" */
+.rg-como{margin-top:clamp(18px,3vh,30px);padding:.9em 1em;border-radius:14px;background:#fff;box-shadow:inset 0 0 0 1px rgba(62,88,112,.14),0 12px 26px -18px rgba(40,28,16,.4);visibility:hidden;opacity:0}
+.rg-como-eti{margin:0;color:#3e5870;font-size:clamp(11px,.8vw,13px);font-weight:700;letter-spacing:.09em;text-transform:uppercase}
+.rg-como-txt{margin:.35em 0 0;color:#16120f;font-size:clamp(14px,1.02vw,17px);line-height:1.38}
+/* Anula los estilos del rótulo anterior (píldora y párrafos superpuestos) */
+.hs-rotulo .hs-ro-item p{position:static;inset:auto;display:block;visibility:inherit;opacity:1;white-space:nowrap}
+.hs-rotulo .hs-ro-barra b{padding:0;color:inherit;font:inherit}
+.hs-rotulo{top:86%}
+.hs-ro-barra i{background:rgba(22,18,15,.18)}
+
+/* ---------- Navbar a tope (arriba y a los lados): barra completa más baja, para ganar altura (escritorio) ---------- */
+@media (min-width:900px){
+  :root{--nav-h:64px}
+  .cabecera{inset:0 0 auto 0}
+  .cabecera-in{width:100%;max-width:none;margin:0;padding:8px var(--lado);border-radius:0;border:0;
+    border-bottom:1px solid rgba(58,40,24,.08);box-shadow:none;background:rgba(250,245,239,.82)}
+  .con-scroll .cabecera-in{background:rgba(250,245,239,.92);box-shadow:0 10px 30px -24px rgba(58,40,24,.45)}
+}
+/* ---------- Columna de explicación: medidas que se ajustan a la altura de la pantalla ---------- */
+.relato-activo .relato-guion .rg-cap{top:clamp(52px,9vh,120px)}
+.relato-activo .relato-guion .rg-titulo{font-size:clamp(26px,min(2.6vw,5vh),46px)}
+.relato-activo .relato-guion .rg-pasos{margin-top:clamp(14px,2.6vh,34px);gap:clamp(10px,1.9vh,24px)}
+.relato-activo .relato-guion .rg-txt{font-size:clamp(15px,min(1.18vw,2.35vh),21px)}
+.relato-activo .relato-guion .rg-como{margin-top:clamp(12px,2.2vh,28px);padding:.75em .95em}
+.relato-activo .relato-guion .rg-como-txt{font-size:clamp(13.5px,min(1.02vw,2vh),17px)}
+
+/* Rótulo del hero anclado al borde inferior del hero (ya no depende del alto de la foto): nunca se corta */
+.hs-hero .hero-media>.hs-rotulo{position:absolute;z-index:3;left:49%;width:47%;top:auto;bottom:clamp(10px,2.4vh,40px);
+  font-size:clamp(12px,min(1vw,2vh),17px)}
+.hs-hero .hero-media>.hs-rotulo{font-size:clamp(12px,min(1vw,1.75vh),17px);bottom:clamp(8px,2vh,40px)}
+.hs-hero .hero-media>.hs-rotulo{bottom:clamp(5px,1.2vh,40px)}
+.hs-hero .hero-media>.hs-rotulo .hs-ro-barra{margin-bottom:.5em}
+
+/* ---------- Hero: notebook + rótulo centrados en altura bajo el navbar (el ancho no cambia) ----------
+   Las medidas se definen en .hero-media y se resuelven en cada hijo (cq = relativas al hero). El notebook ocupa
+   del 28,6 % al 85,3 % del alto de la foto; el rótulo va justo bajo la base. Si la foto sube y deja una franja
+   abajo, se rellena con el color del mesón y la foto se funde hacia él. */
+.hs-hero .hero-media{
+  --corre:4.5cqw;
+  --wf:calc(max(100cqw,177.778cqh) + var(--corre));
+  --hf:calc(var(--wf) * .5625);
+  --topf:min(0px,calc((var(--nav-h) + 100cqh) / 2 - var(--hf) * .5805 - 35px));
+  background:#d6c4b2}
+.hs-hero .hs-esc{--w:var(--wf);left:calc(100cqw - var(--w) + var(--corre));top:var(--topf);
+  -webkit-mask-image:linear-gradient(to bottom,#000 calc(100% - 110px),transparent);mask-image:linear-gradient(to bottom,#000 calc(100% - 110px),transparent)}
+.hs-hero .hero-media>.hs-rotulo{top:calc(var(--topf) + var(--hf) * .875);bottom:auto}
+
+/* ---------- Capítulo 6 · Instagram ---------- */
+.rp-app--ig{background:radial-gradient(circle at 30% 107%,#fdf497 0%,#fd5949 45%,#d6249f 60%,#285aeb 92%);color:#fff}
+.rp-app[data-app="5"],.relato-pantalla[data-pantalla="5"]{--x:39%;--y:25.5%}
+.relato-indice [data-indice="5"] svg{color:#d6249f}
+.rp-ig{display:flex;flex-direction:column;background:#fff;color:#111;font-size:.92em;padding-top:12%}
+.rp-ig-cab{display:flex;justify-content:space-between;align-items:center;padding:.4em 1em .6em;font-size:1.05em}
+.rp-ig-perfil{display:flex;align-items:center;gap:1em;padding:0 1em}
+.rp-ig-avatar{flex:none;display:grid;place-items:center;width:4.4em;height:4.4em;border-radius:50%;background:#f4ebe2;
+  box-shadow:0 0 0 2px #fff,0 0 0 4px #d6249f}
+.rp-ig-avatar svg{width:70%;height:70%}
+.rp-ig-cifras{flex:1;display:flex;justify-content:space-around;text-align:center}
+.rp-ig-cifras p{margin:0;display:flex;flex-direction:column;line-height:1.15}
+.rp-ig-cifras b{font-size:1.05em}
+.rp-ig-cifras small{font-size:.72em;color:#555}
+.rp-ig-bio{margin:.8em 1em 0;display:flex;flex-direction:column;gap:.1em;font-size:.85em;line-height:1.3}
+.rp-ig-link{color:#00376b;font-weight:600}
+.rp-ig-botones{display:flex;gap:.4em;margin:.8em 1em}
+.rp-ig-btn{flex:1;padding:.45em 0;border-radius:.6em;background:#efefef;text-align:center;font-weight:600;font-size:.85em}
+.rp-ig-marco{flex:1;overflow:hidden;border-top:1px solid #dbdbdb}
+.rp-ig-grilla{display:grid;grid-template-columns:repeat(3,1fr);gap:2px}
+.rp-ig-grilla img{display:block;width:100%;aspect-ratio:1;object-fit:cover}
+.rpa-cifra b:nth-child(3){top:200%}
+
+/* ---------- Introducción con motion graphics (solo escritorio con movimiento: clase .ib-activo desde relato.js) ---------- */
+.ib{display:none}
+.ib-activo .ib{display:block;position:absolute;inset:0;overflow:hidden}
+.ib-activo .relato-caja{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.ib-puntos{position:absolute;inset:0;width:100%;height:100%;visibility:hidden;opacity:0}
+.ib-lineas{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.ib-lineas line{stroke:#3e5870;stroke-width:1.6;stroke-dasharray:1;stroke-dashoffset:1;opacity:.55}
+.ib-sitio{position:absolute;left:50%;top:63%;width:clamp(170px,15vw,250px);aspect-ratio:3/2;translate:-50% -50%;border-radius:14px;background:#fff;
+  box-shadow:0 24px 50px -24px rgba(40,28,16,.45),0 0 0 1px rgba(58,40,24,.08);overflow:hidden;visibility:hidden;opacity:0}
+.ib-sitio i{position:absolute;display:block}
+.ib-sitio-barra{left:0;right:0;top:0;height:16%;background:#efe9e2;display:flex;align-items:center;gap:5%;padding-left:6%}
+.ib-sitio-barra b{position:static;width:6px;height:6px;border-radius:50%;background:#d8cfc5}
+.ib-sitio-foto{left:7%;right:7%;top:24%;height:36%;border-radius:7px;background:linear-gradient(135deg,#d9c4ab,#b99a7b)}
+.ib-sitio-l1{left:7%;width:62%;top:67%;height:7%;border-radius:4px;background:#e8e1d9}
+.ib-sitio-l2{left:7%;width:44%;top:79%;height:7%;border-radius:4px;background:#efe9e2}
+.ib-sitio-btn{right:7%;width:22%;top:72%;height:13%;border-radius:999px;background:#3e5870}
+.ib-canal{position:absolute;width:clamp(42px,3.4vw,56px);height:clamp(42px,3.4vw,56px);margin:calc(clamp(42px,3.4vw,56px) / -2) 0 0 calc(clamp(42px,3.4vw,56px) / -2);
+  display:grid;place-items:center;border-radius:50%;background:#fff;box-shadow:0 12px 26px -14px rgba(40,28,16,.5),0 0 0 1px rgba(58,40,24,.08);visibility:hidden;opacity:0}
+.ib-canal svg{width:52%;height:52%}
+.ib-canal[data-c="2"]{color:#1a73e8}.ib-canal[data-c="3"]{color:#25d366}.ib-canal[data-c="4"]{color:#3e5870}.ib-canal[data-c="5"]{color:#d6249f}
+.ib-eti{position:absolute;left:0;right:0;top:calc(var(--nav-h) + 9vh);margin:0;text-align:center;color:#3e5870;font-size:clamp(15px,1.15vw,19px);font-weight:650;letter-spacing:.06em;visibility:hidden;opacity:0}
+.ib-pregunta{position:absolute;left:0;right:0;top:calc(var(--nav-h) + 14vh);margin:0;text-align:center;transform-origin:50% 0;
+  font-size:clamp(48px,6.2vw,108px);font-weight:800;line-height:1.05;letter-spacing:-.055em;color:#16120f}
+.ib-pregunta>span{display:inline-block;overflow:hidden;vertical-align:top;padding-bottom:.08em}
+.ib-pregunta>span>span{display:inline-block}   /* el desplazamiento inicial lo pone GSAP (si va también en CSS, se suman) */
+.ib-pregunta em{font-style:italic;color:#3e5870}
+.ib-no{position:absolute;left:0;right:0;top:calc(var(--nav-h) + 12vh);margin:0;text-align:center;font-size:clamp(70px,8.5vw,150px);font-weight:800;
+  letter-spacing:-.06em;line-height:1;color:#16120f;visibility:hidden;opacity:0}
+.ib-frase1,.ib-frase2{position:absolute;left:0;right:0;margin:0 auto;max-width:28ch;text-align:center;font-size:clamp(18px,1.6vw,28px);
+  line-height:1.3;letter-spacing:-.015em;color:#3a302a;font-weight:500;visibility:hidden;opacity:0}
+.ib-frase1{top:calc(var(--nav-h) + 12vh + clamp(78px,9.2vw,160px))}
+.ib-frase2{top:calc(var(--nav-h) + 17vh)}
+
+/* ---------- Saltar la animación / leer en resumen ---------- */
+.relato-saltar{position:fixed;z-index:25;left:50%;bottom:clamp(14px,2.4vh,24px);display:flex;align-items:center;gap:8px;
+  padding:6px 6px 6px 18px;border-radius:999px;background:rgba(22,18,15,.9);color:#faf5ef;font:500 clamp(13px,.95vw,15px)/1.2 var(--sans);
+  box-shadow:0 16px 36px -18px rgba(22,18,15,.6);translate:-50% 14px;opacity:0;visibility:hidden;
+  transition:opacity .3s var(--suave),translate .35s var(--suave),visibility 0s linear .35s}
+.relato-saltar.visible{opacity:1;visibility:visible;translate:-50% 0;transition:opacity .3s var(--suave),translate .35s var(--suave),visibility 0s}
+.relato-saltar button{min-height:36px;padding:0 15px;border:0;border-radius:999px;font:600 1em/1 var(--sans);cursor:pointer;white-space:nowrap}
+.relato-saltar button:focus-visible{outline:2px solid #faf5ef;outline-offset:2px}
+.rs-saltar{background:#faf5ef;color:#16120f}
+.rs-resumen{background:transparent;color:#faf5ef;box-shadow:inset 0 0 0 1px rgba(250,245,239,.35)}
+@media (hover:hover){.rs-resumen:hover{background:rgba(250,245,239,.12)}.rs-saltar:hover{background:#fff}}
+/* Dentro del relato: solo "Saltar", en la esquina inferior derecha */
+.relato-saltar.compacto{left:auto;right:clamp(14px,1.6vw,28px);translate:0 0;padding:6px}
+.relato-saltar.compacto:not(.visible){translate:0 14px}
+.relato-saltar.compacto .rs-txt,.relato-saltar.compacto .rs-resumen{display:none}
+@media (max-width:899px),(prefers-reduced-motion:reduce){.relato-saltar{display:none}}
+/* Panel de resumen */
+.relato-resumen{width:min(760px,92vw);max-height:86vh;padding:0;border:0;border-radius:24px;background:#f4ebe2;color:#16120f;
+  box-shadow:0 40px 90px -30px rgba(22,18,15,.55)}
+.relato-resumen::backdrop{background:rgba(22,18,15,.5)}
+.rr-cuerpo{max-height:86vh;overflow:auto;padding:clamp(24px,3vw,44px)}
+.rr-eti{margin:0;color:#3e5870;font-size:13px;font-weight:700;letter-spacing:.09em;text-transform:uppercase}
+.rr-titulo{margin:.3em 0 1.2em;font-size:clamp(28px,2.6vw,40px);line-height:1.05;letter-spacing:-.035em}
+.rr-cap{padding:1.1em 0;border-top:1px solid rgba(58,40,24,.12)}
+.rr-cap-eti{margin:0;color:#5c544c;font-size:12.5px;font-weight:650;letter-spacing:.06em;text-transform:uppercase}
+.rr-cap h3{margin:.25em 0 .5em;font-size:22px;letter-spacing:-.02em}
+.rr-cap ol{margin:0;padding-left:1.2em;display:grid;gap:.35em;font-size:16px;line-height:1.45}
+.rr-como{margin:.7em 0 0;padding:.7em .9em;border-radius:12px;background:#fff;font-size:15px;line-height:1.45}
+.rr-acciones{display:flex;justify-content:flex-end;margin-top:1.2em}
+.rr-cerrar{min-height:44px;padding:0 22px;border:0;border-radius:999px;background:#16120f;color:#faf5ef;font:600 15px var(--sans);cursor:pointer}
+.rr-cerrar:focus-visible{outline:2px solid #3e5870;outline-offset:3px}
+
+/* ---------- Resumen por pestañas: un capítulo a la vez, sin scroll ---------- */
+.relato-resumen{width:min(1040px,94vw);max-height:none}
+.rr-cuerpo{max-height:none;overflow:visible;padding:clamp(22px,3vh,40px) clamp(24px,3vw,44px)}
+.rr-titulo{margin:.25em 0 .8em}
+.rr-pestanas{display:flex;flex-wrap:wrap;gap:.45em;margin-bottom:clamp(14px,2.4vh,26px)}
+.rr-tab{display:inline-flex;align-items:center;gap:.45em;min-height:40px;padding:.3em .95em .3em .4em;border:0;border-radius:999px;background:#fff;color:#5c544c;
+  font:600 14px/1 var(--sans);cursor:pointer;box-shadow:inset 0 0 0 1px rgba(62,88,112,.16)}
+.rr-tab svg{width:28px;height:28px;padding:5px;box-sizing:border-box;border-radius:50%;background:#f4ebe2}
+.rr-tab[aria-selected="true"]{background:#16120f;color:#faf5ef;box-shadow:none}
+.rr-tab:focus-visible,.rr-ant:focus-visible,.rr-sig:focus-visible{outline:2px solid #3e5870;outline-offset:3px}
+.rr-capitulos{min-height:clamp(300px,46vh,430px)}
+.rr-cap{padding:0;border:0}
+.rr-cap-eti{font-size:13px}
+.rr-cap h3{margin:.2em 0 .7em;font-size:clamp(28px,2.6vw,40px);line-height:1.05;letter-spacing:-.035em}
+.rr-cap-grilla{display:grid;grid-template-columns:1.25fr 1fr;gap:clamp(18px,2.4vw,36px);align-items:start}
+.rr-cap ol{list-style:none;margin:0;padding:0;display:grid;gap:clamp(12px,2vh,18px)}
+.rr-cap li{display:flex;gap:.8em;align-items:flex-start}
+.rr-n{flex:none;display:grid;place-items:center;width:1.9em;height:1.9em;border-radius:50%;background:#16120f;color:#faf5ef;font-size:14px;font-weight:700}
+.rr-quien{margin:0;font-size:12px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#3e5870}
+.rr-q--negocio{color:#0f7a3e}.rr-q--ambos{color:#16120f}
+.rr-txt{margin:.2em 0 0;font-size:clamp(16px,1.25vw,19px);line-height:1.38}
+.rr-como{margin:0;padding:1em 1.1em;border-radius:16px;background:#fff;box-shadow:inset 0 0 0 1px rgba(62,88,112,.14)}
+.rr-como-eti{margin:0;color:#3e5870;font-size:12px;font-weight:700;letter-spacing:.09em;text-transform:uppercase}
+.rr-como p+p{margin:.4em 0 0;font-size:clamp(15px,1.15vw,18px);line-height:1.45}
+.rr-acciones{gap:.5em;margin-top:clamp(16px,2.6vh,28px)}
+.rr-ant,.rr-sig{min-height:44px;padding:0 18px;border:0;border-radius:999px;background:#fff;color:#16120f;font:600 15px var(--sans);cursor:pointer;
+  box-shadow:inset 0 0 0 1px rgba(62,88,112,.2)}
+.rr-ant:disabled,.rr-sig:disabled{opacity:.4;cursor:default}
+.rr-ant{margin-right:auto}
+.rr-tab svg{filter:none!important;opacity:1!important}
+.rr-tab:nth-child(3) svg{color:#1a73e8}.rr-tab:nth-child(4) svg{color:#1fa855}.rr-tab:nth-child(5) svg{color:#3e5870}.rr-tab:nth-child(6) svg{color:#d6249f}
