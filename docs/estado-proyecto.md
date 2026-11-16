@@ -1,5 +1,11 @@
 # Estado del proyecto · 2026-11-16
 
+> **Ícono protagonista del relato (2026-11-16)**: cada capítulo muestra su ícono grande (círculo blanco, ~56 px) junto a
+> «Capítulo N de 6 · Canal», con entrada de rebote. Al terminar el capítulo (tras leer «Cómo lo logramos»), el ícono vuela en
+> curva con estela fina hasta su botón del índice (que late al recibirlo). Solo en reproducción continua: con pausa, saltos o
+> botones anterior/siguiente no hay vuelo. Medido en Chrome sin ventana: 142 fps durante el vuelo, sin errores de consola.
+> Código: `vuelo`/`lanzarVuelo` en `sitio/js/relato.js`; estilos `.rg-ico`, `.rg-vuelo` al final de `estilos.css`.
+
 > **Ajustes de marca y contacto (2026-11-16)**: WhatsApp configurado (+56 9 5225 5580, en `sitio/js/config.js`);
 > marca "Agencia KAI" en el título y el pie; la sección `#precios` pasó a `#cotizacion` ("Cotización", sin montos,
 > solo cotización a medida); textos reescritos en plural ("nosotros") para hablar como agencia. El dominio se define al final.

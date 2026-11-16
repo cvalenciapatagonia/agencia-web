@@ -673,6 +673,8 @@
           .to(indice[c].querySelector('svg'), { filter: 'grayscale(0)', duration: 0.24 }, entra);
         if (c > 0 && indice[c - 1]) tl.to(indice[c - 1], ESTADO_HECHO, entra);
       }
+      var ico = cap.querySelector('.rg-ico');   // el ícono del canal entra primero, con un pequeño rebote
+      if (ico) { tocados.push(ico); tl.fromTo(ico, { scale: 0.35, autoAlpha: 0 }, { scale: 1, autoAlpha: 1, duration: 0.55, ease: 'back.out(2)' }, entra + 0.06); }
       var pasos = cap.querySelectorAll('.rg-paso');
       // "Cómo lo logramos": aparece poco después del último paso y queda hasta el capítulo siguiente
       var como = cap.querySelector('.rg-como');
@@ -700,9 +702,66 @@
     var btnPausa = control && control.querySelector('.rc-pausa'), btnAntCap = control && control.querySelector('.rc-ant'), btnSigCap = control && control.querySelector('.rc-sig');
     function inicioCap(c) { return Math.max(0.3, PASOS[c][0] - 0.2); }
     function finCap(c) { return c < PASOS.length - 1 ? PASOS[c + 1][0] - 0.3 : PASOS[c][2] + 1.85; }
+    // Vuelo del ícono del capítulo: al terminar, sale de su lugar junto a «Capítulo N» y viaja en curva (con una
+    // estela fina, la misma técnica del hero) hasta su botón del índice, que late al recibirlo. Solo se lanza
+    // en reproducción continua; con pausa, saltos o navegación manual no hay vuelo (se ve el estado final).
+    var vuelo = { espera: null, tl: null, copia: null, traza: null, destino: null };
+    var DURACION_VUELO = 0.95;
+    function terminarVuelo() {
+      if (vuelo.tl) { vuelo.tl.kill(); vuelo.tl = null; }
+      if (vuelo.copia) { vuelo.copia.remove(); vuelo.copia = null; }
+      if (vuelo.traza) { vuelo.traza.remove(); vuelo.traza = null; }
+      if (vuelo.destino) { vuelo.destino.classList.remove('ri-llega'); vuelo.destino = null; }
+    }
+    function limpiarVuelo() {
+      if (vuelo.espera) { vuelo.espera.kill(); vuelo.espera = null; }
+      terminarVuelo();
+      guionCaps.forEach(function (g) { if (g) g.classList.remove('vuela'); });
+    }
+    function lanzarVuelo(c) {
+      var cap = guionCaps[c], ico = cap && cap.querySelector('.rg-ico'), boton = indice[c], dest = boton && boton.querySelector('svg');
+      if (!ico || !dest || enPausa || !aLaVista) return;
+      var a = ico.getBoundingClientRect(), b = dest.getBoundingClientRect();
+      if (!a.width || !b.width) return;
+      terminarVuelo();
+      var x0 = a.left + a.width / 2, y0 = a.top + a.height / 2, x1 = b.left + b.width / 2, y1 = b.top + b.height / 2;
+      var cx = Math.max(x0, x1) + Math.abs(y0 - y1) * 0.3 + 50, cy = (y0 + y1) / 2;   // curva abierta hacia la derecha
+      var copia = ico.cloneNode(true), NS = 'http://www.w3.org/2000/svg';
+      copia.className = 'rg-vuelo';
+      copia.style.width = a.width + 'px'; copia.style.height = a.height + 'px';
+      var svgIco = ico.querySelector('svg'), svgCopia = copia.querySelector('svg');
+      if (svgIco && svgCopia) svgCopia.style.color = getComputedStyle(svgIco).color;
+      var traza = document.createElementNS(NS, 'svg'), camino = document.createElementNS(NS, 'path');
+      traza.setAttribute('class', 'rg-vuelo-estela'); traza.setAttribute('aria-hidden', 'true');
+      var mx = Math.min(x0, x1) - 6, my = Math.min(y0, y1) - 6;
+      var ancho = Math.max(x0, x1, cx) + 6 - mx, alto = Math.max(y0, y1) + 6 - my;   // la capa mide solo lo que ocupa la curva
+      traza.setAttribute('width', ancho); traza.setAttribute('height', alto); traza.setAttribute('viewBox', '0 0 ' + ancho + ' ' + alto);
+      traza.style.left = mx + 'px'; traza.style.top = my + 'px';
+      camino.setAttribute('d', 'M' + (x0 - mx) + ' ' + (y0 - my) + 'Q' + (cx - mx) + ' ' + (cy - my) + ' ' + (x1 - mx) + ' ' + (y1 - my));
+      traza.appendChild(camino);
+      document.body.appendChild(traza); document.body.appendChild(copia);
+      var largo = camino.getTotalLength(), k = { t: 0 }, fin = b.width / a.width, mw = a.width / 2, mh = a.height / 2;
+      gsap.set(camino, { strokeDasharray: largo, strokeDashoffset: largo });
+      gsap.set(copia, { x: x0 - mw, y: y0 - mh });
+      cap.classList.add('vuela');
+      vuelo.copia = copia; vuelo.traza = traza;
+      vuelo.tl = gsap.timeline({ onComplete: function () {
+        terminarVuelo();
+        boton.classList.add('ri-llega'); vuelo.destino = boton;
+        setTimeout(function () { boton.classList.remove('ri-llega'); }, 650);
+      } })
+        .to(k, { t: 1, duration: DURACION_VUELO, ease: 'power2.inOut', onUpdate: function () {
+          var t = k.t, u = 1 - t;
+          gsap.set(copia, { x: u * u * x0 + 2 * u * t * cx + t * t * x1 - mw, y: u * u * y0 + 2 * u * t * cy + t * t * y1 - mh, scale: 1 + (fin - 1) * t });
+        } }, 0)
+        .to(camino, { strokeDashoffset: 0, duration: DURACION_VUELO, ease: 'power2.inOut' }, 0)
+        .to(copia, { opacity: 0, duration: 0.16, ease: 'power2.in' }, DURACION_VUELO - 0.16)
+        .to(traza, { opacity: 0, duration: 0.4, ease: 'power2.out' }, DURACION_VUELO - 0.1);
+    }
     function detener() {
       if (reproduccion) { reproduccion.kill(); reproduccion = null; }
       if (esperaSiguiente) { esperaSiguiente.kill(); esperaSiguiente = null; }
+      limpiarVuelo();
     }
     function actualizarControl() {
       if (!control) return;
@@ -734,11 +793,20 @@
       actualizarControl();
     }
     function alTerminarCap() {
+      var c = capEnCurso;
       esperaSiguiente = gsap.delayedCall(ESPERA, function () { reproducirCap(capEnCurso + 1); });
-      if (enPausa || !aLaVista) esperaSiguiente.pause();
+      if (enPausa || !aLaVista) { esperaSiguiente.pause(); return; }
+      vuelo.espera = gsap.delayedCall(ESPERA - DURACION_VUELO - 0.5, function () { lanzarVuelo(c); });   // sale tras leer «Cómo lo logramos»
     }
-    function pausar() { if (reproduccion) reproduccion.pause(); if (esperaSiguiente) esperaSiguiente.pause(); }
-    function reanudar() { if (reproduccion) reproduccion.resume(); if (esperaSiguiente) esperaSiguiente.resume(); }
+    function pausar() {
+      if (reproduccion) reproduccion.pause(); if (esperaSiguiente) esperaSiguiente.pause();
+      if (vuelo.espera) vuelo.espera.pause(); terminarVuelo();   // un vuelo en curso se cierra: no queda nada flotando
+      guionCaps.forEach(function (g) { if (g) g.classList.remove('vuela'); });
+    }
+    function reanudar() {
+      if (reproduccion) reproduccion.resume(); if (esperaSiguiente) esperaSiguiente.resume();
+      if (vuelo.espera) vuelo.espera.resume();
+    }
     function alternarPausa() {
       enPausa = !enPausa;
       if (enPausa) pausar(); else if (!empezado) reproducirCap(0); else reanudar();

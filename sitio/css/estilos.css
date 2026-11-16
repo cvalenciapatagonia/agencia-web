@@ -2124,3 +2124,22 @@ h3{font-family:var(--serif);font-weight:700;font-size:26px;line-height:1.08;lett
 @keyframes ri-invita-simple{0%{opacity:1;background:#16120f;color:#faf5ef}100%{opacity:1;background:transparent;color:#3e5870}}
 /* Tras saltar ya no hay botón: se sigue con el scroll */
 .relato-saltado .relato-saltar-anim{opacity:0!important;visibility:hidden!important;pointer-events:none}
+
+/* ---------- Relato: ícono protagonista junto a «Capítulo N» y vuelo con estela al índice ---------- */
+.rg-cab{display:flex;align-items:center;gap:clamp(12px,1vw,18px)}
+.rg-ico{flex:none;display:grid;place-items:center;width:clamp(50px,3.9vw,64px);aspect-ratio:1;border-radius:50%;background:#fff;
+  box-shadow:0 1px 2px rgba(58,40,24,.1),0 14px 28px -14px rgba(58,40,24,.55),inset 0 0 0 1px rgba(62,88,112,.1);transform-origin:50% 50%}
+.rg-ico svg{width:56%;height:56%}
+.rg-cap[data-guion="2"] .rg-ico svg{color:#1a73e8}
+.rg-cap[data-guion="3"] .rg-ico svg{color:#1fa855}
+.rg-cap[data-guion="4"] .rg-ico svg{color:#3e5870}
+.rg-cap[data-guion="5"] .rg-ico svg{color:#d6249f}
+.rg-cap.vuela .rg-ico{opacity:0!important}
+.rg-vuelo{position:fixed;left:0;top:0;z-index:41;display:grid;place-items:center;border-radius:50%;background:#fff;pointer-events:none;
+  box-shadow:0 12px 26px -12px rgba(58,40,24,.6);will-change:transform;transform-origin:50% 50%}
+.rg-vuelo svg{width:56%;height:56%}
+.rg-vuelo-estela{position:fixed;z-index:40;pointer-events:none;overflow:visible}
+.rg-vuelo-estela path{fill:none;stroke:#3e5870;stroke-width:2;stroke-linecap:round;opacity:.55}
+.ri-llega{animation:ri-llega .55s var(--suave)}
+@keyframes ri-llega{0%{box-shadow:0 0 0 0 rgba(62,88,112,.55)}100%{box-shadow:0 0 0 14px rgba(62,88,112,0)}}
+@media (prefers-reduced-motion:reduce){.ri-llega{animation:none}}
