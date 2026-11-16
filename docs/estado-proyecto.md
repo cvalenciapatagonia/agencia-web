@@ -4,6 +4,8 @@
 > «Capítulo N de 6 · Canal», con entrada de rebote. Al terminar el capítulo (tras leer «Cómo lo logramos»), el ícono vuela en
 > curva con estela fina hasta su botón del índice (que late al recibirlo). Solo en reproducción continua: con pausa, saltos o
 > botones anterior/siguiente no hay vuelo. Medido en Chrome sin ventana: 142 fps durante el vuelo, sin errores de consola.
+> Decisión del usuario: el índice (íconos y controles) está **abajo a la izquierda** (antes arriba) para no repetir el logo junto al ícono
+> grande; el vuelo baja en curva por el margen izquierdo y la pista se abre hacia arriba. Medido otra vez: 142 fps.
 > Código: `vuelo`/`lanzarVuelo` en `sitio/js/relato.js`; estilos `.rg-ico`, `.rg-vuelo` al final de `estilos.css`.
 
 > **Ajustes de marca y contacto (2026-11-16)**: WhatsApp configurado (+56 9 5225 5580, en `sitio/js/config.js`);

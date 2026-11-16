@@ -2143,3 +2143,6 @@ h3{font-family:var(--serif);font-weight:700;font-size:26px;line-height:1.08;lett
 .ri-llega{animation:ri-llega .55s var(--suave)}
 @keyframes ri-llega{0%{box-shadow:0 0 0 0 rgba(62,88,112,.55)}100%{box-shadow:0 0 0 14px rgba(62,88,112,0)}}
 @media (prefers-reduced-motion:reduce){.ri-llega{animation:none}}
+/* Índice abajo a la izquierda: arriba queda solo el ícono grande del capítulo; la pista se abre hacia arriba */
+.relato-activo .relato-indice{top:auto;bottom:5vh}
+.relato-activo .relato-indice .ri-pista{top:auto;bottom:calc(100% + 10px)}

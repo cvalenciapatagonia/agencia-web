@@ -725,7 +725,7 @@
       if (!a.width || !b.width) return;
       terminarVuelo();
       var x0 = a.left + a.width / 2, y0 = a.top + a.height / 2, x1 = b.left + b.width / 2, y1 = b.top + b.height / 2;
-      var cx = Math.max(x0, x1) + Math.abs(y0 - y1) * 0.3 + 50, cy = (y0 + y1) / 2;   // curva abierta hacia la derecha
+      var cx = Math.min(x0, x1) - 70, cy = (y0 + y1) / 2;   // el índice está abajo: la curva baja abriéndose hacia el margen izquierdo
       var copia = ico.cloneNode(true), NS = 'http://www.w3.org/2000/svg';
       copia.className = 'rg-vuelo';
       copia.style.width = a.width + 'px'; copia.style.height = a.height + 'px';
@@ -733,7 +733,7 @@
       if (svgIco && svgCopia) svgCopia.style.color = getComputedStyle(svgIco).color;
       var traza = document.createElementNS(NS, 'svg'), camino = document.createElementNS(NS, 'path');
       traza.setAttribute('class', 'rg-vuelo-estela'); traza.setAttribute('aria-hidden', 'true');
-      var mx = Math.min(x0, x1) - 6, my = Math.min(y0, y1) - 6;
+      var mx = Math.min(x0, x1, cx) - 6, my = Math.min(y0, y1) - 6;
       var ancho = Math.max(x0, x1, cx) + 6 - mx, alto = Math.max(y0, y1) + 6 - my;   // la capa mide solo lo que ocupa la curva
       traza.setAttribute('width', ancho); traza.setAttribute('height', alto); traza.setAttribute('viewBox', '0 0 ' + ancho + ' ' + alto);
       traza.style.left = mx + 'px'; traza.style.top = my + 'px';
