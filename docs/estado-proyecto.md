@@ -1,4 +1,8 @@
-# Estado del proyecto · 2026-11-15
+# Estado del proyecto · 2026-11-16
+
+> **Ajustes de marca y contacto (2026-11-16)**: WhatsApp configurado (+56 9 5225 5580, en `sitio/js/config.js`);
+> marca "Agencia KAI" en el título y el pie; la sección `#precios` pasó a `#cotizacion` ("Cotización", sin montos,
+> solo cotización a medida); textos reescritos en plural ("nosotros") para hablar como agencia. El dominio se define al final.
 
 > **Relato y hero actuales (hechos en la rama `relato-panel`, carpeta `C:\dev\Personales\Agencia_web-panel`; ya en main)**:
 > relato **sin video**. El usuario lo pidió porque el video, el reproductor y las notificaciones abrumaban.
@@ -115,6 +119,41 @@
 > esquina. Saltar lleva al cierre (27,6 de la línea de tiempo). El resumen es un `<dialog>` con pestañas: un capítulo
 > a la vez, sin scroll (3 pasos + "Cómo lo logramos"), con flechas del teclado, Anterior/Siguiente y Esc para cerrar.
 > El contenido se arma desde los textos de la columna de explicación (una sola fuente). Probado a 1366×768, 1600×800 y 1920×1080.
+> **Reproducción automática (16-11, en main sin commit; elegida por el usuario)**: el relato ya NO va ligado al scroll ni
+> se fija. Es una sección de una pantalla: al llegar parte el capítulo 1 y cada capítulo se reproduce solo (VEL 1,4 s
+> por unidad de la línea de tiempo), con una espera de 3,6 s para leer "Cómo lo logramos" antes del siguiente; tras el
+> 6 aparece el cierre. Controles junto a los íconos: ‹ · Pausar/Reproducir · ›. En pausa, el capítulo elegido se
+> muestra completo. Se pausa si la sección sale de pantalla. Se quitaron el aviso "Saltar" y el modo lectura; el
+> resumen por pestañas queda en el botón del cierre. La introducción ahora dura 3 pantallas.
+> **Fijación y bloqueo (16-11)**: la sección se fija 2 pantallas (`fijacion` en relato.js) y, mientras la animación está
+> en curso, NO deja bajar a Servicios (`sujetar` devuelve el scroll al inicio de la fijación y hace latir "Saltar
+> animación"). Se libera ~2,5 s después de saltar (o del final natural), cuando el aviso pasa a minimalista, o con un enlace del menú. Subir siempre
+> se puede. Se quitó el freno de 0,9 s.
+> **Saltar animación (16-11, corregido)**: el usuario NO quiere que saltar lleve a otra parte. "Saltar animación" detiene
+> la reproducción y deja la persona en la sección con el capítulo 1 completo, el aviso "Recorre la solución paso a paso
+> con estos botones" y los íconos latiendo; íconos y ‹ › muestran cada capítulo completo (sin reproducir). El botón
+> pasa a "Continuar ↓": SOLO Continuar (o el menú) libera el paso y lleva a Servicios. El final natural muestra el
+> cierre y "Continuar", pero tampoco libera solo. Arreglo: los vuelos del hero no despegan si el hero no está a la vista.
+> **Sin "Continuar" (16-11)**: tras saltar, el botón desaparece; el aviso destacado dura ~2,5 s con el scroll bloqueado y
+> luego el scroll queda libre (`liberarTrasAviso`). Igual cuando la animación termina sola.
+> **Memoria de la visita**: si ya saltó la animación, al volver a la sección (subiendo hasta la intro y bajando de nuevo)
+> NO se reinicia: queda en el capítulo y el modo lectura en que la dejó, con el paso libre. Solo en memoria de la
+> página: al recargar, todo parte de cero. Al subir a la intro se oculta el escenario para que la intro se vea limpia.
+> **Aviso minimalista y vuelta "cargada" (16-11)**: "Recorre la solución paso a paso con estos botones" es ahora texto
+> que aparece destacado (píldora negra ~2,5 s, invita al recorrido) y luego queda permanente como texto minimalista (clase `.pista-aviso`, al saltar, al llegar al cierre y al
+> volver). Al volver a la sección (desde abajo u arriba) ya vista o saltada, se muestra el capítulo 1 completo, nunca el
+> cierre (`volverCargada`). En el cierre, "Continuar" va a la esquina para no tapar "Leer los 6 capítulos".
+> **Sin rebobinar (16-11, pedido del usuario: "al volver ninguna animación debería hacer rewind")**: la intro ya no usa
+> scrub; su fijación es un ScrollTrigger aparte que mueve `entrada` solo hasta que se llega al relato (`introVista`).
+> Después queda congelada en su cuadro final (4,45: canales + "Te mostramos…") y al subir solo se difumina entera.
+> El relato nunca se reinicia al subir (solo se oculta el escenario) y al volver queda en el cuadro final del capítulo
+> en que iba (o del 6 si había llegado al cierre). El hero ya no se repite al volver a él (sí al pasar el mouse).
+> **Transiciones sí, en ambos sentidos**: aunque el contenido no se repite, el paso intro ↔ escenario se anima con el
+> scroll: en el último 20 % de la fijación de la intro, su contenido (`.ib`) se funde mientras aparece el escenario
+> (`marco`), con el fondo crema de la intro sólido para que no se trasluzca el hero. Igual al subir. El resumen por pestañas se abre con "Leer en resumen" y con el botón del cierre
+> "Leer los 6 capítulos en resumen" (`.relato-leer-btn`). El logo KAI del navbar siempre lleva arriba del todo (js/main.js).
+> **Chip "Todo dispositivo" (16-11)**: sexto chip del hero ("Celular, tablet y computador", ícono `ico-dispositivos`, color
+> #1f8a70); los chips quedan 3 + 3. Se enciende al final (20,85 s), después de Plataformas a medida.
 > **Pendiente para la sección de servicios/precios y contacto**: el texto sobre la Ley 21.719 de Protección de
 > Datos Personales (vigente desde el 1-12-2026; confirmar la fecha). La recomendación es no hacerlo pasar por
 > sello oficial: "Desarrollado conforme a la Ley 21.719" + "Incluye política de privacidad redactada según la

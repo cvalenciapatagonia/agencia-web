@@ -169,11 +169,26 @@
       introRecorrido.parentNode.insertBefore(introLugar, introRecorrido);
       hero.appendChild(introRecorrido);
     }
-    var entrada = gsap.timeline({
-      scrollTrigger: {
-        trigger: hero, start: 'top top', end: function () { return '+=' + Math.round(window.innerHeight * (introRecorrido && introRecorrido.querySelector('.ib') ? 4.6 : 1.7)); },
-        pin: true, scrub: true,
-        invalidateOnRefresh: true
+    var entrada = gsap.timeline({ paused: true });
+    var introVista = false, CUADRO_FINAL_INTRO = 4.45;   // canales unidos al sitio + "Te mostramos…"
+    entrada.scrollTrigger = ST.create({
+      trigger: hero, start: 'top top', end: function () { return '+=' + Math.round(window.innerHeight * (introRecorrido && introRecorrido.querySelector('.ib') ? 3 : 1.7)); },
+      pin: true, invalidateOnRefresh: true,
+      onUpdate: function (self) {
+        if (!introVista) { entrada.progress(self.progress); return; }
+        // Ya vista: el contenido queda en su cuadro final (no se repite), pero las transiciones sí se animan con
+        // el scroll, hacia adelante y hacia atrás: la intro entra desde el hero y, en su último tramo, se funde con
+        // el escenario del relato (teléfono y tablet).
+        if (Math.abs(entrada.time() - CUADRO_FINAL_INTRO) > 0.001) entrada.time(CUADRO_FINAL_INTRO);
+        var pr = self.progress, cruce = Math.max(0, Math.min(1, (pr - 0.8) / 0.2));
+        // el fondo crema de la intro se mantiene sólido durante el cruce (así no se trasluce el hero): se funde
+        // solo su contenido, mientras aparece el escenario
+        if (introRecorrido) {
+          gsap.set(introRecorrido, { autoAlpha: Math.min(1, pr / 0.12) });
+          var ibc = introRecorrido.querySelector('.ib');
+          if (ibc) gsap.set(ibc, { autoAlpha: 1 - cruce });
+        }
+        gsap.set(marco, { autoAlpha: cruce });
       }
     });
     if (introRecorrido) {
@@ -342,7 +357,7 @@
     var tl = gsap.timeline({
       defaults: { ease: 'none' },
       onUpdate: function () { if (this.scrollTrigger) actualizarAvance(Math.min(1, this.time() / 12.5)); },
-      scrollTrigger: { trigger: seccion, start: 'top top', end: '+=' + TOTAL * 180 + '%', pin: true, scrub: true, invalidateOnRefresh: true }
+      paused: true   // se reproduce por capítulos (ver bloque 8); ya no va ligada al scroll
     });
     // Entrada del escenario (primeras ~0,9 pantallas fijadas): aparece el fondo y los dispositivos crecen
     // hasta su tamaño, primero el iPad del negocio y, con un leve desfase, el iPhone del cliente.
@@ -669,29 +684,154 @@
         if (k > 0) tl.to(pasos[k - 1], { opacity: 0.4, duration: 0.2, ease: 'power2.out' }, m);
       });
     });
-    // Al terminar: cada botón vuelve al inicio de su capítulo (salto directo; el scrub lo deja en ese punto).
+    // Cada ícono del índice reproduce su capítulo desde el inicio.
     var repetir = Array.prototype.slice.call(seccion.querySelectorAll('[data-repetir]'));
-    function irACapitulo(ev) {
-      var c = +ev.currentTarget.getAttribute('data-repetir'), st = tl.scrollTrigger;
-      if (!st) return;
-      var y = st.start + Math.max(0, (PASOS[c][0] + 0.32) / TOTAL) * (st.end - st.start);   // ya con el título y el paso 1
-      if (window.lenis) window.lenis.scrollTo(y, { immediate: true }); else window.scrollTo(0, y);
-    }
+    function irACapitulo(ev) { reproducirCap(+ev.currentTarget.getAttribute('data-repetir')); }
     repetir.forEach(function (b) { b.addEventListener('click', irACapitulo); });
 
-    // 8) Saltar o leer en resumen: aviso fijo al comenzar la introducción (texto + 2 botones) que, ya dentro del
-    //    relato, se reduce a un botón "Saltar" en la esquina. "Saltar" lleva al final del relato (cierre con el
-    //    índice para volver a ver); "Leer en resumen" abre un panel con los 6 capítulos en texto.
-    var aviso = document.querySelector('.relato-saltar'), resumen = document.querySelector('.relato-resumen');
-    var FIN_RELATO = 27.6;   // momento en que el cierre ya está a la vista
-    function irAlFinal() {
-      var st = tl.scrollTrigger;
-      if (!st) return;
-      var y = st.start + (FIN_RELATO / TOTAL) * (st.end - st.start);
-      if (window.lenis) window.lenis.scrollTo(y, { immediate: true }); else window.scrollTo(0, y);
+    // 8) Reproducción automática por capítulos. La sección ocupa una pantalla (no se fija): al llegar parte el
+    //    capítulo 1; al terminar cada uno espera unos segundos (para leer "Cómo lo logramos") y sigue con el
+    //    siguiente; después del 6 aparece el cierre. Pausar/Reproducir, anterior y siguiente junto a los íconos.
+    //    Se pausa si la sección sale de la pantalla y se retoma al volver.
+    var resumen = document.querySelector('.relato-resumen');
+    var VEL = 1.4, ESPERA = 3.6, FIN_RELATO = 28.9;   // segundos por unidad de la línea de tiempo; pausa entre capítulos
+    var reproduccion = null, esperaSiguiente = null, capEnCurso = 0, enPausa = false, empezado = false, aLaVista = false;
+    var control = seccion.querySelector('.relato-control');
+    var btnPausa = control && control.querySelector('.rc-pausa'), btnAntCap = control && control.querySelector('.rc-ant'), btnSigCap = control && control.querySelector('.rc-sig');
+    function inicioCap(c) { return Math.max(0.3, PASOS[c][0] - 0.2); }
+    function finCap(c) { return c < PASOS.length - 1 ? PASOS[c + 1][0] - 0.3 : PASOS[c][2] + 1.85; }
+    function detener() {
+      if (reproduccion) { reproduccion.kill(); reproduccion = null; }
+      if (esperaSiguiente) { esperaSiguiente.kill(); esperaSiguiente = null; }
+    }
+    function actualizarControl() {
+      if (!control) return;
+      control.classList.toggle('en-pausa', enPausa);
+      if (btnPausa) { btnPausa.setAttribute('aria-label', enPausa ? 'Reproducir' : 'Pausar'); btnPausa.title = enPausa ? 'Reproducir' : 'Pausar'; }
+      if (btnAntCap) btnAntCap.disabled = capEnCurso === 0;
+      if (btnSigCap) btnSigCap.disabled = capEnCurso >= PASOS.length;
+    }
+    function reproducirCap(c) {
+      detener();
+      empezado = true;
+      if (saltado) enPausa = true;   // tras saltar: cada capítulo se muestra completo, listo para leer
+      capEnCurso = Math.max(0, Math.min(PASOS.length, c));
+      seccion.classList.toggle('relato-en-cierre', capEnCurso === PASOS.length);
+      if (capEnCurso === PASOS.length) {   // el cierre
+        reproduccion = tl.tweenFromTo(finCap(PASOS.length - 1), FIN_RELATO, { duration: 2.4, ease: 'none' });
+        saltado = true; marcarSalto();   // terminada: aviso y luego scroll libre
+        mostrarPista();
+        liberarTrasAviso();
+      } else {
+        reproduccion = tl.tweenFromTo(inicioCap(capEnCurso), finCap(capEnCurso),
+          { duration: (finCap(capEnCurso) - inicioCap(capEnCurso)) * VEL, ease: 'none', onComplete: alTerminarCap });
+      }
+      if (enPausa || !aLaVista) {
+        reproduccion.pause();
+        // En pausa, el capítulo elegido se muestra completo (listo para leer); al reproducir, parte desde su inicio
+        if (enPausa) tl.time(capEnCurso === PASOS.length ? FIN_RELATO : finCap(capEnCurso) - 0.02);
+      }
+      actualizarControl();
+    }
+    function alTerminarCap() {
+      esperaSiguiente = gsap.delayedCall(ESPERA, function () { reproducirCap(capEnCurso + 1); });
+      if (enPausa || !aLaVista) esperaSiguiente.pause();
+    }
+    function pausar() { if (reproduccion) reproduccion.pause(); if (esperaSiguiente) esperaSiguiente.pause(); }
+    function reanudar() { if (reproduccion) reproduccion.resume(); if (esperaSiguiente) esperaSiguiente.resume(); }
+    function alternarPausa() {
+      enPausa = !enPausa;
+      if (enPausa) pausar(); else if (!empezado) reproducirCap(0); else reanudar();
+      actualizarControl();
+    }
+    function capAnterior() { reproducirCap(capEnCurso - 1); }
+    function capSiguiente() { reproducirCap(capEnCurso + 1); }
+    // "Saltar animación": detiene la reproducción y muestra el cierre, con los íconos destacados y el mensaje
+    // "Recorre la solución paso a paso con estos botones"; el botón desaparece y el scroll se libera tras el aviso.
+    var saltado = false, btnSaltarAnim = seccion.querySelector('.relato-saltar-anim');
+    function mostrarPista() {   // aviso breve junto a los íconos: aparece y se difumina
+      seccion.classList.remove('pista-aviso'); void seccion.offsetWidth; seccion.classList.add('pista-aviso');
+    }
+    function marcarSalto() {
+      seccion.classList.toggle('relato-saltado', saltado);
+    }
+    // Tras saltar (o al terminar sola): aviso destacado ~2,5 s y luego el scroll queda libre (sin botón "Continuar")
+    var timerLibre = null;
+    function liberarTrasAviso() { clearTimeout(timerLibre); timerLibre = setTimeout(liberar, 2500); }
+    function saltarOContinuar() {   // "Saltar animación": se queda en la sección, capítulo 1 completo + aviso
+      if (saltado) return;
+      saltado = true; enPausa = true;
+      marcarSalto();
+      reproducirCap(0);
+      mostrarPista();
+      liberarTrasAviso();
       var primero = seccion.querySelector('.relato-indice [data-indice]');
       if (primero) primero.focus({ preventScroll: true });
     }
+    if (btnSaltarAnim) btnSaltarAnim.addEventListener('click', saltarOContinuar);
+    if (btnPausa) btnPausa.addEventListener('click', alternarPausa);
+    if (btnAntCap) btnAntCap.addEventListener('click', capAnterior);
+    if (btnSigCap) btnSigCap.addEventListener('click', capSiguiente);
+    // La sección se fija un tramo corto (2 pantallas) para que no se pase de largo con el scroll: el escenario
+    // se queda quieto mientras los capítulos se reproducen; si la persona sigue bajando, pasa a Servicios.
+    var fijacion = ST.create({
+      trigger: seccion, start: 'top top', end: function () { return '+=' + Math.round(window.innerHeight * 2); },
+      pin: true, invalidateOnRefresh: true
+    });
+    // Bloqueo: mientras la animación está en curso no se puede bajar más allá de la sección. Se libera al tocar
+    // "Saltar animación", cuando la animación termina sola o al usar un enlace del menú. Subir siempre se puede.
+    var libre = false;
+    function liberar() { if (libre) return; libre = true; seccion.classList.add('relato-libre'); }
+    function avisarBloqueo() {
+      if (!btnSaltarAnim || avisarBloqueo._t || saltado) return;   // tras saltar ya se ve el aviso
+      btnSaltarAnim.classList.remove('llama'); void btnSaltarAnim.offsetWidth; btnSaltarAnim.classList.add('llama');
+      avisarBloqueo._t = setTimeout(function () { avisarBloqueo._t = null; }, 900);
+    }
+    function sujetar() {
+      if (libre || !fijacion) return;
+      var tope = fijacion.start + 2;
+      if (window.scrollY > tope + 1) {
+        if (window.lenis) window.lenis.scrollTo(tope, { immediate: true, force: true }); else window.scrollTo(0, tope);
+        avisarBloqueo();
+      }
+    }
+    if (window.lenis) window.lenis.on('scroll', sujetar);
+    window.addEventListener('scroll', sujetar, { passive: true });
+    function alClicMenu(ev) { var a = ev.target.closest && ev.target.closest('a[href^="#"]'); if (a && a.getAttribute('href') !== '#inicio') liberar(); }
+    document.addEventListener('click', alClicMenu, true);
+    // Parte cuando la sección llega arriba (justo cuando terminan de volar los íconos de la introducción). Si se
+    // vuelve a subir, la línea de tiempo vuelve a 0 (escenario oculto) para que la introducción se vea igual.
+    function volverCargada() {
+      enPausa = true;
+      // Queda en el cuadro final de donde iba; si había llegado al cierre, en el final del capítulo 6
+      reproducirCap(Math.min(capEnCurso, PASOS.length - 1));
+      mostrarPista();
+    }
+    var tramoRelato = ST.create({
+      trigger: seccion, start: 'top 2px',
+      onEnter: function () {
+        aLaVista = true; seccion.classList.add('relato-en-curso');
+        introVista = true;   // desde ahora la introducción queda en su cuadro final
+        if (saltado) { volverCargada(); return; }   // ya la vio o la saltó: queda en su cuadro final
+        if (!empezado) reproducirCap(0); else if (!enPausa) reanudar();
+      },
+      onEnterBack: function () { aLaVista = true; seccion.classList.add('relato-en-curso'); if (saltado) volverCargada(); },
+      onLeaveBack: function () {
+        aLaVista = false; seccion.classList.remove('relato-en-curso'); pausar();
+        // Si ya saltó la animación, no se reinicia en esta visita (solo al recargar la página): se oculta el
+        // escenario para que la introducción se vea limpia, pero se conserva el capítulo y el modo lectura.
+        // nada se rebobina: el escenario se desvanece con el scroll (fundido con la intro)
+      }
+    });
+    // Si la sección sale de la pantalla hacia abajo (o vuelve), pausa y retoma
+    var vigia = new IntersectionObserver(function (e) {
+      var visible = e[0].isIntersecting;
+      if (!empezado) return;
+      aLaVista = visible;
+      if (visible && !enPausa) reanudar(); else pausar();
+    }, { threshold: 0.35 });
+    vigia.observe(seccion);
+    actualizarControl();
     function abrirResumen() {
       if (!resumen) return;
       var lista = resumen.querySelector('.rr-capitulos'), pestanas = resumen.querySelector('.rr-pestanas');
@@ -743,10 +883,10 @@
     }
     function alCerrarResumen() { if (window.lenis) window.lenis.start(); }
     function cerrarResumen() { if (resumen.close) resumen.close(); else resumen.removeAttribute('open'); alCerrarResumen(); }
-    var btnSaltar = aviso && aviso.querySelector('.rs-saltar'), btnResumen = aviso && aviso.querySelector('.rs-resumen');
     var btnCerrar = resumen && resumen.querySelector('.rr-cerrar');
-    if (btnSaltar) btnSaltar.addEventListener('click', irAlFinal);
-    if (btnResumen) btnResumen.addEventListener('click', abrirResumen);
+    var btnLeer = seccion.querySelector('.relato-leer-btn');
+    function leerDesdeCierre() { capActual = 0; abrirResumen(); }
+    if (btnLeer) btnLeer.addEventListener('click', leerDesdeCierre);
     if (btnCerrar) btnCerrar.addEventListener('click', cerrarResumen);
     var btnAnt = resumen && resumen.querySelector('.rr-ant'), btnSig = resumen && resumen.querySelector('.rr-sig');
     function anterior() { if (capActual > 0) verCapitulo(capActual - 1, false); }
@@ -754,20 +894,12 @@
     if (btnAnt) btnAnt.addEventListener('click', anterior);
     if (btnSig) btnSig.addEventListener('click', siguiente);
     if (resumen) resumen.addEventListener('close', alCerrarResumen);
-    // Visible desde que empieza la introducción hasta que aparece el cierre; compacto dentro del relato
-    var tramoAviso = aviso && ST.create({
-      start: function () { return entrada.scrollTrigger.start + window.innerHeight * 0.3; },
-      end: function () { var st = tl.scrollTrigger; return st.start + ((FIN_RELATO - 0.6) / TOTAL) * (st.end - st.start); },
-      onToggle: function (s) { aviso.classList.toggle('visible', s.isActive); },
-      onUpdate: function () { aviso.classList.toggle('compacto', window.scrollY > tl.scrollTrigger.start + 40); }
-    });
 
     var cierre = $('.relato-final');
-    var cierreTexto = cierre && cierre.querySelectorAll('.relato-cierre-antes, .relato-h, .relato-p, .relato-puente');
+    var cierreTexto = cierre && cierre.querySelectorAll('.relato-cierre-antes, .relato-h, .relato-p, .relato-puente, .relato-leer');
     var cierreLinea = cierre && cierre.querySelector('.relato-cierre-linea');
     if (indice[5]) tl.to(indice[5], ESTADO_HECHO, 27.2);
-    var pista = document.querySelector('.ri-pista');
-    if (pista) { tocados.push(pista); tl.fromTo(pista, { autoAlpha: 0, x: -8 }, { autoAlpha: 1, x: 0, duration: 0.3, ease: 'power3.out' }, 27.6); }
+    // (el aviso "Recorre la solución…" no va en la línea de tiempo: ver mostrarPista)
     if (cierre) {
       tl.fromTo(cierre, { autoAlpha: 0, yPercent: 8 }, { autoAlpha: 1, yPercent: 0, duration: 0.8, ease: 'power2.inOut' }, 27.2);
       tl.fromTo(cierreTexto, { autoAlpha: 0, y: 28 }, { autoAlpha: 1, y: 0, duration: 0.6, stagger: 0.22, ease: 'power3.out' }, 27.65);
@@ -801,10 +933,21 @@
       if (rotulos && contenedorRotulos) contenedorRotulos.insertBefore(rotulos, telefono);
       Array.prototype.forEach.call(seccion.querySelectorAll('.relato-velo'), function (v) { v.remove(); });
       repetir.forEach(function (b) { b.removeEventListener('click', irACapitulo); });
-      if (tramoAviso) tramoAviso.kill();
-      if (aviso) aviso.classList.remove('visible', 'compacto');
-      if (btnSaltar) btnSaltar.removeEventListener('click', irAlFinal);
-      if (btnResumen) btnResumen.removeEventListener('click', abrirResumen);
+      detener();
+      tramoRelato.kill();
+      if (window.lenis) window.lenis.off('scroll', sujetar);
+      window.removeEventListener('scroll', sujetar);
+      document.removeEventListener('click', alClicMenu, true);
+      seccion.classList.remove('relato-libre');
+      fijacion.kill(true);
+      vigia.disconnect();
+      if (btnPausa) btnPausa.removeEventListener('click', alternarPausa);
+      if (btnSaltarAnim) btnSaltarAnim.removeEventListener('click', saltarOContinuar);
+      clearTimeout(timerLibre);
+      seccion.classList.remove('relato-en-curso', 'relato-saltado', 'relato-en-cierre', 'pista-aviso');
+      if (btnAntCap) btnAntCap.removeEventListener('click', capAnterior);
+      if (btnSigCap) btnSigCap.removeEventListener('click', capSiguiente);
+      if (btnLeer) btnLeer.removeEventListener('click', leerDesdeCierre);
       if (btnCerrar) btnCerrar.removeEventListener('click', cerrarResumen);
       window.removeEventListener('resize', colocarFotos);
       ST.removeEventListener('refresh', colocarFotos);

@@ -199,7 +199,7 @@
   //      fina) y lo enciende. Sitio web se enciende con la primera página; Plataformas a medida, al final.
   var listaChips = document.querySelector('.chips-desarrollo');
   var chips = listaChips ? Array.prototype.slice.call(listaChips.querySelectorAll('a')) : [];
-  var GANA = [[0, 0.6, null], [1, 6.7, 0], [2, 12.7, 1], [3, 18.7, 2], [4, 20.35, null]];   // [chip, momento, rótulo que vuela]
+  var GANA = [[0, 0.6, null], [1, 6.7, 0], [2, 12.7, 1], [3, 18.7, 2], [4, 20.35, null], [5, 20.85, null]];   // [chip, momento, rótulo que vuela]
   function encender(i) {
     var c = chips[i];
     if (!c || c.classList.contains('ganado')) return;
@@ -213,6 +213,9 @@
     var destino = c.querySelector('svg');
     var a = origen && origen.getBoundingClientRect(), b = destino && destino.getBoundingClientRect();
     if (!a || !b || !a.width || !b.width) { encender(i); return; }
+    // Si el hero ya no está a la vista (la persona bajó), no hay vuelo: el chip solo se enciende
+    var alto = window.innerHeight;
+    if (b.bottom < 0 || b.top > alto || a.bottom < 0 || a.top > alto || window.scrollY > alto * 0.5) { encender(i); return; }
     var x0 = a.left + a.width / 2, y0 = a.top + a.height / 2, x1 = b.left + b.width / 2, y1 = b.top + b.height / 2;
     var cx = (x0 + x1) / 2, cy = Math.min(y0, y1) - Math.max(80, Math.abs(x0 - x1) * 0.18);
     var copia = origen.cloneNode(true);
@@ -269,7 +272,7 @@
     }
     var fuera = false;
     new IntersectionObserver(function (e) {
-      if (e[0].isIntersecting) { if (fuera) repetir(); if (tl.progress() < 1) tl.play(); fuera = false; }
+      if (e[0].isIntersecting) { if (tl.progress() < 1) tl.play(); fuera = false; }   // al volver no se repite: queda en su cuadro final
       else { tl.pause(); fuera = true; }
     }).observe(hero);
     if (conMouse) {                                 // pasar el mouse sobre la pantalla del notebook

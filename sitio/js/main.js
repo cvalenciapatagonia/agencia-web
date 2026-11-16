@@ -44,6 +44,16 @@
 
   /* ---------- Navbar: fondo más sólido al bajar y sección activa ---------- */
   var raiz = document.documentElement;
+  /* ---------- Logo: siempre vuelve al inicio ----------
+     Con el hero fijado por la animación, el navegador cree que #inicio ya está a la vista y no se mueve.
+     Se salta directo arriba (sin recorrer toda la animación hacia atrás). */
+  var logo = document.querySelector('.cabecera .marca');
+  if (logo) logo.addEventListener('click', function (ev) {
+    ev.preventDefault();
+    if (window.lenis) window.lenis.scrollTo(0, { immediate: true }); else window.scrollTo(0, 0);
+    if (history.replaceState) history.replaceState(null, '', location.pathname + location.search);
+  });
+
   var marcarScroll = function () { raiz.classList.toggle('con-scroll', window.scrollY > 24); };
   marcarScroll();
   window.addEventListener('scroll', marcarScroll, { passive: true });
