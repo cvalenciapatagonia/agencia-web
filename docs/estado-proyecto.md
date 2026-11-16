@@ -6,6 +6,9 @@
 > botones anterior/siguiente no hay vuelo. Medido en Chrome sin ventana: 142 fps durante el vuelo, sin errores de consola.
 > Decisión del usuario: el índice (íconos y controles) está **abajo a la izquierda** (antes arriba) para no repetir el logo junto al ícono
 > grande; el vuelo baja en curva por el margen izquierdo y la pista se abre hacia arriba. Medido otra vez: 142 fps.
+> Ajuste de altura: el bloque del capítulo se **centra verticalmente** entre la barra superior y el índice (flex, `safe center`) y la
+> tipografía se adapta a la altura de la pantalla (`vh`, con reglas para <800 px y <700 px). Probado sin encimarse con el índice en
+> 1280×680, 1440×740, 1440×900, 1920×1080 y 2560×1300.
 > Código: `vuelo`/`lanzarVuelo` en `sitio/js/relato.js`; estilos `.rg-ico`, `.rg-vuelo` al final de `estilos.css`.
 
 > **Ajustes de marca y contacto (2026-11-16)**: WhatsApp configurado (+56 9 5225 5580, en `sitio/js/config.js`);
