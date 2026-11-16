@@ -2175,3 +2175,12 @@ h3{font-family:var(--serif);font-weight:700;font-size:26px;line-height:1.08;lett
 .rg-cap>*{flex:none}
 .relato-activo .relato-guion .rg-cap{top:0}
 .relato-activo .relato-guion .rg-cap{bottom:clamp(40px,5.2vh,56px)}
+/* Centrado horizontal: el texto, el ícono y el índice quedan centrados en el sector crema (de 0 al borde de la foto) */
+.relato-activo .relato-guion{left:0;width:var(--col2-izq);box-sizing:border-box;padding-inline:clamp(24px,2.4vw,64px)}
+.relato-activo .relato-guion::before{left:0;width:calc(100% + 14vw)}
+.relato-activo .relato-indice{left:0;width:var(--col2-izq);max-width:none;box-sizing:border-box;padding-inline:clamp(16px,1.6vw,40px);justify-content:center}
+.relato-activo .relato-indice .ri-pista{left:50%;transform:translateX(-50%);margin-left:0}
+.relato-activo .relato-guion .rg-cap{align-items:center}
+.rg-cap>*{width:100%;max-width:560px}
+.relato-activo .relato-guion .rg-cap{left:clamp(24px,2.4vw,64px);right:clamp(24px,2.4vw,64px)}
+.relato-activo .relato-indice .ri-pista{left:0;right:0;transform:none;margin-inline:auto;width:max-content}

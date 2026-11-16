@@ -9,6 +9,8 @@
 > Ajuste de altura: el bloque del capítulo se **centra verticalmente** entre la barra superior y el índice (flex, `safe center`) y la
 > tipografía se adapta a la altura de la pantalla (`vh`, con reglas para <800 px y <700 px). Probado sin encimarse con el índice en
 > 1280×680, 1440×740, 1440×900, 1920×1080 y 2560×1300.
+> Centrado horizontal: el texto, el ícono y el índice quedan centrados en el sector crema (de 0 al borde de la foto, `--col2-izq`),
+> con márgenes iguales a izquierda y derecha en 1440, 1920 y 2560 de ancho; la pista del índice también va centrada.
 > Código: `vuelo`/`lanzarVuelo` en `sitio/js/relato.js`; estilos `.rg-ico`, `.rg-vuelo` al final de `estilos.css`.
 
 > **Ajustes de marca y contacto (2026-11-16)**: WhatsApp configurado (+56 9 5225 5580, en `sitio/js/config.js`);
