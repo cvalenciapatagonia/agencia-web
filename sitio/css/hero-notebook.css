@@ -1,0 +1,77 @@
+/* ===================== Hero: notebook con 3 sitios en pestañas (de pruebas/hero-sitios.html) =====================
+   Notebook solo (hero-computador-nuevo.webp, pantalla apagada). Encima, proyectado con matrix3d
+   en la perspectiva del vidrio, un Chrome de macOS en HTML con 3 pestañas. Cada pestaña muestra
+   una captura real del sitio y hace su acción: cotizar (constructora), comprar (almacén) y
+   agendar (consulta). Movimiento solo dentro de la pantalla; los chips quedan quietos.
+   Todas las clases llevan el prefijo hs- para no chocar con el CSS del sitio. */
+.hs-hero .hero-media::after{display:none}
+.hs-esc{position:absolute;--w:max(100cqw,177.778cqh);width:var(--w);aspect-ratio:16/9;
+  left:calc(100cqw - var(--w));top:calc((100cqh - var(--w) * .5625) * .5)}
+.hs-esc>img{position:absolute;inset:0;width:100%;height:100%;display:block}
+
+/* Pantalla virtual 1512×982 (proporción de un notebook de 14") */
+.hs-pc{position:absolute;left:0;top:0;width:1512px;height:982px;transform-origin:0 0;overflow:hidden;pointer-events:none;
+  background:#fff;font-family:-apple-system,"SF Pro Text","Segoe UI",system-ui,sans-serif;-webkit-font-smoothing:antialiased;color:#202124}
+.hs-pc *{box-sizing:border-box}
+.hs-pc::after{content:"";position:absolute;inset:0;z-index:30;pointer-events:none;background:linear-gradient(118deg,rgba(255,255,255,.12),rgba(255,255,255,0) 40%)}
+.hs-menu{display:flex;align-items:center;gap:22px;height:30px;padding:0 18px;background:#ececec;font-size:13px;color:#1d1d1f}
+.hs-menu b{font-weight:600}.hs-menu .der{margin-left:auto}
+.hs-tabs{position:relative;display:flex;align-items:flex-end;gap:4px;height:42px;padding:0 0 0 92px;background:#dee1e6}
+.hs-luces{position:absolute;left:18px;top:15px;display:flex;gap:8px}
+.hs-luces i{width:12px;height:12px;border-radius:50%;background:#ff5f57}.hs-luces i:nth-child(2){background:#febc2e}.hs-luces i:nth-child(3){background:#28c840}
+.hs-tab{display:flex;align-items:center;gap:9px;width:250px;height:34px;padding:0 12px;border-radius:10px 10px 0 0;font-size:13px;color:#3c4043;white-space:nowrap;overflow:hidden}
+.hs-tab.on{background:#fff;color:#202124}
+.hs-tab .fav{flex:none;display:grid;place-items:center;width:16px;height:16px;border-radius:4px;color:#fff;font-size:9px;font-weight:700}
+.hs-tab .x{margin-left:auto;color:#80868b}
+.hs-mas{align-self:center;margin-left:8px;font-size:18px;color:#5f6368}
+.hs-barra{display:flex;align-items:center;gap:16px;height:42px;padding:0 14px;background:#fff;border-bottom:1px solid #e3e3e3;color:#5f6368;font-size:16px}
+.hs-omni{flex:1;display:flex;align-items:center;gap:10px;height:30px;padding:0 14px;border-radius:15px;background:#f1f3f4;font-size:14px;color:#202124}
+.hs-omni i{font-style:normal;font-size:11px;color:#5f6368}
+.hs-vista{position:absolute;left:0;right:0;top:114px;bottom:0;overflow:hidden;background:#111}
+.hs-pag{position:absolute;inset:0;opacity:0}
+.hs-pag[data-p="0"]{opacity:1}
+.hs-lienzo{position:absolute;left:0;top:0;width:1024px;transform-origin:0 0}
+.hs-lienzo>img{display:block;width:1024px}
+
+/* Sobre las capturas (coordenadas en px de cada captura de 1024 de ancho) */
+.hs-campo{position:absolute;font-size:14px;color:#e9e9e9;white-space:nowrap;clip-path:inset(0 100% 0 0)}
+.hs-campo--sel{width:160px;height:28px;padding-left:6px;line-height:28px;background:#282c2f}
+.hs-agregado{position:absolute;display:grid;place-items:center;border-radius:12px;background:#c8a46a;color:#151515;font-size:13px;font-weight:600;opacity:0}
+.hs-sel{position:absolute;display:grid;place-items:center;color:#fff;font-weight:600;opacity:0}
+.hs-sel--chip{border-radius:8px;background:#3f7f8c;font-size:16px}
+.hs-sel--dia{border-radius:50%;background:#3f7f8c;font-size:14px}
+.hs-sel--hora{border-radius:8px;background:#3f7f8c;font-size:15px}
+
+/* Carrito del almacén */
+.hs-carro{position:absolute;transform:translateX(105%);top:0;right:0;bottom:0;width:430px;padding:30px 28px;background:#121412;color:#efe6d6;
+  box-shadow:-30px 0 60px -20px rgba(0,0,0,.6);font-family:Georgia,serif}
+.hs-carro h4{font-size:26px;font-weight:400}
+.hs-carro ul{margin-top:22px;list-style:none;font:15px/1.4 -apple-system,"Segoe UI",sans-serif}
+.hs-carro li{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid rgba(200,164,106,.25)}
+.hs-carro .tot{display:flex;justify-content:space-between;margin-top:18px;font:600 18px -apple-system,"Segoe UI",sans-serif}
+.hs-carro .pagar{display:block;margin-top:24px;padding:14px;border-radius:26px;background:#c8a46a;color:#151515;text-align:center;font:600 16px -apple-system,"Segoe UI",sans-serif}
+
+/* Confirmaciones */
+.hs-modal{position:absolute;inset:0;display:grid;place-items:center;background:rgba(0,0,0,.4);opacity:0;visibility:hidden}
+.hs-caja{width:600px;padding:44px 48px;border-radius:22px;text-align:center;box-shadow:0 30px 70px -20px rgba(0,0,0,.55)}
+.hs-caja .ok{display:grid;place-items:center;width:84px;height:84px;margin:0 auto 20px;border-radius:50%;font:700 40px/1 system-ui}
+.hs-caja h3{font-size:38px;line-height:1.1}
+.hs-caja p{margin-top:12px;font:20px/1.45 -apple-system,"Segoe UI",sans-serif}
+.hs-caja--obra{background:#22262b;color:#f2f2f2;font-family:-apple-system,"Segoe UI",sans-serif}
+.hs-caja--obra .ok{background:rgba(232,119,46,.16);color:#e8772e}.hs-caja--obra p{color:#c9cdd2}
+.hs-caja--almacen{background:#141815;color:#efe6d6;font-family:Georgia,serif}
+.hs-caja--almacen .ok{background:rgba(200,164,106,.18);color:#c8a46a}.hs-caja--almacen p{color:#cfc5b4}
+.hs-caja--kine{background:#fbf7f1;color:#1d2b30;font-family:Georgia,serif}
+.hs-caja--kine .ok{background:#e1eef0;color:#3f7f8c}.hs-caja--kine p{color:#55636a}
+
+.hs-cursor{position:absolute;left:0;top:0;z-index:20;width:24px;height:34px;opacity:0;filter:drop-shadow(0 1px 1.5px rgba(0,0,0,.45))}
+/* Final: estela que sale del notebook y subrayado tipo marcador bajo el subtítulo */
+.hs-estela{position:absolute;inset:0;width:100%;height:100%;z-index:3;pointer-events:none;overflow:hidden;visibility:hidden}
+.hs-estela path{fill:none;stroke-linecap:round;opacity:0}
+.hs-estela-halo{stroke:rgba(62,88,112,.16);stroke-width:9}
+.hs-estela-luz{stroke:var(--acero);stroke-width:2.5}
+.hs-hero .hero-sub{position:relative;isolation:isolate}
+.hs-trazo{position:absolute;z-index:-1;border-radius:.12em;background:rgba(62,88,112,.2);transform:scaleX(0);transform-origin:0 50%;pointer-events:none}
+.hs-clic{position:absolute;z-index:19;width:44px;height:44px;margin:-22px 0 0 -22px;border-radius:50%;background:rgba(120,120,120,.35);opacity:0;transform:scale(0)}
+
+

@@ -11,7 +11,7 @@
 > 1280×680, 1440×740, 1440×900, 1920×1080 y 2560×1300.
 > Centrado horizontal: el texto, el ícono y el índice quedan centrados en el sector crema (de 0 al borde de la foto, `--col2-izq`),
 > con márgenes iguales a izquierda y derecha en 1440, 1920 y 2560 de ancho; la pista del índice también va centrada.
-> Código: `vuelo`/`lanzarVuelo` en `sitio/js/relato.js`; estilos `.rg-ico`, `.rg-vuelo` al final de `estilos.css`.
+> Código: `vuelo`/`lanzarVuelo` en `sitio/js/relato.js`; estilos `.rg-ico`, `.rg-vuelo` en `css/relato-apps.css` y `css/refinamientos.css`.
 
 > **Ajustes de marca y contacto (2026-11-16)**: WhatsApp configurado (+56 9 5225 5580, en `sitio/js/config.js`);
 > marca "Agencia KAI" en el título y el pie; la sección `#precios` pasó a `#cotizacion` ("Cotización", sin montos,
@@ -186,7 +186,7 @@ No vuelvas a implementar los cambios, no hagas merge ni cherry-pick y no restaur
 
 1. **Hero**: notebook con 3 sitios en pestañas y la estela final (ver abajo); los chips de canales quedan quietos.
    El video original del hero ya no se usa: su marcado se reemplazó y el código de `main.js` quedó inactivo.
-2. **Relato** (`#relato`, `js/relato.js`, CSS al final de `css/estilos.css`): video por scroll (cuadros AVIF en canvas)
+2. **Relato** (`#relato`, `js/relato.js`, CSS en `css/relato*.css` y `css/refinamientos.css`): video por scroll (cuadros AVIF en canvas)
    dentro de un **iPad** (dueño del negocio, oficina) y a la izquierda un **iPhone Pro Max** (cliente) que abre
    Google, Maps, Perfil/reseñas, WhatsApp e IA con animaciones tipo iOS. A cada acción del cliente llega una
    notificación al iPad (arriba a la izquierda, compacta y translúcida para no tapar rostros) junto con los controles
@@ -225,7 +225,7 @@ muestra la **utilidad** (lo que pasa con el cliente). Sin teléfono en el hero.
 - Línea de tiempo GSAP (~18 s, **una sola vez**): constructora → llena formulario → "¡Solicitud enviada!";
   almacén → agrega 2 productos → carrito → "Comprar" → "¡Compra confirmada!"; consulta → Evaluación, jueves 19,
   10:30 → "¡Hora agendada!". Cursor de macOS con onda de clic.
-- Depuración: `#t=segundos` en la URL congela ese instante. Clases con prefijo `hs-` (evita choques con `estilos.css`).
+- Depuración: `#t=segundos` en la URL congela ese instante. Clases con prefijo `hs-` (evita choques con el resto del CSS).
 - Medido: 139 fps, 0 cuadros largos, consola limpia.
 - Prototipos anteriores, ya descartados: `pruebas/hero-pagina.html`, `pruebas/hero-cafe.html`.
 
@@ -245,7 +245,7 @@ muestra la **utilidad** (lo que pasa con el cliente). Sin teléfono en el hero.
    cuadros sueltos de 35 a 90 ms en los cambios de pestaña y del carrito (entre 3 y 11 s). Varían entre una medición
    y otra, y el panel estaba sin foco: hay que confirmarlos en Chrome antes de integrar.
 7. **Integrado en `index.html` (2026-11-15)**: el hero de la página ya usa el notebook con 3 pestañas y la estela.
-   El marcado está en `index.html`, el CSS al final de `css/estilos.css` y el JS en `js/hero.js`; `main.js` ya no
+   El marcado está en `index.html`, el CSS en `css/relato*.css` y `css/refinamientos.css` y el JS en `js/hero.js`; `main.js` ya no
    arranca el video viejo porque `.escena-video` no existe. El prototipo `pruebas/hero-sitios.html` sigue como banco
    de pruebas: si se cambia, hay que copiar el cambio a los tres archivos. Medido en Chrome sin ventana (1600×900,
    recorrido completo): 143 fps, sin cuadros largos, consola limpia. El paso del hero a la introducción del recorrido
