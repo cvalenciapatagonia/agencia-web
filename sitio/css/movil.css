@@ -13,29 +13,34 @@
 
   /* ---------- Hero · orden en móvil: 1º notebook, 2º texto y botón, 3º chips ----------
      .hero-texto deja de ser una caja (display:contents): sus hijos se ordenan directamente dentro del hero. */
-  .hero{display:flex;flex-direction:column}
+  .hero{display:flex;flex-direction:column;align-items:stretch;min-height:100svh;padding-bottom:calc(76px + env(safe-area-inset-bottom,0px))}
   .hero-texto{display:contents}
   .hero-media{order:1}
   .hero-texto>*{order:2;margin-inline:var(--lado)}
-  .hero-texto>.chips-desarrollo{order:3;width:auto;margin-bottom:36px}
-  .hero-texto>.etiqueta{margin-top:6px}
-  .hero h1{text-wrap:balance}
-  .hero-sub{text-wrap:pretty}
-  .hero-acciones{gap:14px 22px}
-  .hero-acciones .btn-wa{min-height:52px}
+  .hero-texto>.chips-desarrollo{order:3;width:auto;margin-top:auto;margin-bottom:0}
+  .hero-texto>.etiqueta{margin-top:4px;font-size:12px}
+  .hero h1{text-wrap:balance;font-size:clamp(34px,10.4vw,46px);margin-top:8px}
+  .hero-sub{text-wrap:pretty;font-size:clamp(16px,4.3vw,19px);margin-top:10px}
+  .hero-acciones{gap:10px 22px;margin-top:10px}
+  /* El botón rectangular de WhatsApp sobra en móvil: ya está el botón circular flotante */
+  .hero-acciones .btn-wa{display:none}
   .hero-acciones .enlace{display:inline-flex;align-items:center;min-height:44px}
 
   /* ---------- Hero · chips «qué desarrollamos»: compactos, 2 columnas × 3 filas ---------- */
-  .chips-desarrollo{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;max-width:none;margin-top:28px}
+  .chips-desarrollo{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;max-width:none;padding-top:10px}
   .chips-desarrollo li{min-width:0}
-  .chips-desarrollo a{display:flex;width:100%;min-height:46px;padding:6px 10px 6px 6px;gap:8px;font-size:14px;line-height:1.15}
+  .chips-desarrollo a{display:flex;width:100%;min-height:44px;padding:4px 10px 4px 5px;gap:8px;font-size:14px;line-height:1.15}
   .chips-desarrollo small{display:none}
   .chips-desarrollo .chip-txt{min-width:0}
   .chips-desarrollo .chip-nom{font-size:14px;font-weight:600;overflow-wrap:anywhere}
 
   /* ---------- Hero · notebook: la foto se recorta sobre el equipo y la pantalla animada se ve completa ---------- */
-  .hero-media{aspect-ratio:100/102;max-height:none;margin-top:0;overflow:hidden}
-  .hs-hero .hs-esc{--w:192cqw;width:var(--w);left:-84.5cqw;top:-10cqw}
+  /* Alto del notebook = pantalla − (zona del botón flotante + bloque de texto); nunca menos de 324 px ni más de ~1:1 */
+  .hero-media{flex:none;aspect-ratio:auto;height:clamp(324px,calc(100svh - 76px - var(--bloque,calc(371px + (100vw - 390px) * .28))),104vw);max-height:none;margin-top:0;overflow:hidden}
+  /* La foto se escala por ancho o por alto (el menor), pero nunca bajo 167cqw: menos dejaría ver el borde derecho de la imagen.
+     Se centra sobre el equipo y se limita para cubrir siempre el contenedor. El equipo queda bajo la barra flotante. */
+  .hs-hero .hs-esc{--w:max(167cqw,min(192cqw,calc((100cqh - 150px) * 3.12)));width:var(--w);
+    left:clamp(calc(100cqw - var(--w)),calc(50cqw - .70 * var(--w)),0px);top:calc(72px - .1576 * var(--w))}
   .hs-hero .hero-media::after{display:block;height:24%}
 
   /* Rótulo bajo el notebook: ancho casi completo, centrado y con texto que puede pasar a 2 líneas */
@@ -44,6 +49,14 @@
   .hs-ro-textos{height:4.6em}
   .hs-ro-tit span{font-size:1.5em}
   .hs-ro-txt{line-height:1.3}
+
+  /* ---------- Pantallas bajas (≤ 790 px de alto, p. ej. móvil con barras del navegador) ----------
+     La etiqueta superior se oculta solo a la vista (sigue en el HTML para lectores de pantalla y buscadores)
+     y el notebook gana esos píxeles, para que el hero siga cabiendo en la pantalla. */
+  @media (max-height:790px){
+    .hero{--bloque:calc(347px + (100vw - 390px) * .28)}
+    .hero-texto>.etiqueta{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  }
 
   /* ---------- Botón flotante de WhatsApp: circular, fijo abajo a la derecha ---------- */
   .wa-flotante{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:40;

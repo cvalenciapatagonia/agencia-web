@@ -14,6 +14,13 @@
 > - Servicios: ritmo más compacto y interlineado de títulos más holgado.
 > - **Orden del hero en móvil (pedido del usuario)**: 1º notebook (a sangre bajo la barra), 2º título, subtítulo y botón, 3º chips al final.
 >   Se logra con `.hero{display:flex;flex-direction:column}` y `.hero-texto{display:contents}` + `order`, sin tocar el HTML del hero.
+> - **Hero = una pantalla completa en móvil**: `.hero{min-height:100svh}`. En móvil se oculta el botón rectangular «Cotizar por WhatsApp» del hero
+>   (sobra con el botón flotante; en escritorio sigue). El notebook se escala por ancho o por alto (`--w:max(167cqw,min(192cqw,…))`) y su alto sale de
+>   `100svh − 76px (zona del botón) − --bloque` (altura medida del texto, que crece algo con el ancho). Los chips quedan abajo (`margin-top:auto`).
+>   En pantallas de ≤ 790 px de alto la etiqueta «Desarrollo web y apps · Chile» se oculta solo a la vista (sigue en el HTML) para que quepa todo.
+>   Medido: el hero mide exactamente el alto de pantalla en 360×740, 360×800, 390×750, 390×780, 390×844, 412×800, 412×915 y 430×932, y el botón
+>   flotante no tapa ningún chip. Por debajo de ~720 px de alto el hero es algo más alto que la pantalla (los chips asoman al desplazar).
+>   Ojo: `.hero` heredaba `align-items:center` de escritorio; en móvil va `stretch`.
 > - **Botón flotante de WhatsApp (solo móvil)**: `<a class="wa-flotante" data-whatsapp>` al final del `<body>`; círculo de 58 px fijo abajo a la
 >   derecha (respeta `safe-area-inset-bottom`), verde profundo `--wa` con ícono blanco (contraste AA), entrada suave solo con movimiento
 >   permitido. En escritorio está oculto (`display:none`). El pie tiene aire extra para que no tape contenido. `main.js` le asigna el enlace.
