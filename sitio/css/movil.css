@@ -41,11 +41,11 @@
   /* ---------- Hero · notebook: la foto se recorta sobre el equipo y la pantalla animada se ve completa ---------- */
   /* Alto del notebook = pantalla − (zona del botón flotante + aire bajo la barra + bloque de texto y chips); nunca menos de 300 px ni más de lo que ocupa el equipo (el sobrante queda entre el subtítulo y el notebook) */
   .hero-media{flex:none;aspect-ratio:auto;height:clamp(300px,calc(100svh - 76px - 76px - var(--bloque,calc(317px + (100vw - 390px) * .28))),calc(88px + 57.7vw));max-height:none;overflow:hidden}
-  /* La foto se escala por ancho o por alto (el menor), entre 167cqw y 180cqw. Se centra la PANTALLA del equipo (su eje está al ~76 %
+  /* La foto se escala por ancho o por alto (el menor), entre 167cqw y 180cqw. Se centra la PANTALLA del equipo (punto medio entre el eje de la tapa, 76 %, y el del equipo entero, 70 %: 73 %, así la tapa y el cuerpo quedan a igual distancia del centro
      del ancho de la foto), no el equipo entero: así la tapa queda en el centro y la base asoma a la izquierda. El borde derecho de la
      foto se funde con el fondo (máscara) para que no se vea un corte cuando la foto termina antes que el contenedor. */
   .hs-hero .hs-esc{--w:max(167cqw,min(180cqw,calc((100cqh - 88px) * 3.12)));width:var(--w);
-    left:min(0px,calc(50cqw - .762 * var(--w)));top:calc(10px - .1576 * var(--w))}
+    left:min(0px,calc(50cqw - .73 * var(--w)));top:calc(10px - .1576 * var(--w))}
   .hs-hero .hs-esc>img{-webkit-mask-image:linear-gradient(to left,transparent 0,#000 7%);mask-image:linear-gradient(to left,transparent 0,#000 7%)}
   .hs-hero .hero-media::after{display:block;height:24%}
   .hs-hero .hero-media::before{content:"";position:absolute;inset:0 0 auto 0;height:16%;z-index:1;pointer-events:none;background:linear-gradient(to bottom,var(--crema),transparent)}
