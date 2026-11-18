@@ -1,4 +1,16 @@
-# Estado del proyecto · 2026-11-16
+# Estado del proyecto · 2026-11-18
+
+> **Limpieza de código y archivos (2026-11-18)**: `sitio/` pasó de 184 MB a 2,4 MB sin cambiar nada de lo que se ve ni se hace
+> (comparado con la versión anterior: estilos calculados idénticos, misma estructura del relato, mismas 44 peticiones).
+> - **CSS** dividido en `css/` (`base`, `demos`, `relato`, `hero-notebook`, `relato-apps`, `refinamientos`, `lenis`), cargados en ese
+>   orden (el orden importa: hay capas que se sobrescriben). Se eliminó el CSS sin elementos (antigua maqueta 3D, hero con video,
+>   reproductor del iPad, notificaciones del iPad): 2.186 → ~1.550 líneas.
+> - **JS**: `main.js` 640 → 104 líneas (se quitó el hero con video y el recorrido 3D, que no tenían elementos en el HTML);
+>   `relato.js` sin el bloque de video (el HTML no tiene `<video>`). Se quitó la maqueta 3D, `pruebas/`, `previews/` y las dependencias.
+> - **Assets**: se quitaron los videos del hero y del relato (29 MB, nunca se pedían), cuadros sobrantes e imágenes sin uso.
+>   Los dos PNG pesados pasaron a WebP.
+> - Si se vuelve a un relato con video, hay que reponer `<video class="relato-film">` y el reproductor: están en el historial de git.
+> - Ojo al limpiar CSS: algunas clases las crea el JS (`rr-q--*` sale de `rg-quien--*`) o las librerías (`lenis*`); no borrarlas por «no estar en el HTML».
 
 > **Ícono protagonista del relato (2026-11-16)**: cada capítulo muestra su ícono grande (círculo blanco, ~56 px) junto a
 > «Capítulo N de 6 · Canal», con entrada de rebote. Al terminar el capítulo (tras leer «Cómo lo logramos»), el ícono vuela en
@@ -11,7 +23,7 @@
 > 1280×680, 1440×740, 1440×900, 1920×1080 y 2560×1300.
 > Centrado horizontal: el texto, el ícono y el índice quedan centrados en el sector crema (de 0 al borde de la foto, `--col2-izq`),
 > con márgenes iguales a izquierda y derecha en 1440, 1920 y 2560 de ancho; la pista del índice también va centrada.
-> Código: `vuelo`/`lanzarVuelo` en `sitio/js/relato.js`; estilos `.rg-ico`, `.rg-vuelo` al final de `estilos.css`.
+> Código: `vuelo`/`lanzarVuelo` en `sitio/js/relato.js`; estilos `.rg-ico`, `.rg-vuelo` en `css/relato-apps.css` y `css/refinamientos.css`.
 
 > **Ajustes de marca y contacto (2026-11-16)**: WhatsApp configurado (+56 9 5225 5580, en `sitio/js/config.js`);
 > marca "Agencia KAI" en el título y el pie; la sección `#precios` pasó a `#cotizacion` ("Cotización", sin montos,
@@ -186,7 +198,7 @@ No vuelvas a implementar los cambios, no hagas merge ni cherry-pick y no restaur
 
 1. **Hero**: notebook con 3 sitios en pestañas y la estela final (ver abajo); los chips de canales quedan quietos.
    El video original del hero ya no se usa: su marcado se reemplazó y el código de `main.js` quedó inactivo.
-2. **Relato** (`#relato`, `js/relato.js`, CSS al final de `css/estilos.css`): video por scroll (cuadros AVIF en canvas)
+2. **Relato** (`#relato`, `js/relato.js`, CSS en `css/relato*.css` y `css/refinamientos.css`): video por scroll (cuadros AVIF en canvas)
    dentro de un **iPad** (dueño del negocio, oficina) y a la izquierda un **iPhone Pro Max** (cliente) que abre
    Google, Maps, Perfil/reseñas, WhatsApp e IA con animaciones tipo iOS. A cada acción del cliente llega una
    notificación al iPad (arriba a la izquierda, compacta y translúcida para no tapar rostros) junto con los controles
@@ -217,7 +229,7 @@ Scroll suave: Lenis (`js/vendor/lenis.min.js`, `js/suave.js`).
 Idea acordada: el hero muestra **la página web como algo desarrollado** (interacción con el sitio); el relato
 muestra la **utilidad** (lo que pasa con el cliente). Sin teléfono en el hero.
 
-- Foto `assets/img/hero-computador-nuevo.png` (notebook solo). Encima, por `matrix3d` (homografía), una pantalla
+- Foto `assets/img/hero-computador-nuevo.webp` (notebook solo). Encima, por `matrix3d` (homografía), una pantalla
   virtual de 1512×982 con Chrome de macOS en HTML: 3 pestañas y barra de dirección.
 - Capturas de los 3 sitios (hechas en ChatGPT image): `hero-sitio-constructora.webp`, `hero-sitio-mercado.webp`
   (oscuro premium, parecido al almacén del video), `hero-sitio-consulta.webp` (consulta personal de la kinesióloga
@@ -225,7 +237,7 @@ muestra la **utilidad** (lo que pasa con el cliente). Sin teléfono en el hero.
 - Línea de tiempo GSAP (~18 s, **una sola vez**): constructora → llena formulario → "¡Solicitud enviada!";
   almacén → agrega 2 productos → carrito → "Comprar" → "¡Compra confirmada!"; consulta → Evaluación, jueves 19,
   10:30 → "¡Hora agendada!". Cursor de macOS con onda de clic.
-- Depuración: `#t=segundos` en la URL congela ese instante. Clases con prefijo `hs-` (evita choques con `estilos.css`).
+- Depuración: `#t=segundos` en la URL congela ese instante. Clases con prefijo `hs-` (evita choques con el resto del CSS).
 - Medido: 139 fps, 0 cuadros largos, consola limpia.
 - Prototipos anteriores, ya descartados: `pruebas/hero-pagina.html`, `pruebas/hero-cafe.html`.
 
@@ -245,7 +257,7 @@ muestra la **utilidad** (lo que pasa con el cliente). Sin teléfono en el hero.
    cuadros sueltos de 35 a 90 ms en los cambios de pestaña y del carrito (entre 3 y 11 s). Varían entre una medición
    y otra, y el panel estaba sin foco: hay que confirmarlos en Chrome antes de integrar.
 7. **Integrado en `index.html` (2026-11-15)**: el hero de la página ya usa el notebook con 3 pestañas y la estela.
-   El marcado está en `index.html`, el CSS al final de `css/estilos.css` y el JS en `js/hero.js`; `main.js` ya no
+   El marcado está en `index.html`, el CSS en `css/relato*.css` y `css/refinamientos.css` y el JS en `js/hero.js`; `main.js` ya no
    arranca el video viejo porque `.escena-video` no existe. El prototipo `pruebas/hero-sitios.html` sigue como banco
    de pruebas: si se cambia, hay que copiar el cambio a los tres archivos. Medido en Chrome sin ventana (1600×900,
    recorrido completo): 143 fps, sin cuadros largos, consola limpia. El paso del hero a la introducción del recorrido

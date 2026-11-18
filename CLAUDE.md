@@ -36,6 +36,3 @@ Estado detallado y pendientes: `docs/estado-proyecto.md`.
 - Versión clara: `node servidor.mjs 5181` en esta carpeta → http://localhost:5181/
 - Versión oscura: `node servidor.mjs 5183` en `C:\dev\Personales\Agencia_web-video` → http://localhost:5183/
 
-## Comandos
-
-- `npm run build:3d` compila `fuente/diorama3d.js` (maqueta 3D, en desuso) a `sitio/js/diorama3d.min.js`.

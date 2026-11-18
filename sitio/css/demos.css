@@ -1,0 +1,100 @@
+/* Reseñas (Perfil de Empresa en Google) */
+.logo-gbp{width:20px;height:20px;color:#4285f4;flex:none}
+
+/* Chips que se "ganan": empiezan apagados mientras corre el video y se encienden
+   cuando llega el logo de su tarjeta */
+.chips-canales.coleccion a{background:transparent;box-shadow:inset 0 0 0 1px rgba(62,88,112,.18);transition:background-color .4s,box-shadow .4s}
+.chips-canales.coleccion a svg{filter:grayscale(1);opacity:.35;transition:filter .4s,opacity .4s}
+.chips-canales.coleccion a.ganado{background:#fff;box-shadow:0 8px 18px -12px rgba(58,40,24,.5);animation:ganar .55s var(--suave)}
+.chips-canales.coleccion a.ganado svg{filter:none;opacity:1}
+@keyframes ganar{0%{transform:scale(1)}40%{transform:scale(1.09)}100%{transform:scale(1)}}
+
+/* Al llegar el logo: anillo que se expande con el color del canal */
+.chips-canales a{position:relative}
+.chips-canales a.llega::after{content:"";position:absolute;inset:-2px;border-radius:inherit;box-shadow:0 0 0 2px var(--anillo,#3e5870);pointer-events:none;will-change:transform,opacity;animation:anillo .7s ease-out forwards}
+.chips-canales a[data-canal="google"]{--anillo:rgba(66,133,244,.55)}
+.chips-canales a[data-canal="mapa"]{--anillo:rgba(234,67,53,.5)}
+.chips-canales a[data-canal="resenas"]{--anillo:rgba(26,115,232,.5)}
+.chips-canales a[data-canal="whatsapp"]{--anillo:rgba(37,211,102,.55)}
+.chips-canales a[data-canal="ia"]{--anillo:rgba(62,88,112,.5)}
+@keyframes anillo{from{transform:scale(1);opacity:1}to{transform:scale(1.08,1.45);opacity:0}}
+
+/* Entrada del hero */
+@media (prefers-reduced-motion:no-preference){
+  .hero-texto>*{animation:subir .9s var(--suave) both}
+  .hero-texto>:nth-child(2){animation-delay:.08s}
+  .hero-texto>:nth-child(3){animation-delay:.18s}
+  .hero-texto>:nth-child(4){animation-delay:.26s}
+  .hero-texto>:nth-child(5){animation-delay:.34s}
+  .cabecera-in{animation:bajar .8s var(--suave) both}
+}
+@keyframes subir{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+@keyframes bajar{from{opacity:0;transform:translateY(-14px)}to{opacity:1;transform:none}}
+
+/* ---------- Aparición al hacer scroll (solo con JS y con movimiento permitido) ---------- */
+@media (prefers-reduced-motion:no-preference){
+  .js .aparece{opacity:0;transform:translateY(18px);transition:opacity .7s ease,transform .8s var(--suave)}
+  .js .aparece.a-la-vista{opacity:1;transform:none}
+}
+
+/* ---------- Tablet y móvil ---------- */
+@media (max-width:1020px){
+  .servicios{grid-template-columns:1fr;border-top:0}
+  .servicio,.servicio:first-child,.servicio:last-child{border-left:0;border-top:1px solid var(--linea);padding:32px 0 36px}
+  .servicio-num{margin-bottom:14px}
+  .proyectos{grid-template-columns:1fr 1fr}
+  .pasos{grid-template-columns:1fr 1fr}
+  .precios,.preguntas{grid-template-columns:1fr}
+}
+
+@media (max-width:899px){
+  body{font-size:16px}
+  .cabecera{inset:10px 0 auto 0}
+  .hero-texto{padding-top:calc(var(--nav-h) + 8px)!important}
+  .cabecera-in{width:calc(100% - 20px);padding:6px 6px 6px 18px;gap:6px}
+  .menu{order:3}
+  .btn-wa-nav{order:2}
+  .menu-btn{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 4px 0 10px;border:0;background:none;color:var(--tinta);font:500 16px var(--sans);cursor:pointer}
+  .js .menu-lista{display:none}
+  .menu-lista{position:absolute;left:0;right:0;top:calc(100% + 8px);z-index:10;flex-direction:column;gap:0;background:var(--papel);padding:8px 18px 12px;border-radius:24px;box-shadow:0 24px 40px -24px rgba(58,40,24,.4)}
+  .js .menu.abierto .menu-lista{display:flex}
+  .menu-lista a{width:100%;min-height:52px;font-size:19px;border-bottom:1px solid var(--linea)}
+  .menu-lista li:last-child a{border-bottom:0}
+  .btn-wa-nav{padding:3px 14px 3px 3px;font-size:14px}
+
+  .hero{display:block;height:auto;overflow:visible}
+  .hero-texto{width:auto;padding:28px var(--lado) 8px}
+  .hero h1{font-size:clamp(42px,11.500vw,76px)}
+  .hero-sub{font-size:clamp(19px,4.600vw,26px)}
+  .hero-acciones{margin-top:26px}
+  
+  .chips-canales{margin-top:24px;gap:8px}
+  .chips-canales a{font-size:14px;padding:5px 13px 5px 9px}
+
+  /* El video ocupa la parte baja; arriba queda un espacio libre para las tarjetas */
+  .hero-media{position:relative;inset:auto;margin-top:8px;width:100%;aspect-ratio:3/4;max-height:600px}
+
+  .hero-media::after{height:14%}
+
+  .proyectos,.pasos{grid-template-columns:1fr}
+  .proyecto{max-width:520px}
+  .faq details p{padding-right:0}
+  .contacto-panel{border-radius:var(--r-lg)}
+  .pie-in{flex-direction:column;align-items:flex-start}
+}
+
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{transition-duration:.01ms!important;animation-duration:.01ms!important}
+  
+}
+
+/* ---------- Logo de Agencia KAI sobre cápsula negra (la barra mantiene su color) ---------- */
+.cabecera-in{padding-left:8px}
+.marca{background:#0d0c0b;border-radius:999px;padding:7px 20px 7px 16px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.06)}
+.marca-logo{display:block;height:36px;width:auto}
+@media (max-width:899px){
+  .cabecera-in{padding-left:6px}
+  .marca{padding:6px 14px 6px 12px}
+  .marca-logo{height:30px}
+}

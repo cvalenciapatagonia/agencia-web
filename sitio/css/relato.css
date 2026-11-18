@@ -1,0 +1,480 @@
+/* =========================================================
+   Relato con video (js/relato.js, GSAP + ScrollTrigger).
+   Video aprobado 1920×1080 · 48 fps, con su posición ligada LINEALMENTE al scroll (sin filtros ni
+   velos oscuros sobre la imagen: la lectura se apoya solo en tarjetas opacas). Por defecto —y
+   siempre debajo de 900px o con "reducir movimiento"— el contenido es el de abajo, en flujo normal:
+   tres fotos (AVIF) con su tarjeta de texto; el .mp4 nunca se pide. `.relato-activo` (la añade
+   js/relato.js solo ≥900px y sin reducir movimiento) fija la pantalla y activa el recorrido en video.
+   ========================================================= */
+.relato{position:relative;z-index:1;background:var(--crema)}
+.relato-intro{padding-block:clamp(64px,7vw,112px) clamp(32px,4vw,64px);text-align:center;max-width:none}
+.relato-intro .relato-eti{justify-content:center}
+.relato-intro .relato-eti::before{display:none}
+.relato-intro .relato-h{margin-top:16px;font-size:clamp(40px,6vw,96px);line-height:.98;letter-spacing:-.045em;color:var(--tinta);text-shadow:none}
+.relato-intro .relato-h em{font-style:italic;color:var(--acero)}
+
+.relato-eti{display:flex;align-items:center;gap:14px;font-size:13px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:var(--acero)}
+.relato-eti:not(:has(.relato-num))::before{content:"";width:28px;height:1px;background:currentColor;opacity:.7}
+
+.relato-h em{font-style:italic;color:var(--acero)}
+.relato-p{margin-top:22px;font-size:clamp(18px,1.4vw,22px);line-height:1.5;color:var(--gris);max-width:40ch}
+
+.relato-escena{display:none}
+.relato-telefono{display:none}
+/* :where() para que estos :not() no sumen especificidad: si no, esta regla le gana por puntaje a
+   ".relato-activo .relato-cap" de más abajo (menos clases) y la tarjeta queda mal posicionada. */
+.relato-cap:where(:not(.relato-intro)):where(:not(.relato-final)):where(:not(.relato-idea-cap)){position:relative;isolation:isolate;overflow:hidden;background:#33302d;margin-bottom:2px}
+.relato-cap img{width:100%;height:clamp(340px,62vw,620px);object-fit:cover;display:block}
+.relato-voz{padding:22px 24px 26px;background:var(--papel);color:var(--tinta)}
+.relato-voz .relato-h{margin-top:10px;font-size:clamp(26px,2.8vw,44px);line-height:1.04;letter-spacing:-.035em;text-wrap:balance;color:var(--tinta)}
+/* Tarjeta interpretativa: mismo tamaño y estilo que el resto, solo que sin foto propia */
+.relato-idea-cap{margin-bottom:2px}
+.relato-final{padding:clamp(56px,8vw,120px) var(--lado);text-align:center}
+.relato-final .relato-h{font-size:clamp(40px,5.4vw,84px);letter-spacing:-.045em;line-height:.98;color:var(--tinta)}
+.relato-final .relato-p{margin:22px auto 0;max-width:46ch}
+.relato-progreso,.relato-sombra{display:none}
+
+/* ---------- .relato-activo: pantalla fijada (ScrollTrigger pin+scrub) ----------
+   Dos dispositivos: a la izquierda el iPhone del CLIENTE (abre apps desde su ícono, busca, escribe,
+   reseña, pregunta a la IA); a la derecha el iPad del DUEÑO, con el video corriendo en su pantalla y
+   la notificación de lo que hizo el cliente llegando en el mismo instante. Los tamaños se limitan
+   por ancho Y por el alto disponible bajo el header (--banda): en ninguna ventana se recortan. */
+.relato-activo{height:100vh;height:100svh;overflow:hidden}
+/* La sección sube transparente encima del hero fijado (su última pantalla): así no queda un tramo vacío
+   entre la introducción y los dispositivos. El margen negativo es el alto del hero. */
+.relato-activo{margin-top:calc(-1 * clamp(620px,56.25vw,100svh));background:transparent}
+.relato-activo .relato-escena,.relato-activo .relato-historia{will-change:transform,opacity}
+.relato-activo .relato-pin{position:absolute;inset:0}
+.relato-activo .relato-marco{position:absolute;inset:0;overflow:hidden;background:var(--crema);
+  /* Geometría única: iPhone e iPad tienen el MISMO alto (--dev-h) y arrancan a la misma altura
+     (--dev-top), así terminan arriba y abajo en la misma línea. El título va en su propia fila
+     sobre el teléfono. El grupo completo (título + equipos) se centra en el alto bajo el header. */
+  --banda:calc(100vh - var(--nav-h));
+  --titulo-h:clamp(64px,7.4vw,112px);
+  --sep:min(28px,3vh);
+  --gap-dev:clamp(56px,6vw,120px);
+  /* 1.8712 = ancho del iPad (1,4 × alto) + ancho del iPhone (9/19,1 × alto) */
+  --dev-h:max(300px,min(760px,calc(var(--banda) - var(--titulo-h) - var(--sep) - 40px),
+    calc((100vw - 2 * clamp(28px,4vw,72px) - var(--gap-dev)) / 1.8712)));
+  --ipad-w:calc(var(--dev-h) * 1.4);
+  --ipad-h:var(--dev-h);
+  --telf-w:calc(var(--dev-h) * 9 / 19.1);
+  --grupo-top:calc(var(--nav-h) + (var(--banda) - var(--titulo-h) - var(--sep) - var(--dev-h)) / 2);
+  --dev-top:calc(var(--grupo-top) + var(--titulo-h) + var(--sep));
+  /* 100% (no 100vw): se resuelve donde se usa (left/right), contra el ancho real sin la barra de scroll */
+  --lado-dev:max(clamp(28px,4vw,72px),calc((100% - var(--telf-w) - var(--gap-dev) - var(--ipad-w)) / 2))}
+.relato-activo .relato-split{position:absolute;inset:0}
+
+/* ---------- iPad del dueño: bisel negro parejo + canto de aluminio + cámara frontal ---------- */
+.relato-activo .relato-escena{display:block;position:absolute;z-index:1;box-sizing:border-box;
+  right:var(--lado-dev);top:var(--dev-top);
+  width:var(--ipad-w);height:var(--ipad-h);padding:calc(var(--ipad-w) * .021);
+  border-radius:calc(var(--ipad-w) * .042);background:#0c0b0a;
+  box-shadow:0 0 0 calc(var(--ipad-w) * .0035) #cdc9c1,0 0 0 calc(var(--ipad-w) * .0058) #8f8b83,
+    0 0 0 calc(var(--ipad-w) * .0068) rgba(20,16,12,.22),
+    0 60px 100px -46px rgba(20,16,12,.5),0 18px 36px -22px rgba(20,16,12,.3)}
+.relato-ipad-camara{position:absolute;top:calc(var(--ipad-w) * .0068);left:50%;translate:-50% 0;
+  width:calc(var(--ipad-w) * .0075);aspect-ratio:1;border-radius:50%;
+  background:radial-gradient(circle at 38% 38%,#3d4c5c,#0a0c10 70%)}
+.relato-ipad-pantalla{position:relative;width:100%;height:100%;overflow:hidden;background:#000;
+  border-radius:calc(var(--ipad-w) * .022);font-size:clamp(9px,calc(var(--ipad-w) * .0128),13.5px)}
+
+.relato-ipad-estado{position:absolute;top:0;left:0;right:0;z-index:2;display:flex;align-items:center;justify-content:space-between;
+  padding:.75em 1.8em;color:#fff;font-size:.92em;font-weight:600;letter-spacing:.01em;pointer-events:none}
+.rp-bateria{position:relative;display:inline-block;width:2em;height:.95em;border:1px solid currentColor;border-radius:.3em;opacity:.9}
+.rp-bateria::before{content:"";position:absolute;top:1.5px;bottom:1.5px;left:1.5px;right:22%;border-radius:.15em;background:currentColor}
+.rp-bateria::after{content:"";position:absolute;right:-3px;top:30%;width:2px;height:40%;border-radius:0 1px 1px 0;background:currentColor}
+
+/* ---------- Columna izquierda: título breve (uno a la vez) sobre el iPhone, centrados en su columna ---------- */
+.relato-activo .relato-historia{position:absolute;z-index:2;left:var(--lado-dev);top:var(--grupo-top);width:var(--telf-w)}
+.relato-activo .relato-rotulos{position:relative;width:100%;height:var(--titulo-h);margin-bottom:var(--sep)}
+/* Apilados en la misma casilla, pegados abajo (junto al teléfono); se ve uno a la vez */
+.relato-activo .relato-historia .relato-cap{position:absolute;left:0;bottom:0;margin:0;max-width:none;height:auto;
+  width:max(100%,min(320px,calc(100% + var(--gap-dev) - 16px)));
+  overflow:visible;isolation:auto;background:none;pointer-events:none;visibility:hidden;opacity:0}
+.relato-activo .relato-historia .relato-cap img,
+.relato-activo .relato-historia .relato-cap .relato-p{display:none}
+.relato-activo .relato-voz{position:static;max-width:none;padding:0;border-radius:0;color:var(--tinta);
+  background:none;backdrop-filter:none;-webkit-backdrop-filter:none;border:none;box-shadow:none}
+.relato-activo .relato-voz .relato-h{margin:0;color:var(--tinta);font-size:clamp(20px,min(2.1vw,4.2vh),31px);line-height:1.14;letter-spacing:-.03em}
+
+/* ---------- iPhone del cliente (proporción Pro Max): marco de titanio + bisel negro + vidrio ---------- */
+.relato-activo .relato-telefono{display:block;position:relative;flex-shrink:0;width:var(--telf-w);aspect-ratio:9/19.1}
+.relato-telefono-chasis{position:absolute;inset:0;box-sizing:border-box;padding:calc(var(--telf-w) * .045);
+  border-radius:calc(var(--telf-w) * .16);
+  background:linear-gradient(150deg,#d9d4cb 0%,#908b81 22%,#5d5952 50%,#a39e94 78%,#dad5cc 100%);
+  box-shadow:inset 0 1px 1px rgba(255,255,255,.65),inset 0 -1px 1px rgba(0,0,0,.35),
+    0 60px 90px -40px rgba(20,16,12,.5),0 16px 30px -16px rgba(20,16,12,.32)}
+/* Bisel negro entre el titanio y el vidrio: es lo que le da el grosor de un Pro Max */
+.relato-telefono-chasis::after{content:"";position:absolute;inset:calc(var(--telf-w) * .016);
+  border-radius:calc(var(--telf-w) * .145);background:#090808;box-shadow:inset 0 0 0 1px rgba(255,255,255,.06)}
+.relato-telefono-chasis::before{content:"";position:absolute;inset:0;z-index:2;border-radius:inherit;pointer-events:none;
+  box-shadow:inset 0 0 0 1px rgba(20,16,12,.6),inset 0 0 0 2px rgba(255,255,255,.2)}
+.relato-telefono-boton{position:absolute;z-index:1;background:linear-gradient(90deg,#5d5952,#c3beb4);
+  box-shadow:inset 1px 0 1px rgba(255,255,255,.5),-1px 0 2px rgba(0,0,0,.25);border-radius:3px 0 0 3px}
+.relato-telefono-boton--accion{left:-4px;top:15%;width:4px;height:4%}
+.relato-telefono-boton--vol1{left:-4px;top:21.5%;width:4px;height:7%}
+.relato-telefono-boton--vol2{left:-4px;top:30%;width:4px;height:7%}
+.relato-telefono-boton--encendido{left:auto;right:-4px;top:21%;width:4px;height:10%;
+  border-radius:0 3px 3px 0;background:linear-gradient(270deg,#5d5952,#c3beb4)}
+.relato-telefono-pantalla{position:relative;z-index:1;width:100%;height:100%;overflow:hidden;background:#f6f1e9;
+  border-radius:calc(var(--telf-w) * .118);font-size:calc(var(--telf-w) * .036)}
+.relato-telefono-isla{position:absolute;z-index:5;top:1.2%;left:50%;translate:-50% 0;width:29%;aspect-ratio:3.4/1;
+  border-radius:999px;background:#050505}
+.rp-estado{position:absolute;z-index:4;top:0;left:0;right:0;height:6.4%;display:flex;align-items:center;justify-content:space-between;
+  padding:0 9% 0 11%;color:#1c1712;font-weight:650;pointer-events:none}
+
+/* Pantalla de inicio: cada app se abre y se cierra desde SU ícono (transform-origin = posición del ícono) */
+.rp-home{position:absolute;inset:0;
+  background:radial-gradient(120% 70% at 20% 0%,#efe2cf 0%,rgba(239,226,207,0) 60%),linear-gradient(165deg,#d9c3a5 0%,#a8a196 45%,#64788a 100%)}
+.rp-app{position:absolute;left:var(--x);top:var(--y);translate:-50% -50%;width:15.5%;aspect-ratio:1;border-radius:23%;
+  display:grid;place-items:center;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.18)}
+.rp-app svg{width:60%;height:60%}
+.rp-app[data-nombre]::after{content:attr(data-nombre);position:absolute;top:calc(100% + .35em);left:50%;translate:-50% 0;
+  font-size:.72em;color:#fff;white-space:nowrap;text-shadow:0 1px 2px rgba(0,0,0,.35)}
+.rp-app--maps svg{width:46%}
+.rp-app--perfil{color:#4285f4}
+.rp-app--wa{background:#25d366;color:#fff}
+.rp-app--ia{background:#1f1c19;color:#fff}
+
+.rp-app--tienda{background:#e6834d;color:#fff}
+.rp-app--web{background:#4a7bd0;color:#fff}
+.rp-app--tel{background:#34c759;color:#fff}
+.rp-app--lupa{color:var(--acero)}
+.rp-app--pin{color:#e05a47}
+.rp-dock{position:absolute;left:4.5%;right:4.5%;bottom:2.2%;height:9.6%;display:flex;align-items:center;justify-content:space-around;
+  padding:0 6%;border-radius:2em;background:rgba(255,255,255,.28);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.rp-dock .rp-app{position:relative;left:auto;top:auto;translate:none;width:17%}
+.rp-app[data-app="0"],.relato-pantalla[data-pantalla="0"]{--x:17%;--y:13%}
+.rp-app[data-app="1"],.relato-pantalla[data-pantalla="1"]{--x:39%;--y:13%}
+.rp-app[data-app="2"],.relato-pantalla[data-pantalla="2"]{--x:61%;--y:13%}
+.rp-app[data-app="3"],.relato-pantalla[data-pantalla="3"]{--x:83%;--y:13%}
+.rp-app[data-app="4"],.relato-pantalla[data-pantalla="4"]{--x:17%;--y:25.5%}
+.rp-app[data-app="5"]{--x:39%;--y:25.5%}
+.rp-app[data-app="6"]{--x:61%;--y:25.5%}
+.rp-app[data-app="7"]{--x:83%;--y:25.5%}
+
+/* Apps abiertas */
+.relato-pantalla{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;overflow:hidden;
+  padding-top:8.2%;background:#f6f1e9;transform-origin:var(--x) var(--y);visibility:hidden;opacity:0}
+.rp-ico{flex:none;width:1.2em;height:1.2em}
+.rp-barra{flex:none;display:flex;align-items:center;gap:.6em;padding:.75em 1.1em;font-weight:600;color:var(--tinta);
+  background:var(--papel);border-bottom:1px solid rgba(28,23,18,.08)}
+
+.rp-barra--perfil .rp-ico{color:#4285f4}
+.rp-barra--ia .rp-ico{color:var(--acero)}
+.rp-barra--buscar{margin:.6em .9em;border:none;border-radius:999px;background:#fff;font-weight:500;box-shadow:0 1px 4px rgba(28,23,18,.12)}
+
+/* 0 · Google */
+.rp-resultados{flex:1;display:flex;flex-direction:column;gap:1.3em;padding:.8em 1.1em}
+.rp-fila{margin:0 -.7em;padding:.6em .7em;border-radius:.8em}
+.rp-url{font-size:.82em;color:var(--gris)}
+.rp-titulo{margin-top:.1em;font-size:1.12em;font-weight:600;color:#1a56b0}
+.rp-fila--tuyo .rp-titulo{font-weight:700}
+.rp-snippet{margin-top:.25em;font-size:.86em;line-height:1.35;color:var(--gris)}
+
+/* 1 · Maps */
+.rp-mapa{flex:1;position:relative;overflow:hidden;background:#e3e9dc}
+
+.rp-pin{position:absolute;top:50%;left:52%;width:2em;height:2.8em;translate:-50% -100%}
+.rp-ficha{flex:none;padding:1em 1.1em 1.6em;background:#fff;border-radius:1.4em 1.4em 0 0;box-shadow:0 -6px 20px -10px rgba(28,23,18,.25)}
+.rp-ficha-nombre{font-size:1.12em;font-weight:700;color:var(--tinta)}
+.rp-ficha-meta{margin-top:.2em;font-size:.86em;color:#2f7d4a}
+.rp-boton{display:inline-block;margin-top:.8em;padding:.6em 1.2em;border-radius:999px;background:#1a73e8;color:#fff;font-size:.9em;font-weight:600}
+
+/* 2 · Reseña */
+.rp-resenas{flex:1;display:flex;flex-direction:column;gap:.8em;padding:1.2em 1.1em;background:#fff}
+.rp-resena-tit{font-size:1.05em;font-weight:650;color:var(--tinta)}
+.rp-estrellas-in{display:flex;gap:.25em;font-size:1.6em;line-height:1;color:#d8d2c6}
+.rp-estrellas-in i{display:inline-block;font-style:normal}
+.rp-campo{min-height:4.6em;padding:.7em .8em;border-radius:.7em;font-size:.92em;line-height:1.35;color:var(--tinta);
+  box-shadow:inset 0 0 0 1px rgba(28,23,18,.14)}
+.rp-boton--publicar{align-self:flex-end;margin-top:0;background:var(--acero)}
+
+/* 3 · WhatsApp y 4 · IA */
+.rp-chat{flex:1;display:flex;flex-direction:column;gap:.65em;padding:1em .9em;background:#efe9df}
+.rp-burbuja{align-self:flex-start;max-width:86%;padding:.65em .9em;border-radius:1.1em 1.1em 1.1em .3em;background:#fff;
+  color:var(--tinta);font-size:.98em;line-height:1.32}
+.rp-burbuja--yo{align-self:flex-end;border-radius:1.1em 1.1em .3em 1.1em;background:#d9f2d0;transform-origin:100% 100%}
+.rp-ticks{display:inline-block;width:1.15em;height:.8em;margin-left:.3em;vertical-align:-.05em;color:#9a9a9a}
+.rp-envio{flex:none;display:flex;align-items:center;gap:.6em;padding:.7em .9em 1.4em;background:var(--papel)}
+.rp-campo-chat{flex:1;min-height:2.3em;padding:.55em .9em;border-radius:1.2em;background:#fff;font-size:.92em;line-height:1.3;
+  color:var(--tinta);box-shadow:inset 0 0 0 1px rgba(28,23,18,.1)}
+.rp-envio-boton{position:relative;flex:none;width:2.1em;height:2.1em;border-radius:50%;background:#25d366}
+.rp-envio-boton::before{content:"";position:absolute;inset:0;left:.15em;margin:auto;width:0;height:0;
+  border:.42em solid transparent;border-left-color:#fff;border-right:none}
+.rp-agente{display:grid;grid-template-columns:auto 1fr;align-items:center;gap:.5em;font-size:.88em;color:var(--gris)}
+.rp-agente-ico{width:1.2em;height:1.2em;color:var(--acero)}
+.rp-paso{grid-area:1/2}
+.rp-paso--2{visibility:hidden;opacity:0}
+.rp-fuente{display:flex;align-items:center;gap:.35em;width:fit-content;margin-top:.55em;padding:.3em .6em;border-radius:999px;
+  background:#efe9df;font-size:.82em;color:var(--acero)}
+.rp-fuente svg{width:1.1em;height:1.1em}
+
+/* Entrada: titular centrado sobre el crema */
+/* Sin transición de entrada: el titular "Tu negocio ya trabaja duro" queda solo para móvil / sin movimiento */
+.relato-activo .relato-intro{display:none}
+/* Sin cierre oscuro ni video a pantalla completa: el bloque final queda solo para móvil / sin movimiento */
+.relato-activo .relato-final{display:none}
+/* Máscara de cada línea (SplitText mask:"lines"): margen para que no se corten acentos ni descendentes */
+.relato [class*="linea-mask"]{padding-bottom:.08em;margin-bottom:-.08em}
+
+@media (max-width:899px){
+  .relato-voz{margin:0 20px}
+}
+
+/* Roles y respuesta recibida durante el recorrido */
+.relato-rol{display:none}
+.relato-activo .relato-rol{display:block;position:absolute;color:var(--tinta);font-size:14px;font-weight:700;letter-spacing:.01em}
+.relato-rol span{display:block;margin-top:3px;font-size:12px;font-weight:400;color:var(--gris)}
+.relato-activo .relato-rol-cliente{left:0;top:calc(-1 * var(--grupo-top) + var(--nav-h) + 12px)}
+.relato-activo .relato-rol-negocio{z-index:2;right:var(--lado-dev);top:calc(var(--dev-top) - 46px);width:var(--ipad-w)}
+.relato-respuesta{position:absolute;z-index:4;right:4%;bottom:8%;width:min(43%,300px);padding:1.2em;border-radius:1em;background:#faf5ef;color:#16120f;box-shadow:0 12px 32px rgba(0,0,0,.24);opacity:0;visibility:hidden}
+.relato-respuesta strong{font-size:1em}
+.relato-respuesta p{margin:.55em 0;font-size:1.05em;line-height:1.35}
+.relato-respuesta span{display:inline-block;color:#0f7a3e;font-weight:700}
+/* Dos perspectivas dentro de una misma historia */
+.relato-activo .relato-marco{
+  --ipad-w:calc(var(--dev-h) * 1.02);
+  --ipad-h:calc(var(--dev-h) * .73);
+  --gap-dev:clamp(48px,7vw,120px);
+  --lado-dev:max(clamp(28px,4vw,72px),calc((100% - var(--telf-w) - var(--gap-dev) - var(--ipad-w)) / 2));
+}
+.relato-activo .relato-escena{top:calc(var(--dev-top) + var(--dev-h) * .14)}
+.relato-activo .relato-rol{width:auto;z-index:4;padding:10px 16px;border:1px solid rgba(28,23,18,.13);border-radius:16px;font-size:14px;line-height:1.2;letter-spacing:0;box-shadow:0 8px 24px rgba(43,34,27,.07)}
+.relato-activo .relato-rol strong{display:block;font-size:15px;letter-spacing:-.01em}
+.relato-activo .relato-rol span{margin-top:4px;font-size:12px;line-height:1.2}
+.relato-activo .relato-rol::after{content:"";position:absolute;bottom:-7px;width:12px;height:12px;transform:rotate(45deg);border-right:1px solid rgba(28,23,18,.13);border-bottom:1px solid rgba(28,23,18,.13)}
+.relato-activo .relato-rol-cliente{top:calc(-1 * var(--grupo-top) + var(--nav-h) + 5px);left:0;background:#fff;min-width:170px}
+.relato-activo .relato-rol-cliente::after{left:25px;background:#fff}
+.relato-activo .relato-rol-negocio{top:calc(var(--dev-top) + var(--dev-h) * .14 - 72px);right:var(--lado-dev);background:#1c2429;color:#faf5ef;min-width:190px}
+.relato-activo .relato-rol-negocio span{color:#dadfe1}
+.relato-activo .relato-rol-negocio::after{right:28px;background:#1c2429;border-color:#1c2429}
+.relato-activo .relato-historia .relato-cap{bottom:-6px}
+.relato-activo .relato-voz .relato-h{font-size:clamp(18px,min(1.8vw,3.5vh),27px)}
+/* Simulación de mapa y selección de ruta */
+.rp-maps-buscar{position:absolute;z-index:3;top:9%;left:5%;right:5%;height:8%;display:flex;align-items:center;gap:.7em;padding:0 1em;border-radius:999px;background:#fff;color:#202124;box-shadow:0 2px 8px rgba(60,64,67,.22);white-space:nowrap;overflow:hidden}
+.rp-maps-lupa{font-size:2em;line-height:1;color:#5f6368}
+.rp-maps-consulta{flex:1;overflow:hidden;font-size:1em}
+.rp-maps-perfil{display:grid;place-items:center;flex:none;width:2.1em;height:2.1em;border-radius:50%;background:#6f567c;color:#fff;font-size:.8em}
+.rp-mapa{background:#eeeae2}
+.rp-maps-plano{display:block;width:100%;height:100%}
+.rp-maps-plano text{font:7px Arial,sans-serif;fill:#827c74}
+.rp-ruta-linea,.rp-ruta-origen{visibility:hidden;opacity:0}
+.rp-maps-localidad{position:absolute;left:24%;top:48%;font-size:.85em;color:#6b6863}
+.rp-maps-ubicacion{position:absolute;right:5%;bottom:4%;width:2.8em;height:2.8em;display:grid;place-items:center;border-radius:50%;background:white;box-shadow:0 2px 7px #0002;color:#4b5867;font-size:1.1em}
+.rp-pin{top:43%;left:68%;width:2.4em;height:3.2em}
+.rp-ficha{position:relative;z-index:2;padding:1.1em 1.2em 1.5em;background:#fff;color:#202124;border-radius:1.4em 1.4em 0 0}
+.rp-maps-tirador{display:block;width:3em;height:.3em;margin:-.45em auto 1em;border-radius:1em;background:#dadce0}
+.rp-ficha-nombre{font-size:1.24em;letter-spacing:-.02em}
+.rp-maps-estrellas{margin:.35em 0;color:#5f6368;font-size:.9em}.rp-maps-estrellas span{color:#f9ab00}.rp-maps-estrellas small{font-size:1em}
+.rp-ficha-meta{font-size:.9em}.rp-ficha-meta span,.rp-maps-direccion{color:#5f6368}.rp-maps-direccion{margin-top:.5em;font-size:.9em}
+.rp-ficha .rp-boton{margin-top:1em}
+.rp-ruta-panel{position:absolute;z-index:4;left:0;right:0;bottom:0;padding:1.2em 1.3em 1.6em;background:white;color:#202124;border-radius:1.4em 1.4em 0 0;box-shadow:0 -3px 18px #0002;opacity:0;visibility:hidden}
+.rp-ruta-panel>div:not(.rp-ruta-opciones){display:grid;gap:.3em;padding-left:2.5em}.rp-ruta-panel small{font-size:.85em;color:#5f6368}.rp-ruta-panel strong{font-size:1em}
+.rp-ruta-volver{position:absolute;font-size:2em;top:.4em;left:.6em}.rp-ruta-opciones{display:flex;gap:1.3em;margin:1.2em 0;padding:.7em 0;border-bottom:1px solid #e3e3e3;color:#5f6368}.rp-ruta-opciones b{color:#1a73e8}.rp-ruta-panel p{line-height:1.5}.rp-ruta-panel p b{color:#188038;font-size:1.2em}.rp-ruta-iniciar{display:inline-block;margin-top:.9em;padding:.65em 1.3em;border-radius:2em;background:#1a73e8;color:white;font-weight:650}
+
+/* Simulación del teclado del cliente */
+.rp-teclado{position:absolute;z-index:6;left:0;right:0;bottom:0;padding:1em .35em 1.25em;background:#d5dae2;color:#292c31;opacity:0;visibility:hidden}
+.rp-teclado-fila{display:flex;justify-content:center;gap:.27em;margin-bottom:.48em}
+.rp-tecla,.rp-teclado-inferior span{display:grid;place-items:center;flex:1;height:2.8em;border-radius:.4em;background:#fff;box-shadow:0 1px 0 #a2a7af;font-size:.9em}
+.rp-teclado-inferior span{background:#afb8c5}.rp-teclado-inferior .rp-espacio{flex:5;background:#fff;font-size:.8em}
+/* Ficha y conversación ilustrativas */
+.rp-resenas{display:block;overflow:hidden;padding:0;background:#fff;color:#202124}
+.rp-perfil-foto{height:20%;min-height:5em;overflow:hidden;background:#ddd}
+.rp-perfil-foto img{display:block;width:100%;height:100%;object-fit:cover}
+.rp-perfil-nombre{padding:.7em 1em 0;font-size:1.2em;font-weight:700}
+.rp-perfil-calificacion,.rp-perfil-estado{padding:.35em 1.35em 0;font-size:.88em;color:#5f6368}
+.rp-perfil-calificacion span,.rp-perfil-comentario>span{color:#f9ab00;letter-spacing:.03em}
+.rp-perfil-calificacion small{font-size:1em}.rp-perfil-estado{color:#188038}.rp-perfil-estado span{color:#5f6368}
+.rp-perfil-acciones{display:flex;justify-content:space-around;padding:.8em .3em;color:#1a73e8;font-weight:700}
+.rp-perfil-acciones>span{text-align:center}.rp-perfil-acciones small{display:block;margin-top:.3em;color:#5f6368;font-size:.76em;font-weight:400}
+.rp-perfil-tabs{display:flex;gap:1.1em;padding:.65em 1.1em;border-bottom:1px solid #dadce0;font-size:.82em;color:#5f6368}.rp-perfil-tabs b{color:#1a73e8}
+.rp-perfil-comentario{display:grid;gap:.2em;padding:.65em 1.1em;border-bottom:1px solid #eee;font-size:.84em}
+.rp-perfil-comentario small{font-size:1em;line-height:1.3}
+.rp-resena-tit,.rp-estrellas-in,.rp-resenas .rp-campo{margin:.45em 1.1em 0}
+.rp-resenas .rp-campo{min-height:2.5em;padding:.5em}
+.rp-resenas .rp-estrellas-in{font-size:1.25em}
+.rp-resenas .rp-boton--publicar{float:right;margin:.45em 1em}
+.rp-wa-cabecera{display:flex;align-items:center;gap:.6em;min-height:4.1em;padding:.5em .9em;background:#f8f8f8;border-bottom:1px solid #ddd;color:#17221d}
+.rp-wa-volver{font-size:2.1em;line-height:1;color:#168c70}.rp-wa-avatar{display:grid;place-items:center;flex:none;width:2.8em;height:2.8em;border-radius:50%;background:#d0e7db;color:#326c51;font-weight:700}
+.rp-wa-datos{display:grid;gap:.15em;min-width:0}.rp-wa-datos b{white-space:nowrap}.rp-wa-datos small{font-size:.8em;color:#717771}.rp-wa-acciones{margin-left:auto;color:#128a70}
+.rp-wa-chat{background-color:#eae4db;background-image:radial-gradient(#b8b0a5 0.5px,transparent .7px);background-size:9px 9px}
+.rp-wa-seguridad{align-self:center;max-width:94%;padding:.6em .9em;border-radius:.6em;background:#fff4ca;color:#806d38;font-size:.74em;line-height:1.25;text-align:center}
+.rp-wa-fecha{align-self:center;padding:.35em .7em;border-radius:.5em;background:#fff;color:#777;font-size:.7em}
+.rp-wa-hora{font-size:.7em;color:#7f8c84}
+
+/* Ambientes que distinguen la perspectiva de cada persona. */
+.relato-activo .relato-marco{background:#f4ebe2 url(../assets/img/relato-espacios.webp) center/100% 100% no-repeat}
+.relato-activo .relato-historia .relato-h{color:#16120f;text-shadow:0 1px 5px rgba(250,245,239,.7)}
+
+.rp-ia-compositor{position:absolute;z-index:5;left:5%;right:5%;bottom:4%;min-height:3em;padding:.8em 1em;border-radius:1em;background:#fff;box-shadow:0 1px 6px #0002;font-size:.9em}
+.rp-wa-chat + .rp-envio{position:relative;z-index:7}
+
+/* Ficha ilustrativa integrada en los resultados de búsqueda */
+.rp-lemsg{position:relative;overflow:hidden;border:1px solid #e1e3e6;border-radius:1em;background:#fff;color:#202124}
+.rp-lemsg-foto{display:block;width:100%;height:7em;object-fit:cover}
+.rp-kai-logo{position:absolute;top:3.75em;right:.65em;width:3.5em;height:3.5em;border:2px solid #fff;border-radius:50%;background:#f3e9dd}
+
+.rp-lemsg-contenido{padding:.8em .9em}
+.rp-lemsg-contenido>strong{font-size:1.15em;letter-spacing:-.02em}
+.rp-lemsg-contenido p{margin:.3em 0;font-size:.85em;color:#5f6368}
+.rp-lemsg-contenido p span{color:#f9ab00}
+.rp-lemsg-contenido p small{font-size:1em}
+.rp-lemsg-contenido .rp-lemsg-horario{color:#188038}
+.rp-lemsg-horario small{color:#5f6368}
+.rp-lemsg-acciones{display:flex;justify-content:space-between;gap:.5em;margin-top:.8em;color:#1a73e8;font-weight:700}
+.rp-lemsg-acciones span{text-align:center}
+.rp-lemsg-acciones small{display:block;color:#5f6368;font-size:.72em;font-weight:400}
+.rp-resultados{overflow:hidden}
+
+/* Cierre del relato */
+.relato-activo .relato-final{display:grid;place-items:center;position:absolute;inset:0;z-index:8;padding:calc(var(--nav-h) + 24px) var(--lado) 36px;background:#f4ebe2;text-align:center;visibility:hidden;opacity:0}
+.relato-caja{max-width:1100px}
+.relato-cierre-antes{margin-bottom:clamp(20px,3vw,42px);color:#3e5870;font-size:clamp(14px,1.1vw,18px);font-weight:650;letter-spacing:.08em}
+.relato-activo .relato-final .relato-h{font-size:clamp(48px,7vw,112px);line-height:.95;letter-spacing:-.055em;color:#16120f}
+.relato-activo .relato-final .relato-h em{font-style:italic;color:#3e5870}
+.relato-activo .relato-final .relato-p{margin:clamp(20px,3vw,38px) auto 0;max-width:40ch;color:#5c544c;font-size:clamp(17px,1.4vw,22px)}
+.relato-cierre-linea{width:clamp(64px,8vw,120px);height:3px;margin:clamp(24px,3vw,44px) auto 0;background:#3e5870;transform-origin:center}
+
+/* Cada dispositivo queda centrado dentro del ambiente que representa. */
+.relato-activo .relato-marco{
+  --telf-w:min(calc(var(--dev-h) * 9 / 19.1),calc(35.5vw - 32px));
+  --ipad-w:min(calc(var(--dev-h) * 1.02),calc(60.7vw - 40px));
+  --ipad-h:calc(var(--ipad-w) * .73 / 1.02);
+}
+.relato-activo .relato-historia{left:calc(17.75% - var(--telf-w) / 2)}
+.relato-activo .relato-escena{right:calc(30.35% - var(--ipad-w) / 2)}
+.relato-activo .relato-rol-negocio{right:calc(30.35% - var(--ipad-w) / 2)}
+
+/* La introducción comparte la composición y tipografía del cierre. */
+.intro-recorrido{min-height:100svh;display:grid;place-items:center;background:var(--crema);padding:calc(var(--nav-h) + 24px) var(--lado) 36px;text-align:center}
+.hero .intro-recorrido{position:absolute;inset:0;z-index:5;min-height:0;width:100%;height:100%}
+.intro-recorrido .relato-h{font-size:clamp(40px,7vw,112px);line-height:.95;letter-spacing:-.055em;color:#16120f;text-wrap:balance}
+.intro-recorrido .relato-h em{font-style:italic;color:#3e5870}
+.intro-recorrido .relato-p{margin:clamp(20px,3vw,38px) auto 0;max-width:40ch;color:#5c544c;font-size:clamp(17px,1.4vw,22px)}
+
+/* Dispositivos ampliados, centrados en cada ambiente. */
+.relato-activo .relato-marco{
+  --titulo-h:clamp(55px,6vw,88px);
+  --sep:clamp(10px,1.5vh,18px);
+  --dev-h:max(300px,min(880px,calc(var(--banda) - var(--titulo-h) - var(--sep) - 28px),calc((35.5vw - 28px) * 19.1 / 9)));
+  --telf-w:calc(var(--dev-h) * 9 / 19.1);
+  --ipad-w:min(calc(var(--dev-h) * 1.26),calc(60.7vw - 28px));
+  --ipad-h:calc(var(--ipad-w) * .73 / 1.02);
+}
+.relato-activo .relato-escena{top:calc(var(--dev-top) + (var(--dev-h) - var(--ipad-h)) / 2)}
+.relato-activo .relato-rol-negocio{top:calc(var(--dev-top) + (var(--dev-h) - var(--ipad-h)) / 2 - 72px)}
+
+/* Espacio para que el rótulo del cliente y el título no se superpongan. */
+.relato-activo .relato-marco{--titulo-h:clamp(104px,8.5vw,122px)}
+
+/* La conversación de IA usa la disposición visual de ChatGPT. */
+.rp-barra--ia{min-height:4.2em;padding:.9em 1em;background:#fff;border-color:#eee;color:#202123}
+.rp-barra--ia strong{font-size:1.1em;letter-spacing:-.02em}
+.rp-chatgpt-menu{font-size:1.35em;color:#353535}
+.rp-chatgpt-desplegar{font-size:1.1em;color:#777}
+.rp-chatgpt-nuevo{margin-left:auto;font-size:1.3em;color:#353535}
+.rp-chatgpt{background:#fff;gap:1em;padding:1.1em 1em}
+.rp-chatgpt .rp-burbuja--yo{max-width:88%;background:#f1f1f1;color:#202123;border-radius:1.3em;font-size:1em}
+.rp-chatgpt .rp-burbuja--ia{max-width:100%;padding:.25em 0;background:transparent;font-size:1em;line-height:1.5}
+.rp-chatgpt .rp-agente{padding:.3em 0;color:#777}
+.rp-chatgpt .rp-fuente{border:1px solid #dedede;background:#f7f7f7;color:#444}
+.rp-ia-compositor{border:1px solid #dedede;border-radius:1.4em;box-shadow:0 1px 3px #0001}
+
+/* Acercar los dispositivos al centro del encuadre. */
+.relato-activo .relato-marco{--ipad-w:min(calc(var(--dev-h) * 1.26),calc(56vw - 28px))}
+.relato-activo .relato-historia{left:calc(20% - var(--telf-w) / 2)}
+.relato-activo .relato-escena{right:calc(32% - var(--ipad-w) / 2)}
+.relato-activo .relato-rol-negocio{right:calc(32% - var(--ipad-w) / 2)}
+
+/* Centrado vertical de ambos dispositivos bajo la navegación. */
+.relato-activo .relato-marco{
+  --dev-h:max(260px,min(880px,calc(100svh - var(--nav-h) - 2 * (var(--titulo-h) + var(--sep) + 8px)),calc((35.5vw - 28px) * 19.1 / 9)));
+  --dev-top:calc((100svh + var(--nav-h) - var(--dev-h)) / 2);
+  --grupo-top:calc(var(--dev-top) - var(--titulo-h) - var(--sep));
+}
+
+/* Los dispositivos crecen manteniendo el mismo centro vertical. */
+.relato-activo .relato-marco{
+  --dev-h:max(260px,min(880px,calc(100svh - var(--nav-h) - 190px),calc((35.5vw - 28px) * 19.1 / 9)));
+}
+.relato-activo .relato-rol-cliente{padding:7px 12px}
+.relato-activo .relato-rol-cliente span{display:none}
+.relato-activo .relato-historia .relato-h{font-size:clamp(17px,min(1.6vw,3vh),23px)}
+
+.relato-activo .relato-rol-cliente{padding:4px 12px}
+
+/* Dispositivos grandes alrededor del centro del espacio disponible. */
+.relato-activo .relato-marco{
+  --dev-h:max(260px,min(880px,calc(100svh - var(--nav-h) - 70px),calc((35.5vw - 28px) * 19.1 / 9)));
+  --ipad-w:min(calc(var(--dev-h) * 1.26),calc(60.2vw - 28px));
+}
+.relato-activo .relato-historia .relato-rotulos{
+  position:absolute;z-index:3;margin:0;
+  left:calc(39.3vw - (20vw - var(--telf-w) / 2) + 24px);
+  top:calc(var(--titulo-h) + var(--sep) + (var(--dev-h) - var(--ipad-h)) / 2 + var(--ipad-h) - 82px);
+  width:min(36vw,420px);height:60px;
+}
+.relato-activo .relato-historia .relato-cap{width:100%}
+.relato-activo .relato-historia .relato-voz{display:inline-block;padding:8px 12px;border-radius:10px;background:rgba(250,245,239,.94)}
+.relato-activo .relato-historia .relato-h{text-shadow:none}
+.relato-activo .relato-historia>.relato-telefono{margin-top:calc(var(--titulo-h) + var(--sep))}
+
+/* Mensajes y notificaciones legibles en ambos dispositivos. */
+.relato-telefono-pantalla{font-size:clamp(12px,calc(var(--telf-w) * .045),18px)}
+
+.rp-resultados{gap:.8em}
+.rp-lemsg-foto{height:5.5em}
+.rp-resenas .rp-perfil-foto{min-height:4em}
+
+.relato-respuesta{font-size:clamp(13px,1.05vw,16px);width:min(46%,350px)}
+
+/* Los rótulos de la historia viven en la franja inferior del iPad. */
+.relato-activo .relato-ipad-pantalla .relato-rotulos{
+  position:absolute;z-index:5;left:0;right:0;bottom:0;width:auto;margin:0;
+  height:clamp(38px,calc((var(--ipad-h) - var(--ipad-w) * .042 - var(--ipad-w) * .958 * 9 / 16) / 2),100px);
+  background:#000;overflow:hidden;pointer-events:none;
+}
+.relato-activo .relato-ipad-pantalla .relato-rotulos .relato-cap{
+  position:absolute;inset:0;display:flex;align-items:center;padding:3px 3%;
+  width:auto;height:auto;margin:0;background:transparent;visibility:hidden;opacity:0;
+}
+.relato-activo .relato-ipad-pantalla .relato-rotulos img,
+.relato-activo .relato-ipad-pantalla .relato-rotulos .relato-p{display:none}
+.relato-activo .relato-ipad-pantalla .relato-rotulos .relato-voz{
+  padding:0;background:transparent;color:#faf5ef;box-shadow:none;
+}
+.relato-activo .relato-ipad-pantalla .relato-rotulos .relato-h{
+  margin:0;color:#faf5ef;font-size:clamp(13px,calc(var(--ipad-w) * .0205),22px);
+  font-weight:600;line-height:1.08;letter-spacing:-.02em;text-shadow:none;
+}
+
+/* Mensaje centrado en toda la franja inferior del iPad. */
+.relato-activo .relato-ipad-pantalla .relato-rotulos .relato-cap{
+  justify-content:center;padding:3px 4%;text-align:center;
+}
+.relato-activo .relato-ipad-pantalla .relato-rotulos .relato-voz{width:100%}
+.relato-activo .relato-ipad-pantalla .relato-rotulos .relato-h{
+  font-size:clamp(15px,calc(var(--ipad-w) * .031),32px);
+  font-weight:650;line-height:1.04;letter-spacing:-.035em;text-wrap:balance;
+}
+.relato-activo .relato-ipad-pantalla .relato-rotulos .relato-h br{display:none}
+
+/* Respuesta ilustrativa de IA con contexto y fotografías. */
+.rp-chatgpt{gap:.7em;overflow:hidden}
+.rp-chatgpt .rp-burbuja--ia{font-size:.92em;line-height:1.36}
+.rp-ia-detalles{margin-top:.75em}
+.rp-ia-detalles strong{display:block;font-size:1em}
+.rp-ia-detalles p{margin:.35em 0;line-height:1.3}
+.rp-ia-fotos{display:grid;grid-template-columns:1fr 1fr;gap:.45em;margin:.6em 0}
+.rp-ia-fotos img{display:block;width:100%;height:5em;object-fit:cover;border-radius:.7em}
+.rp-ia-fotos img:nth-child(1){object-position:20% center}
+.rp-ia-fotos img:nth-child(2){object-position:80% center}
+.rp-ia-ejemplo{display:block;margin-top:.5em;color:#777;font-size:.76em}
+
+/* El texto y el computador del video comparten la portada con espacio equivalente. */
+@media(min-width:900px){
+  .hero-texto{width:48vw}
+  .hero h1{font-size:clamp(44px,5vw,78px)}
+}
