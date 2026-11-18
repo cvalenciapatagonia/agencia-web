@@ -18,6 +18,11 @@
 >   antes que la imagen y el rótulo que vuela a su chip hace un trayecto corto (~120 px). El notebook ya no ocupa el espacio bajo la barra, por lo
 >   que gana altura. Umbral de pantalla baja: 835 px (se ocultan la etiqueta superior, solo a la vista, y «Ver trabajos →»; queda «Proyectos» en el menú).
 > - **Texto del hero centrado en móvil** (`.hero-texto{text-align:center}`; los chips mantienen su texto a la izquierda; la etiqueta lleva `padding-left:.22em` para compensar su espaciado de letras).
+> - **Móvil: sin «Ver trabajos» ni «Cotizar» de la barra (pedido del usuario)**: `.hero-acciones{display:none}` y `.btn-wa-nav{display:none}` bajo 900 px.
+>   Los trabajos quedan en el menú («Proyectos», probado: lleva a la sección y cierra el menú); WhatsApp, en el botón circular flotante. En escritorio no cambia.
+>   El notebook se centra por su PANTALLA (eje al ~76 % de la foto) y no por el equipo entero; el borde derecho de la foto se funde con una máscara.
+>   La zona del notebook no crece más de lo que ocupa el equipo (`88px + 57.7vw`); el sobrante queda entre el subtítulo y el notebook.
+>   Umbral de pantalla baja (etiqueta superior oculta solo a la vista): 780 px de alto.
 > - **Hero = una pantalla completa en móvil**: `.hero{min-height:100svh}`. En móvil se oculta el botón rectangular «Cotizar por WhatsApp» del hero
 >   (sobra con el botón flotante; en escritorio sigue). El notebook se escala por ancho o por alto (`--w:max(167cqw,min(192cqw,…))`) y su alto sale de
 >   `100svh − 76px (zona del botón) − --bloque` (altura medida del texto, que crece algo con el ancho). Los chips quedan abajo (`margin-top:auto`).
