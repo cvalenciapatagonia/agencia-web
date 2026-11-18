@@ -1,0 +1,52 @@
+/* =========================================================
+   Versión móvil (hasta 899 px). Se carga AL FINAL: gana la cascada sobre las reglas de escritorio.
+   Secciones adaptadas: hero y servicios. El resto sigue con las reglas genéricas de demos.css.
+   Criterios: sin desborde horizontal, botones táctiles de ≥44 px, texto ≥14 px, nada fuera de pantalla.
+   ========================================================= */
+@media (max-width:899px){
+
+  /* Red de seguridad: nada puede ensanchar el documento */
+  html,body{overflow-x:clip}
+
+  /* ---------- Hero · texto ---------- */
+  .hero-texto{padding:calc(var(--nav-h) + 28px) var(--lado) 12px}
+  .hero h1{text-wrap:balance}
+  .hero-sub{text-wrap:pretty}
+  .hero-acciones{gap:14px 22px}
+  .hero-acciones .btn-wa{min-height:52px}
+  .hero-acciones .enlace{display:inline-flex;align-items:center;min-height:44px}
+
+  /* ---------- Hero · chips «qué desarrollamos»: compactos, 2 columnas × 3 filas ---------- */
+  .chips-desarrollo{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;max-width:none;width:100%;margin-top:26px}
+  .chips-desarrollo li{min-width:0}
+  .chips-desarrollo a{display:flex;width:100%;min-height:46px;padding:6px 10px 6px 6px;gap:8px;font-size:14px;line-height:1.15}
+  .chips-desarrollo small{display:none}
+  .chips-desarrollo .chip-txt{min-width:0}
+  .chips-desarrollo .chip-nom{font-size:14px;font-weight:600;overflow-wrap:anywhere}
+
+  /* ---------- Hero · notebook: la foto se recorta sobre el equipo y la pantalla animada se ve completa ---------- */
+  .hero-media{aspect-ratio:100/88;max-height:none;margin-top:6px;overflow:hidden}
+  .hs-hero .hs-esc{--w:192cqw;width:var(--w);left:-84.5cqw;top:-24cqw}
+  .hs-hero .hero-media::after{display:block;height:24%}
+
+  /* Rótulo bajo el notebook: ancho casi completo, centrado y con texto que puede pasar a 2 líneas */
+  .hs-hero .hero-media>.hs-rotulo{left:5%;width:90%;bottom:3.5%;font-size:13px;text-align:center}
+  .hs-rotulo .hs-ro-item p{white-space:normal}
+  .hs-ro-textos{height:4.6em}
+  .hs-ro-tit span{font-size:1.5em}
+  .hs-ro-txt{line-height:1.3}
+
+  /* ---------- Transición «¿Basta con tenerlo?»: en móvil no ocupa una pantalla entera (dejaba un hueco vacío) ---------- */
+  .intro-recorrido{min-height:0;padding:64px var(--lado) 48px}
+
+  /* ---------- Servicios ---------- */
+  #servicios{padding-block:64px 56px}
+  #servicios .seccion-cab h2{line-height:1.02}
+  #servicios .seccion-intro{text-wrap:pretty}
+  .servicios{margin-top:32px}
+  .servicio{padding:28px 0 12px;border-left:0}
+  .servicio-num{margin-bottom:14px}
+  .servicio h3{line-height:1.05}
+  .servicio ul{margin-top:20px;padding-top:18px}
+  .servicio ul li{line-height:1.4}
+}

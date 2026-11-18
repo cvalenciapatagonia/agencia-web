@@ -1,5 +1,23 @@
 # Estado del proyecto · 2026-11-18
 
+> **Versión móvil: hero y servicios (2026-11-18)**: nuevo archivo `css/movil.css`, cargado **al final** (gana la cascada) y con todo
+> dentro de `@media (max-width:899px)`. Solo se adaptaron el hero y servicios; el resto sigue genérico.
+> - Causa del problema principal: los chips del hero medían más que la pantalla y ensanchaban todo el documento (602 px en un móvil de
+>   390), con lo que la cabecera se estiraba y el botón «Cotizar» y el «Menú» quedaban fuera de pantalla. Ya no hay desborde en 320, 360,
+>   390, 412 ni 768 px.
+> - Chips «qué desarrollamos»: 2 columnas × 3 filas, solo ícono + nombre (sin la frase corta), alto táctil ≥ 46 px.
+> - Notebook del hero: la foto se recorta sobre el equipo (`--w:192cqw`, `left:-84.5cqw`, `top:-24cqw`) y la pantalla animada se ve entera;
+>   el rótulo («Cotizador en línea…») va centrado a casi todo el ancho y puede pasar a 2 líneas. La animación y la proyección `matrix3d`
+>   no se tocaron (hero.js mide `esc.clientWidth`).
+> - Transición «¿Basta con tenerlo?»: en móvil `min-height:0` (dejaba un hueco vacío de ~330 px). Está fuera de las dos secciones; es una regla
+>   y se puede quitar de `movil.css`.
+> - Servicios: ritmo más compacto y interlineado de títulos más holgado.
+> - Verificado: escritorio (1440 px) con 0 diferencias de estilo; las demás secciones en móvil con 0 diferencias; todos los elementos
+>   táctiles de cabecera, hero y servicios ≥ 44 px; la animación de chips se enciende también en móvil; 0 errores de consola.
+> - **Pendiente**: la sesión corrió en la nube y no pudo leer `C:\dev\Skills_rep\INDEX.md`; no se aplicaron las skills de diseño del
+>   proyecto (`high-end-visual-design`, `premium-web-design`, `apple-design`). Revisar el resultado con ellas desde el PC y medir fps en un
+>   móvil real. Revisión hecha solo con Chrome sin ventana (sin GPU).
+
 > **Limpieza de código y archivos (2026-11-18)**: `sitio/` pasó de 184 MB a 2,4 MB sin cambiar nada de lo que se ve ni se hace
 > (comparado con la versión anterior: estilos calculados idénticos, misma estructura del relato, mismas 44 peticiones).
 > - **CSS** dividido en `css/` (`base`, `demos`, `relato`, `hero-notebook`, `relato-apps`, `refinamientos`, `lenis`), cargados en ese
