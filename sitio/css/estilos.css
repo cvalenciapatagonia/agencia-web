@@ -1132,7 +1132,7 @@ h3{font-family:var(--serif);font-weight:700;font-size:26px;line-height:1.08;lett
 .rp-wa-hora{font-size:.7em;color:#7f8c84}
 
 /* Ambientes que distinguen la perspectiva de cada persona. */
-.relato-activo .relato-marco{background:#f4ebe2 url(../assets/img/relato-espacios.png) center/100% 100% no-repeat}
+.relato-activo .relato-marco{background:#f4ebe2 url(../assets/img/relato-espacios.webp) center/100% 100% no-repeat}
 .relato-activo .relato-historia .relato-h{color:#16120f;text-shadow:0 1px 5px rgba(250,245,239,.7)}
 
 .rp-ia-compositor{position:absolute;z-index:5;left:5%;right:5%;bottom:4%;min-height:3em;padding:.8em 1em;border-radius:1em;background:#fff;box-shadow:0 1px 6px #0002;font-size:.9em}
@@ -1395,7 +1395,7 @@ h3{font-family:var(--serif);font-weight:700;font-size:26px;line-height:1.08;lett
 
 
 /* ===================== Hero: notebook con 3 sitios en pestañas (de pruebas/hero-sitios.html) =====================
-   Notebook solo (hero-computador-nuevo.png, pantalla apagada). Encima, proyectado con matrix3d
+   Notebook solo (hero-computador-nuevo.webp, pantalla apagada). Encima, proyectado con matrix3d
    en la perspectiva del vidrio, un Chrome de macOS en HTML con 3 pestañas. Cada pestaña muestra
    una captura real del sitio y hace su acción: cotizar (constructora), comprar (almacén) y
    agendar (consulta). Movimiento solo dentro de la pantalla; los chips quedan quietos.

@@ -217,7 +217,7 @@ Scroll suave: Lenis (`js/vendor/lenis.min.js`, `js/suave.js`).
 Idea acordada: el hero muestra **la página web como algo desarrollado** (interacción con el sitio); el relato
 muestra la **utilidad** (lo que pasa con el cliente). Sin teléfono en el hero.
 
-- Foto `assets/img/hero-computador-nuevo.png` (notebook solo). Encima, por `matrix3d` (homografía), una pantalla
+- Foto `assets/img/hero-computador-nuevo.webp` (notebook solo). Encima, por `matrix3d` (homografía), una pantalla
   virtual de 1512×982 con Chrome de macOS en HTML: 3 pestañas y barra de dirección.
 - Capturas de los 3 sitios (hechas en ChatGPT image): `hero-sitio-constructora.webp`, `hero-sitio-mercado.webp`
   (oscuro premium, parecido al almacén del video), `hero-sitio-consulta.webp` (consulta personal de la kinesióloga
