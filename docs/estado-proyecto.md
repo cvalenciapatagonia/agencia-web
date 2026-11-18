@@ -12,6 +12,11 @@
 > - Transición «¿Basta con tenerlo?»: en móvil `min-height:0` (dejaba un hueco vacío de ~330 px). Está fuera de las dos secciones; es una regla
 >   y se puede quitar de `movil.css`.
 > - Servicios: ritmo más compacto y interlineado de títulos más holgado.
+> - **Orden del hero en móvil (pedido del usuario)**: 1º notebook (a sangre bajo la barra), 2º título, subtítulo y botón, 3º chips al final.
+>   Se logra con `.hero{display:flex;flex-direction:column}` y `.hero-texto{display:contents}` + `order`, sin tocar el HTML del hero.
+> - **Botón flotante de WhatsApp (solo móvil)**: `<a class="wa-flotante" data-whatsapp>` al final del `<body>`; círculo de 58 px fijo abajo a la
+>   derecha (respeta `safe-area-inset-bottom`), verde profundo `--wa` con ícono blanco (contraste AA), entrada suave solo con movimiento
+>   permitido. En escritorio está oculto (`display:none`). El pie tiene aire extra para que no tape contenido. `main.js` le asigna el enlace.
 > - Verificado: escritorio (1440 px) con 0 diferencias de estilo; las demás secciones en móvil con 0 diferencias; todos los elementos
 >   táctiles de cabecera, hero y servicios ≥ 44 px; la animación de chips se enciende también en móvil; 0 errores de consola.
 > - **Pendiente**: la sesión corrió en la nube y no pudo leer `C:\dev\Skills_rep\INDEX.md`; no se aplicaron las skills de diseño del
