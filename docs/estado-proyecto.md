@@ -14,6 +14,9 @@
 > - Servicios: ritmo más compacto y interlineado de títulos más holgado.
 > - **Orden del hero en móvil (pedido del usuario)**: 1º notebook (a sangre bajo la barra), 2º título, subtítulo y botón, 3º chips al final.
 >   Se logra con `.hero{display:flex;flex-direction:column}` y `.hero-texto{display:contents}` + `order`, sin tocar el HTML del hero.
+> - **Orden del hero en móvil (revisado)**: 1º título y subtítulo, 2º notebook, 3º chips (antes el notebook iba primero). Así el mensaje se lee
+>   antes que la imagen y el rótulo que vuela a su chip hace un trayecto corto (~120 px). El notebook ya no ocupa el espacio bajo la barra, por lo
+>   que gana altura. Umbral de pantalla baja: 835 px (se ocultan la etiqueta superior, solo a la vista, y «Ver trabajos →»; queda «Proyectos» en el menú).
 > - **Hero = una pantalla completa en móvil**: `.hero{min-height:100svh}`. En móvil se oculta el botón rectangular «Cotizar por WhatsApp» del hero
 >   (sobra con el botón flotante; en escritorio sigue). El notebook se escala por ancho o por alto (`--w:max(167cqw,min(192cqw,…))`) y su alto sale de
 >   `100svh − 76px (zona del botón) − --bloque` (altura medida del texto, que crece algo con el ancho). Los chips quedan abajo (`margin-top:auto`).
