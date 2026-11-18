@@ -15,15 +15,10 @@
 
 .relato-eti{display:flex;align-items:center;gap:14px;font-size:13px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:var(--acero)}
 .relato-eti:not(:has(.relato-num))::before{content:"";width:28px;height:1px;background:currentColor;opacity:.7}
-/* Número grande y pálido delante del nombre del negocio, como una ficha premium (01. 02. 03.) */
-.relato-eti:has(.relato-num){gap:12px}
-.relato-num{font-family:'Inter Tight',system-ui,sans-serif;font-size:clamp(30px,3vw,42px);font-weight:700;
-  letter-spacing:-.02em;line-height:1;text-transform:none;color:currentColor;opacity:.32}
+
 .relato-h em{font-style:italic;color:var(--acero)}
 .relato-p{margin-top:22px;font-size:clamp(18px,1.4vw,22px);line-height:1.5;color:var(--gris);max-width:40ch}
 
-/* ---------- Por defecto: en flujo, es también la versión sin movimiento (<900px, reduced-motion) ---------- */
-.relato-film{display:none}
 .relato-escena{display:none}
 .relato-telefono{display:none}
 /* :where() para que estos :not() no sumen especificidad: si no, esta regla le gana por puntaje a
@@ -83,33 +78,12 @@
   background:radial-gradient(circle at 38% 38%,#3d4c5c,#0a0c10 70%)}
 .relato-ipad-pantalla{position:relative;width:100%;height:100%;overflow:hidden;background:#000;
   border-radius:calc(var(--ipad-w) * .022);font-size:clamp(9px,calc(var(--ipad-w) * .0128),13.5px)}
-/* El clip es 16:9 y la pantalla del iPad no: "contain" muestra el cuadro completo (barras negras,
-   como cualquier video en un iPad) en vez de recortarlo. */
-.relato-activo .relato-film{display:block;position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:0;pointer-events:none}
+
 .relato-ipad-estado{position:absolute;top:0;left:0;right:0;z-index:2;display:flex;align-items:center;justify-content:space-between;
   padding:.75em 1.8em;color:#fff;font-size:.92em;font-weight:600;letter-spacing:.01em;pointer-events:none}
 .rp-bateria{position:relative;display:inline-block;width:2em;height:.95em;border:1px solid currentColor;border-radius:.3em;opacity:.9}
 .rp-bateria::before{content:"";position:absolute;top:1.5px;bottom:1.5px;left:1.5px;right:22%;border-radius:.15em;background:currentColor}
 .rp-bateria::after{content:"";position:absolute;right:-3px;top:30%;width:2px;height:40%;border-radius:0 1px 1px 0;background:currentColor}
-
-/* Notificaciones del dueño: banner de iPadOS (material translúcido), entra y sale por arriba */
-.relato-notifs{position:absolute;z-index:3;top:2.6%;left:50%;width:46%;translate:-50% 0}
-.rn-banner{position:absolute;top:0;left:0;right:0;display:flex;align-items:center;gap:.9em;padding:.85em 1.05em;
-  border-radius:1.55em;color:#1c1712;background:rgba(244,240,234,.84);
-  backdrop-filter:blur(16px) saturate(150%);-webkit-backdrop-filter:blur(16px) saturate(150%);
-  box-shadow:0 12px 32px -12px rgba(0,0,0,.5),inset 0 0 0 .5px rgba(255,255,255,.45);visibility:hidden;opacity:0}
-.rn-ico{flex:none;display:grid;place-items:center;width:2.7em;height:2.7em;border-radius:.66em;background:#fff;
-  box-shadow:0 0 0 .5px rgba(0,0,0,.08)}
-.rn-ico svg{width:58%;height:58%}
-.rn-ico--web{background:var(--acero);color:#fff}
-.rn-ico--perfil{color:#4285f4}
-.rn-ico--wa{background:#25d366;color:#fff}
-.rn-ico--ia{background:#1f1c19;color:#fff}
-.rn-txt{flex:1;min-width:0}
-.rn-cab{display:flex;align-items:baseline;justify-content:space-between;gap:.8em}
-.rn-cab b{overflow:hidden;font-weight:650;white-space:nowrap;text-overflow:ellipsis}
-.rn-cab span{flex:none;font-size:.82em;color:rgba(28,23,18,.5)}
-.rn-cuerpo{margin-top:.12em;font-size:.94em;line-height:1.3;color:rgba(28,23,18,.82)}
 
 /* ---------- Columna izquierda: título breve (uno a la vez) sobre el iPhone, centrados en su columna ---------- */
 .relato-activo .relato-historia{position:absolute;z-index:2;left:var(--lado-dev);top:var(--grupo-top);width:var(--telf-w)}
@@ -162,7 +136,7 @@
 .rp-app--perfil{color:#4285f4}
 .rp-app--wa{background:#25d366;color:#fff}
 .rp-app--ia{background:#1f1c19;color:#fff}
-.rp-app--notas{background:#f3d36b;color:#5b4a14}
+
 .rp-app--tienda{background:#e6834d;color:#fff}
 .rp-app--web{background:#4a7bd0;color:#fff}
 .rp-app--tel{background:#34c759;color:#fff}
@@ -186,7 +160,7 @@
 .rp-ico{flex:none;width:1.2em;height:1.2em}
 .rp-barra{flex:none;display:flex;align-items:center;gap:.6em;padding:.75em 1.1em;font-weight:600;color:var(--tinta);
   background:var(--papel);border-bottom:1px solid rgba(28,23,18,.08)}
-.rp-barra--chat .rp-ico{color:#25d366}
+
 .rp-barra--perfil .rp-ico{color:#4285f4}
 .rp-barra--ia .rp-ico{color:var(--acero)}
 .rp-barra--buscar{margin:.6em .9em;border:none;border-radius:999px;background:#fff;font-weight:500;box-shadow:0 1px 4px rgba(28,23,18,.12)}
@@ -201,10 +175,7 @@
 
 /* 1 · Maps */
 .rp-mapa{flex:1;position:relative;overflow:hidden;background:#e3e9dc}
-.rp-calle{position:absolute;background:#fff;border-radius:2px}
-.rp-calle--a{left:-10%;right:-10%;top:38%;height:.9em;rotate:-8deg}
-.rp-calle--b{top:-10%;bottom:-10%;left:30%;width:.8em;rotate:12deg}
-.rp-calle--c{top:-10%;bottom:-10%;left:70%;width:.6em;rotate:-4deg}
+
 .rp-pin{position:absolute;top:50%;left:52%;width:2em;height:2.8em;translate:-50% -100%}
 .rp-ficha{flex:none;padding:1em 1.1em 1.6em;background:#fff;border-radius:1.4em 1.4em 0 0;box-shadow:0 -6px 20px -10px rgba(28,23,18,.25)}
 .rp-ficha-nombre{font-size:1.12em;font-weight:700;color:var(--tinta)}
@@ -247,8 +218,7 @@
 .relato-activo .relato-final{display:none}
 /* Máscara de cada línea (SplitText mask:"lines"): margen para que no se corten acentos ni descendentes */
 .relato [class*="linea-mask"]{padding-bottom:.08em;margin-bottom:-.08em}
-.historia{position:relative;z-index:2;background:var(--crema);border-radius:40px 40px 0 0}
-.relato-activo+.historia{margin-top:-100vh;margin-top:-100svh;box-shadow:0 -50px 90px -40px rgba(14,11,9,.5)}
+
 @media (max-width:899px){
   .relato-voz{margin:0 20px}
 }
@@ -345,8 +315,7 @@
 .rp-lemsg{position:relative;overflow:hidden;border:1px solid #e1e3e6;border-radius:1em;background:#fff;color:#202124}
 .rp-lemsg-foto{display:block;width:100%;height:7em;object-fit:cover}
 .rp-kai-logo{position:absolute;top:3.75em;right:.65em;width:3.5em;height:3.5em;border:2px solid #fff;border-radius:50%;background:#f3e9dd}
-.kai-nombre{display:flex!important;align-items:center;gap:.45em}
-.kai-logo--mini{width:2.1em;height:2.1em;flex:none}
+
 .rp-lemsg-contenido{padding:.8em .9em}
 .rp-lemsg-contenido>strong{font-size:1.15em;letter-spacing:-.02em}
 .rp-lemsg-contenido p{margin:.3em 0;font-size:.85em;color:#5f6368}
@@ -377,9 +346,6 @@
 .relato-activo .relato-historia{left:calc(17.75% - var(--telf-w) / 2)}
 .relato-activo .relato-escena{right:calc(30.35% - var(--ipad-w) / 2)}
 .relato-activo .relato-rol-negocio{right:calc(30.35% - var(--ipad-w) / 2)}
-
-/* El hero se funde con el fondo de la introducción. */
-.hero-relato-fondo{position:absolute;inset:0;z-index:4;background:var(--crema);opacity:0;visibility:hidden;pointer-events:none;transform-origin:center}
 
 /* La introducción comparte la composición y tipografía del cierre. */
 .intro-recorrido{min-height:100svh;display:grid;place-items:center;background:var(--crema);padding:calc(var(--nav-h) + 24px) var(--lado) 36px;text-align:center}
@@ -457,10 +423,7 @@
 
 /* Mensajes y notificaciones legibles en ambos dispositivos. */
 .relato-telefono-pantalla{font-size:clamp(12px,calc(var(--telf-w) * .045),18px)}
-.relato-notifs{width:min(78%,650px)}
-.rn-banner{font-size:clamp(14px,1.25vw,19px);gap:.8em;padding:.9em 1em}
-.rn-cab b{white-space:normal;line-height:1.2}
-.rn-cuerpo{font-size:1em;line-height:1.35}
+
 .rp-resultados{gap:.8em}
 .rp-lemsg-foto{height:5.5em}
 .rp-resenas .rp-perfil-foto{min-height:4em}
@@ -515,80 +478,3 @@
   .hero-texto{width:48vw}
   .hero h1{font-size:clamp(44px,5vw,78px)}
 }
-
-/* Fondo continuo con el video de los dispositivos integrado a la derecha. */
-.hero-fondo-fluido{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-@media(min-width:900px){
-  .hero-media .escena-img,.hero-media .escena-video{
-    -webkit-mask-image:linear-gradient(90deg,transparent 35%,#000 52%);
-    mask-image:linear-gradient(90deg,transparent 35%,#000 52%);
-  }
-}
-@media(max-width:899px){
-  .hero-fondo-fluido{mask-image:linear-gradient(transparent,#000 24%);-webkit-mask-image:linear-gradient(transparent,#000 24%)}
-}
-
-/* Imagen del computador con el contenido animado ajustado a la pantalla. */
-.hero-mascara-def{position:absolute;pointer-events:none}
-.hero-notebook-final .escena-video{opacity:0}
-.hero-media .escena-img,.hero-media .escena-video{
-  -webkit-mask-image:url("#hero-pantallas");mask-image:url("#hero-pantallas");
-  -webkit-mask-size:100% 100%;mask-size:100% 100%;
-}
-
-/* ---------- Controles del reproductor del iPad: aparecen con cada notificación ----------
-   Cubren solo el área del video (entre las barras negras) y la barra avanza con el video real. */
-.relato-reproductor{display:none}
-.relato-activo .relato-reproductor{
-  --pantalla-h:calc(var(--ipad-h) - var(--ipad-w) * .042);
-  --barra:max(0px,calc((var(--pantalla-h) - var(--ipad-w) * .958 * 9 / 16) / 2));
-  display:flex;flex-direction:column;justify-content:flex-end;position:absolute;z-index:2;left:0;right:0;
-  top:var(--barra);bottom:clamp(38px,var(--barra),100px);padding:0 4% 2.4%;
-  font-size:clamp(13px,calc(var(--ipad-w) * .022),22px);color:#fff;pointer-events:none;
-  background:linear-gradient(180deg,rgba(0,0,0,.42) 0%,rgba(0,0,0,.24) 30%,rgba(0,0,0,.24) 64%,rgba(0,0,0,.6) 100%);
-  visibility:hidden;opacity:0}
-.rr-centro{position:absolute;left:50%;top:58%;translate:-50% -50%;display:flex;align-items:center;gap:2.6em}
-.rr-boton{display:grid;place-items:center;border-radius:50%;background:rgba(14,14,14,.58);box-shadow:inset 0 0 0 1px rgba(255,255,255,.16),0 6px 18px rgba(0,0,0,.3)}
-.rr-salto{width:3.2em;height:3.2em}
-.rr-salto svg{width:62%;height:62%}
-.rr-pausa{display:flex;align-items:center;justify-content:center;gap:.55em;width:4.6em;height:4.6em}
-.rr-pausa i{display:block;width:.55em;height:1.7em;border-radius:.15em;background:#fff}
-.rr-barra{display:flex;align-items:center;gap:.9em}
-.rr-tiempo{flex:none;min-width:2.6em;font-size:.82em;font-weight:600;font-variant-numeric:tabular-nums;text-shadow:0 1px 3px rgba(0,0,0,.5)}
-.rr-tiempo--resta{text-align:right}
-.rr-pista{position:relative;flex:1;height:.36em;overflow:hidden;border-radius:999px;background:rgba(255,255,255,.32)}
-.rr-pista b{position:absolute;top:0;bottom:0;left:0;width:var(--avance,0%);border-radius:inherit;background:#fff}
-
-/* ---------- Notificaciones del dueño: más grandes, blancas, con sombra marcada y más contenido ---------- */
-.relato-activo .relato-notifs{width:min(84%,700px)}
-.relato-activo .rn-banner{align-items:flex-start;padding:1em 1.15em 1.05em;border-radius:1.35em;background:rgba(255,255,255,.96);
-  box-shadow:0 22px 48px -14px rgba(0,0,0,.7),0 0 0 1px rgba(0,0,0,.05);font-size:clamp(13px,calc(var(--ipad-w) * .0185),19px)}
-.relato-activo .rn-ico{width:3em;height:3em;border-radius:.72em}
-.rn-app{font-size:.74em;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:rgba(28,23,18,.5)}
-.relato-activo .rn-cab{margin-top:.15em}
-.relato-activo .rn-cab b{font-size:1.06em}
-.relato-activo .rn-cuerpo{margin-top:.25em;line-height:1.32;color:#2b2520}
-.rn-meta{margin-top:.35em;font-size:.8em;color:rgba(28,23,18,.55)}
-.rn-acciones{display:flex;gap:.5em;margin-top:.7em}
-.rn-acciones span{padding:.42em .9em;border-radius:999px;background:rgba(28,23,18,.07);font-size:.82em;font-weight:600;color:#1a56b0}
-.rn-acciones span+span{color:rgba(28,23,18,.6)}
-
-/* ---------- Notificación compacta y translúcida en la esquina superior izquierda del iPad ----------
-   En los tres negocios las personas aparecen del centro a la derecha del cuadro; a la izquierda hay
-   estantes, muros o vigas. Ahí no tapa rostros. Más angosta y sin fila de botones. */
-.relato-activo .relato-notifs{left:2.2%;right:auto;top:2.4%;translate:none;width:min(40%,360px)}
-.relato-activo .rn-banner{gap:.65em;padding:.7em .8em .75em;border-radius:1.1em;background:rgba(250,248,245,.62);
-  backdrop-filter:blur(18px) saturate(150%);-webkit-backdrop-filter:blur(18px) saturate(150%);
-  box-shadow:0 10px 26px -12px rgba(0,0,0,.45),inset 0 0 0 .5px rgba(255,255,255,.5);
-  font-size:clamp(10.5px,calc(var(--ipad-w) * .0132),14px)}
-.relato-activo .rn-ico{width:2.4em;height:2.4em;border-radius:.6em}
-.relato-activo .rn-acciones{display:none}
-
-/* ---------- Controles del reproductor discretos: el video no pierde protagonismo ---------- */
-.relato-activo .relato-reproductor{font-size:clamp(11px,calc(var(--ipad-w) * .016),16px);
-  background:linear-gradient(180deg,rgba(0,0,0,0) 60%,rgba(0,0,0,.28) 100%)}
-.relato-activo .rr-boton{background:rgba(0,0,0,.2);box-shadow:inset 0 0 0 1px rgba(255,255,255,.14)}
-.relato-activo .rr-centro{opacity:.7}
-.relato-activo .rr-pista{height:.26em;background:rgba(255,255,255,.22)}
-.relato-activo .rr-pista b{background:rgba(255,255,255,.85)}
-.relato-activo .rr-tiempo{opacity:.8}

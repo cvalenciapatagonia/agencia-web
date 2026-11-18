@@ -270,10 +270,9 @@
       gsap.fromTo(colocarTrazos(), { scaleX: 1, opacity: 0 }, { opacity: 1, duration: 0.2, delay: 0.3 });
       return;
     }
-    var fuera = false;
     new IntersectionObserver(function (e) {
-      if (e[0].isIntersecting) { if (tl.progress() < 1) tl.play(); fuera = false; }   // al volver no se repite: queda en su cuadro final
-      else { tl.pause(); fuera = true; }
+      if (e[0].isIntersecting) { if (tl.progress() < 1) tl.play(); }   // al volver no se repite: queda en su cuadro final
+      else tl.pause();
     }).observe(hero);
     if (conMouse) {                                 // pasar el mouse sobre la pantalla del notebook
       var dentro = false;

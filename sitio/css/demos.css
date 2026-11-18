@@ -8,9 +8,7 @@
 .chips-canales.coleccion a.ganado{background:#fff;box-shadow:0 8px 18px -12px rgba(58,40,24,.5);animation:ganar .55s var(--suave)}
 .chips-canales.coleccion a.ganado svg{filter:none;opacity:1}
 @keyframes ganar{0%{transform:scale(1)}40%{transform:scale(1.09)}100%{transform:scale(1)}}
-.vuelo{position:fixed;z-index:41;pointer-events:none;will-change:transform;box-shadow:0 6px 14px -6px rgba(58,40,24,.45)}
-.vuelo svg{display:block;width:100%;height:100%}
-.estela-punto{position:fixed;left:0;top:0;z-index:40;border-radius:50%;pointer-events:none}
+
 /* Al llegar el logo: anillo que se expande con el color del canal */
 .chips-canales a{position:relative}
 .chips-canales a.llega::after{content:"";position:absolute;inset:-2px;border-radius:inherit;box-shadow:0 0 0 2px var(--anillo,#3e5870);pointer-events:none;will-change:transform,opacity;animation:anillo .7s ease-out forwards}
@@ -75,13 +73,8 @@
 
   /* El video ocupa la parte baja; arriba queda un espacio libre para las tarjetas */
   .hero-media{position:relative;inset:auto;margin-top:8px;width:100%;aspect-ratio:3/4;max-height:600px}
-  
-  .escena-img,.escena-video{-webkit-mask-image:linear-gradient(transparent,#000 24%);mask-image:linear-gradient(transparent,#000 24%)}
-  .hero-media::after{height:14%}
-  .tarjeta{font-size:13px}
 
-  .video-control{left:12px;right:auto;bottom:12px;font-size:13px;z-index:3}
-  .video-saltar{left:64px;right:auto;bottom:12px;height:44px;font-size:13px}
+  .hero-media::after{height:14%}
 
   .proyectos,.pasos{grid-template-columns:1fr}
   .proyecto{max-width:520px}
@@ -93,7 +86,7 @@
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
   *,*::before,*::after{transition-duration:.01ms!important;animation-duration:.01ms!important}
-  .tarjeta{transform:none;transition:opacity .2s ease!important}
+  
 }
 
 /* ---------- Logo de Agencia KAI sobre cápsula negra (la barra mantiene su color) ---------- */

@@ -27,9 +27,7 @@
   var gsap = window.gsap, ST = window.ScrollTrigger, Split = window.SplitText;
   var marco = seccion.querySelector('.relato-marco');
   var pin = seccion.querySelector('.relato-pin');
-  var film = seccion.querySelector('.relato-film');
   if (!marco || !pin || !gsap || !ST) return;
-  if (film && (!film.canPlayType || !film.canPlayType('video/mp4'))) film = null;   // rama relato-panel: sin video
   gsap.registerPlugin(ST);
   if (Split) gsap.registerPlugin(Split);
 
@@ -157,10 +155,8 @@
     ST.addEventListener('refresh', colocarFotos);
     var rotulos = $('.relato-rotulos');
     var contenedorRotulos = rotulos && rotulos.parentNode;
-    var pantallaIpad = $('.relato-ipad-pantalla');
     // Con el panel, los títulos de cada escena quedan sobre el iPhone (no dentro del iPad).
-    if (rotulos && pantallaIpad && film) pantallaIpad.appendChild(rotulos);
-    else if (rotulos) marco.appendChild(rotulos);   // sin video: subtítulo centrado bajo los dos dispositivos
+    if (rotulos) marco.appendChild(rotulos);   // subtítulo centrado bajo los dos dispositivos
 
     var hero = document.getElementById('inicio');
     var introRecorrido = document.querySelector('.intro-recorrido');
@@ -280,83 +276,8 @@
 
 
 
-    /* ---------- Video: posición ligada linealmente al scroll ----------
-       Se descarga como Blob cuando la sección está cerca (búsquedas exactas por cuadro, sin
-       depender de range-requests). Nunca se pide un cuadro nuevo mientras el anterior sigue en
-       curso: se espera a que "seeked" resuelva antes de solicitar el cuadro más reciente. */
-    var FPS = 48;
-    var avance = 0, solicitado = -1, cerca = false, cargando = false, terminado = false;
-    var descarga = new AbortController(), fuente = null;
-
-    function sincronizar() {
-      if (!film || !cerca || film.seeking || film.readyState < 2 || !Number.isFinite(film.duration)) return;
-      var ultimo = Math.round(film.duration * FPS) - 1;
-      var cuadro = Math.round(avance * ultimo);
-      if (cuadro === solicitado) return;
-      solicitado = cuadro;
-      film.currentTime = (cuadro + 0.25) / FPS;
-    }
-    function mostrarCuadro() { film.style.opacity = '1'; sincronizar(); }
-
-    // Barra y tiempos del reproductor del iPad: siguen la posición real del clip (14,92 s).
-    var reproductor = $('.relato-reproductor');
-    var relojActual = $('.rr-tiempo--actual'), relojResta = $('.rr-tiempo--resta');
-    var DURACION = 14.9167, segundoMostrado = -1;
-    function mmss(s) { return Math.floor(s / 60) + ':' + ('0' + (s % 60)).slice(-2); }
-    function moverReproductor() {
-      if (!reproductor) return;
-      reproductor.style.setProperty('--avance', (avance * 100).toFixed(2) + '%');
-      var s = Math.floor(avance * DURACION);
-      if (s === segundoMostrado || !relojActual || !relojResta) return;
-      segundoMostrado = s;
-      relojActual.textContent = mmss(s);
-      relojResta.textContent = '-' + mmss(Math.max(0, Math.ceil(DURACION) - s));
-    }
-    function actualizarAvance(p) {
-      // Correspondencia entre el tiempo del relato y los cortes reales del video (14,92 s).
-      // Así Google, Maps/reseñas y WhatsApp/IA coinciden con su respectivo negocio.
-      var puntos = [[0, 0], [0.75, 2.07], [2.8, 4.8], [3.25, 5.15], [5.65, 7.5], [7.0, 8.7], [7.55, 10.2], [8.9, 11.2], [12.5, 14.9167]];
-      var tiempo = Math.min(12.5, Math.max(0, p * 12.5));
-      for (var i = 1; i < puntos.length; i++) {
-        if (tiempo <= puntos[i][0]) {
-          var anterior = puntos[i - 1], siguiente = puntos[i];
-          var fraccion = (tiempo - anterior[0]) / (siguiente[0] - anterior[0]);
-          avance = (anterior[1] + fraccion * (siguiente[1] - anterior[1])) / 14.9167;
-          break;
-        }
-      }
-      moverReproductor();
-      sincronizar();
-    }
-    function cargarFilm() {
-      cargando = true;
-      fetch('assets/video/relato-scroll-1080.mp4', { signal: descarga.signal }).then(function (r) {
-        if (!r.ok) throw new Error('Video no disponible');
-        return r.blob();
-      }).then(function (clip) {
-        if (terminado) return;
-        fuente = URL.createObjectURL(clip);
-        film.preload = 'auto';
-        film.src = fuente;
-      }).catch(function () { /* queda la pantalla negra del iPad */ });
-    }
-    var observador = new IntersectionObserver(function (entradas) {
-      if (terminado) return;
-      cerca = entradas[0].isIntersecting;
-      if (cerca && !cargando) cargarFilm();
-      sincronizar();
-    }, { rootMargin: '100% 0px' });
-
-    if (film) {
-      film.style.opacity = '0';
-      film.addEventListener('loadeddata', sincronizar);
-      film.addEventListener('seeked', mostrarCuadro);
-      observador.observe(pin);
-    }
-
     var tl = gsap.timeline({
       defaults: { ease: 'none' },
-      onUpdate: function () { if (this.scrollTrigger) actualizarAvance(Math.min(1, this.time() / 12.5)); },
       paused: true   // se reproduce por capítulos (ver bloque 8); ya no va ligada al scroll
     });
     // Entrada del escenario (primeras ~0,9 pantallas fijadas): aparece el fondo y los dispositivos crecen
@@ -975,20 +896,10 @@
     }
 
     // El panel de respuesta de WhatsApp ya no se muestra: la notificación ampliada trae el mismo
-    // mensaje y su botón "Responder", y el panel tapaba la barra del reproductor.
+    // mensaje y su botón "Responder".
     var respuesta = $('.relato-respuesta');
 
     return function () {
-      terminado = true;
-      descarga.abort();
-      observador.disconnect();
-      if (film) {
-        film.removeEventListener('loadeddata', sincronizar);
-        film.removeEventListener('seeked', mostrarCuadro);
-        film.removeAttribute('src');
-        film.load();
-      }
-      if (fuente) URL.revokeObjectURL(fuente);
       if (entrada.scrollTrigger) entrada.scrollTrigger.kill();
       entrada.kill();
       if (introRecorrido && introLugar.parentNode) {
@@ -1021,8 +932,7 @@
       ST.removeEventListener('refresh', colocarFotos);
       marco.classList.remove('con-fotos');
       seccion.classList.remove('relato-activo');
-      if (reproductor) reproductor.style.removeProperty('--avance');
-      gsap.set([marco, film, telefono, reproductor, reproductor && reproductor.querySelector('.rr-pausa')].concat(caps, ideas, pantallas, apps, notifs, tocados, [respuesta, cierre, cierreLinea], Array.from(cierreTexto || [])).filter(Boolean), { clearProps: 'all' });
+      gsap.set([marco, telefono].concat(caps, ideas, pantallas, apps, notifs, tocados, [respuesta, cierre, cierreLinea], Array.from(cierreTexto || [])).filter(Boolean), { clearProps: 'all' });
     };
   });
 

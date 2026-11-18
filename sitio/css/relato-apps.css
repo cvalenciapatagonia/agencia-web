@@ -209,17 +209,7 @@
 .relato-activo .relato-marco:has(.relato-guion) .relato-historia{left:auto;top:auto;
   right:calc(var(--borde-der) + var(--ipad-w) - var(--telf-w) * .15);bottom:4vh;width:var(--telf-w)}
 .relato-activo .relato-marco:has(.relato-guion) .relato-historia>.relato-telefono{margin-top:0;width:var(--telf-w)}
-/* Al terminar: volver a ver un capítulo */
-.relato-repetir{display:none}
-.relato-activo .relato-repetir{display:block;margin-top:clamp(26px,4vh,46px)}
-.relato-repetir>p{margin:0 0 .9em;color:#3e5870;font-size:clamp(13px,1vw,16px);font-weight:650;letter-spacing:.08em;text-transform:uppercase}
-.rr-opciones{display:flex;flex-wrap:wrap;justify-content:center;gap:.6em}
-.rr-opciones button{display:inline-flex;align-items:center;gap:.5em;min-height:44px;padding:.45em 1.1em .45em .5em;border:0;border-radius:999px;
-  background:#fff;color:#16120f;font:600 clamp(14px,1.05vw,17px)/1 var(--sans);cursor:pointer;
-  box-shadow:0 1px 2px rgba(58,40,24,.1),0 10px 24px -16px rgba(58,40,24,.5);transition:transform .2s var(--suave),box-shadow .2s}
-.rr-opciones button svg{width:1.9em;height:1.9em;padding:.3em;box-sizing:border-box;border-radius:50%;background:#f4ebe2}
-@media (hover:hover){.rr-opciones button:hover{transform:translateY(-2px);box-shadow:0 2px 4px rgba(58,40,24,.12),0 16px 30px -16px rgba(58,40,24,.55)}}
-.rr-opciones button:focus-visible{outline:2px solid #3e5870;outline-offset:3px}
+
 .rpa-fila>span:last-child{flex:none}
 
 /* ---------- Rama relato-panel · ronda 4: índice con estados, dos espacios (cliente / negocio) ---------- */

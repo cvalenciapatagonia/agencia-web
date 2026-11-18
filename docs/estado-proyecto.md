@@ -1,4 +1,16 @@
-# Estado del proyecto · 2026-11-16
+# Estado del proyecto · 2026-11-18
+
+> **Limpieza de código y archivos (2026-11-18)**: `sitio/` pasó de 184 MB a 2,4 MB sin cambiar nada de lo que se ve ni se hace
+> (comparado con la versión anterior: estilos calculados idénticos, misma estructura del relato, mismas 44 peticiones).
+> - **CSS** dividido en `css/` (`base`, `demos`, `relato`, `hero-notebook`, `relato-apps`, `refinamientos`, `lenis`), cargados en ese
+>   orden (el orden importa: hay capas que se sobrescriben). Se eliminó el CSS sin elementos (antigua maqueta 3D, hero con video,
+>   reproductor del iPad, notificaciones del iPad): 2.186 → ~1.550 líneas.
+> - **JS**: `main.js` 640 → 104 líneas (se quitó el hero con video y el recorrido 3D, que no tenían elementos en el HTML);
+>   `relato.js` sin el bloque de video (el HTML no tiene `<video>`). Se quitó la maqueta 3D, `pruebas/`, `previews/` y las dependencias.
+> - **Assets**: se quitaron los videos del hero y del relato (29 MB, nunca se pedían), cuadros sobrantes e imágenes sin uso.
+>   Los dos PNG pesados pasaron a WebP.
+> - Si se vuelve a un relato con video, hay que reponer `<video class="relato-film">` y el reproductor: están en el historial de git.
+> - Ojo al limpiar CSS: algunas clases las crea el JS (`rr-q--*` sale de `rg-quien--*`) o las librerías (`lenis*`); no borrarlas por «no estar en el HTML».
 
 > **Ícono protagonista del relato (2026-11-16)**: cada capítulo muestra su ícono grande (círculo blanco, ~56 px) junto a
 > «Capítulo N de 6 · Canal», con entrada de rebote. Al terminar el capítulo (tras leer «Cómo lo logramos»), el ícono vuela en
