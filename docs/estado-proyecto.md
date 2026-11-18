@@ -23,6 +23,11 @@
 >   El notebook se centra en un punto medio (eje al 73 % de la foto: la tapa, 76 %, y el equipo entero, 70 %, quedan a igual distancia del centro); el borde derecho de la foto se funde con una máscara.
 >   La zona del notebook no crece más de lo que ocupa el equipo (`88px + 57.7vw`); el sobrante queda entre el subtítulo y el notebook.
 >   Umbral de pantalla baja (etiqueta superior oculta solo a la vista): 780 px de alto.
+> - **Transición y relato en móvil (arreglos rápidos)**: `intro-recorrido{padding:8px … 28px}` (bajo el hero ya hay 76 px reservados para el botón flotante),
+>   `relato-intro{padding-block:36px 28px}` (los dos títulos seguidos se leen como una secuencia) y `.relato-voz{margin:0}`: la regla heredada
+>   `margin:0 20px` dejaba la tarjeta de texto 20 px más angosta que la foto y asomaba el fondo oscuro `#33302d` de `.relato-cap`.
+>   **Pendiente (no se hizo, decisión de diseño)**: en móvil el relato es un flujo simple de foto + tarjeta; la experiencia del iPhone/iPad con las
+>   apps solo existe en escritorio. El botón flotante de WhatsApp tapa el final de algunas líneas de texto al desplazar.
 > - **Hero = una pantalla completa en móvil**: `.hero{min-height:100svh}`. En móvil se oculta el botón rectangular «Cotizar por WhatsApp» del hero
 >   (sobra con el botón flotante; en escritorio sigue). El notebook se escala por ancho o por alto (`--w:max(167cqw,min(192cqw,…))`) y su alto sale de
 >   `100svh − 76px (zona del botón) − --bloque` (altura medida del texto, que crece algo con el ancho). Los chips quedan abajo (`margin-top:auto`).

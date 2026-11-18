@@ -82,8 +82,13 @@
 @keyframes wa-entra{from{opacity:0;transform:translateY(14px) scale(.8)}to{opacity:1;transform:none}}
 @media (max-width:899px){
 
-  /* ---------- Transición «¿Basta con tenerlo?»: en móvil no ocupa una pantalla entera (dejaba un hueco vacío) ---------- */
-  .intro-recorrido{min-height:0;padding:64px var(--lado) 48px}
+  /* ---------- Transición hero → «¿Basta con tenerlo?» → relato (flujo móvil) ----------
+     Bajo el hero ya hay 76 px reservados para el botón flotante, así que la transición casi no lleva aire arriba;
+     y los dos títulos seguidos se acercan para leerse como una sola secuencia. */
+  .intro-recorrido{min-height:0;padding:8px var(--lado) 28px}
+  .relato-intro{padding-block:36px 28px}
+  /* Las tarjetas de texto ocupan el ancho de la foto (antes quedaban 20 px más angostas y dejaban ver el fondo oscuro de respaldo) */
+  .relato-voz{margin:0}
 
   /* ---------- Servicios ---------- */
   #servicios{padding-block:64px 56px}
