@@ -1,0 +1,103 @@
+/* =========================================================
+   Versión móvil (hasta 899 px). Se carga AL FINAL: gana la cascada sobre las reglas de escritorio.
+   Secciones adaptadas: hero y servicios. El resto sigue con las reglas genéricas de demos.css.
+   Criterios: sin desborde horizontal, botones táctiles de ≥44 px, texto ≥14 px, nada fuera de pantalla.
+   ========================================================= */
+/* El botón flotante solo existe en móvil */
+.wa-flotante{display:none}
+
+@media (max-width:899px){
+
+  /* Red de seguridad: nada puede ensanchar el documento */
+  html,body{overflow-x:clip}
+
+  /* ---------- Barra superior: sin botón «Cotizar» (WhatsApp es el botón flotante) ---------- */
+  .btn-wa-nav{display:none}
+
+  /* ---------- Hero · orden en móvil: 1º título y texto, 2º notebook, 3º chips (el rótulo vuela al chip, que queda justo debajo) ----------
+     .hero-texto deja de ser una caja (display:contents): sus hijos se ordenan directamente dentro del hero. */
+  .hero{display:flex;flex-direction:column;align-items:stretch;min-height:100svh;padding-top:76px;padding-bottom:calc(76px + env(safe-area-inset-bottom,0px))}
+  .hero-texto{display:contents}
+  .hero-texto>*{order:1;margin-inline:var(--lado)}
+  .hero-media{order:2;margin-top:auto}
+  .hero-texto>.chips-desarrollo{order:3;width:auto;margin-top:0;margin-bottom:0}
+  /* Texto del hero centrado (la etiqueta lleva un padding igual a su espaciado de letras para quedar bien centrada) */
+  .hero-texto{text-align:center}
+  .hero-texto>.etiqueta{margin-top:4px;font-size:12px;padding-left:.22em}
+  .hero h1{text-wrap:balance;font-size:clamp(34px,10.4vw,46px);margin-top:8px}
+  .hero-sub{text-wrap:balance;font-size:clamp(16px,4.3vw,19px);margin-top:10px}
+  /* Sin botón de WhatsApp ni «Ver trabajos» en el hero: WhatsApp es el botón flotante y los trabajos están en el menú («Proyectos») */
+  .hero-acciones{display:none}
+
+  /* ---------- Hero · chips «qué desarrollamos»: compactos, 2 columnas × 3 filas ---------- */
+  .chips-desarrollo{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;max-width:none;padding-top:10px}
+  .chips-desarrollo{text-align:left}
+  .chips-desarrollo li{min-width:0}
+  .chips-desarrollo a{display:flex;width:100%;min-height:44px;padding:4px 10px 4px 5px;gap:8px;font-size:14px;line-height:1.15}
+  .chips-desarrollo small{display:none}
+  .chips-desarrollo .chip-txt{min-width:0}
+  .chips-desarrollo .chip-nom{font-size:14px;font-weight:600;overflow-wrap:anywhere}
+
+  /* ---------- Hero · notebook: la foto se recorta sobre el equipo y la pantalla animada se ve completa ---------- */
+  /* Alto del notebook = pantalla − (zona del botón flotante + aire bajo la barra + bloque de texto y chips); nunca menos de 300 px ni más de lo que ocupa el equipo (el sobrante queda entre el subtítulo y el notebook) */
+  .hero-media{flex:none;aspect-ratio:auto;height:clamp(300px,calc(100svh - 76px - 76px - var(--bloque,calc(317px + (100vw - 390px) * .28))),calc(88px + 57.7vw));max-height:none;overflow:hidden}
+  /* La foto se escala por ancho o por alto (el menor), entre 167cqw y 180cqw. Se centra la PANTALLA del equipo (punto medio entre el eje de la tapa, 76 %, y el del equipo entero, 70 %: 73 %, así la tapa y el cuerpo quedan a igual distancia del centro
+     del ancho de la foto), no el equipo entero: así la tapa queda en el centro y la base asoma a la izquierda. El borde derecho de la
+     foto se funde con el fondo (máscara) para que no se vea un corte cuando la foto termina antes que el contenedor. */
+  .hs-hero .hs-esc{--w:max(167cqw,min(180cqw,calc((100cqh - 88px) * 3.12)));width:var(--w);
+    left:min(0px,calc(50cqw - .73 * var(--w)));top:calc(10px - .1576 * var(--w))}
+  .hs-hero .hs-esc>img{-webkit-mask-image:linear-gradient(to left,transparent 0,#000 7%);mask-image:linear-gradient(to left,transparent 0,#000 7%)}
+  .hs-hero .hero-media::after{display:block;height:24%}
+  .hs-hero .hero-media::before{content:"";position:absolute;inset:0 0 auto 0;height:16%;z-index:1;pointer-events:none;background:linear-gradient(to bottom,var(--crema),transparent)}
+
+  /* Rótulo bajo el notebook: ancho casi completo, centrado y con texto que puede pasar a 2 líneas */
+  .hs-hero .hero-media>.hs-rotulo{left:5%;width:90%;bottom:3.5%;font-size:13px;text-align:center}
+  .hs-rotulo .hs-ro-item p{white-space:normal}
+  .hs-ro-textos{height:4.6em}
+  .hs-ro-tit span{font-size:1.5em}
+  .hs-ro-txt{line-height:1.3}
+
+  /* ---------- Pantallas bajas (≤ 780 px de alto, p. ej. móvil con barras del navegador) ----------
+     La etiqueta superior se oculta solo a la vista (sigue en el HTML para lectores de pantalla y buscadores):
+     así el hero sigue cabiendo en la pantalla. */
+  @media (max-height:780px){
+    .hero{--bloque:calc(293px + (100vw - 390px) * .28)}
+    .hero-texto>.etiqueta{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  }
+
+  /* ---------- Botón flotante de WhatsApp: circular, fijo abajo a la derecha ---------- */
+  .wa-flotante{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:40;
+    display:grid;place-items:center;width:58px;height:58px;border-radius:50%;
+    background:var(--wa);color:#fff;text-decoration:none;
+    box-shadow:0 0 0 3px #fff,0 12px 26px -8px rgba(15,122,62,.6);
+    -webkit-tap-highlight-color:transparent;transition:transform .25s var(--suave),background-color .25s}
+  .wa-flotante svg{width:30px;height:30px}
+  .wa-flotante:active{transform:scale(.94);background:#0b6a35}
+  .wa-flotante:focus-visible{outline:3px solid var(--tinta);outline-offset:4px}
+  .pie{padding-bottom:calc(48px + 58px)}
+}
+@media (max-width:899px) and (prefers-reduced-motion:no-preference){
+  .wa-flotante{animation:wa-entra .5s var(--suave) 1s both}
+}
+@keyframes wa-entra{from{opacity:0;transform:translateY(14px) scale(.8)}to{opacity:1;transform:none}}
+@media (max-width:899px){
+
+  /* ---------- Transición hero → «¿Basta con tenerlo?» → relato (flujo móvil) ----------
+     Bajo el hero ya hay 76 px reservados para el botón flotante, así que la transición casi no lleva aire arriba;
+     y los dos títulos seguidos se acercan para leerse como una sola secuencia. */
+  .intro-recorrido{min-height:0;padding:8px var(--lado) 28px}
+  .relato-intro{padding-block:36px 28px}
+  /* Las tarjetas de texto ocupan el ancho de la foto (antes quedaban 20 px más angostas y dejaban ver el fondo oscuro de respaldo) */
+  .relato-voz{margin:0}
+
+  /* ---------- Servicios ---------- */
+  #servicios{padding-block:64px 56px}
+  #servicios .seccion-cab h2{line-height:1.02}
+  #servicios .seccion-intro{text-wrap:pretty}
+  .servicios{margin-top:32px}
+  .servicio{padding:28px 0 12px;border-left:0}
+  .servicio-num{margin-bottom:14px}
+  .servicio h3{line-height:1.05}
+  .servicio ul{margin-top:20px;padding-top:18px}
+  .servicio ul li{line-height:1.4}
+}

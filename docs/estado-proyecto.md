@@ -1,5 +1,49 @@
 # Estado del proyecto · 2026-11-18
 
+> **Versión móvil: hero y servicios (2026-11-18)**: nuevo archivo `css/movil.css`, cargado **al final** (gana la cascada) y con todo
+> dentro de `@media (max-width:899px)`. Solo se adaptaron el hero y servicios; el resto sigue genérico.
+> - Causa del problema principal: los chips del hero medían más que la pantalla y ensanchaban todo el documento (602 px en un móvil de
+>   390), con lo que la cabecera se estiraba y el botón «Cotizar» y el «Menú» quedaban fuera de pantalla. Ya no hay desborde en 320, 360,
+>   390, 412 ni 768 px.
+> - Chips «qué desarrollamos»: 2 columnas × 3 filas, solo ícono + nombre (sin la frase corta), alto táctil ≥ 46 px.
+> - Notebook del hero: la foto se recorta sobre el equipo (`--w:192cqw`, `left:-84.5cqw`, `top:-24cqw`) y la pantalla animada se ve entera;
+>   el rótulo («Cotizador en línea…») va centrado a casi todo el ancho y puede pasar a 2 líneas. La animación y la proyección `matrix3d`
+>   no se tocaron (hero.js mide `esc.clientWidth`).
+> - Transición «¿Basta con tenerlo?»: en móvil `min-height:0` (dejaba un hueco vacío de ~330 px). Está fuera de las dos secciones; es una regla
+>   y se puede quitar de `movil.css`.
+> - Servicios: ritmo más compacto y interlineado de títulos más holgado.
+> - **Orden del hero en móvil (pedido del usuario)**: 1º notebook (a sangre bajo la barra), 2º título, subtítulo y botón, 3º chips al final.
+>   Se logra con `.hero{display:flex;flex-direction:column}` y `.hero-texto{display:contents}` + `order`, sin tocar el HTML del hero.
+> - **Orden del hero en móvil (revisado)**: 1º título y subtítulo, 2º notebook, 3º chips (antes el notebook iba primero). Así el mensaje se lee
+>   antes que la imagen y el rótulo que vuela a su chip hace un trayecto corto (~120 px). El notebook ya no ocupa el espacio bajo la barra, por lo
+>   que gana altura. Umbral de pantalla baja: 835 px (se ocultan la etiqueta superior, solo a la vista, y «Ver trabajos →»; queda «Proyectos» en el menú).
+> - **Texto del hero centrado en móvil** (`.hero-texto{text-align:center}`; los chips mantienen su texto a la izquierda; la etiqueta lleva `padding-left:.22em` para compensar su espaciado de letras).
+> - **Móvil: sin «Ver trabajos» ni «Cotizar» de la barra (pedido del usuario)**: `.hero-acciones{display:none}` y `.btn-wa-nav{display:none}` bajo 900 px.
+>   Los trabajos quedan en el menú («Proyectos», probado: lleva a la sección y cierra el menú); WhatsApp, en el botón circular flotante. En escritorio no cambia.
+>   El notebook se centra en un punto medio (eje al 73 % de la foto: la tapa, 76 %, y el equipo entero, 70 %, quedan a igual distancia del centro); el borde derecho de la foto se funde con una máscara.
+>   La zona del notebook no crece más de lo que ocupa el equipo (`88px + 57.7vw`); el sobrante queda entre el subtítulo y el notebook.
+>   Umbral de pantalla baja (etiqueta superior oculta solo a la vista): 780 px de alto.
+> - **Transición y relato en móvil (arreglos rápidos)**: `intro-recorrido{padding:8px … 28px}` (bajo el hero ya hay 76 px reservados para el botón flotante),
+>   `relato-intro{padding-block:36px 28px}` (los dos títulos seguidos se leen como una secuencia) y `.relato-voz{margin:0}`: la regla heredada
+>   `margin:0 20px` dejaba la tarjeta de texto 20 px más angosta que la foto y asomaba el fondo oscuro `#33302d` de `.relato-cap`.
+>   **Pendiente (no se hizo, decisión de diseño)**: en móvil el relato es un flujo simple de foto + tarjeta; la experiencia del iPhone/iPad con las
+>   apps solo existe en escritorio. El botón flotante de WhatsApp tapa el final de algunas líneas de texto al desplazar.
+> - **Hero = una pantalla completa en móvil**: `.hero{min-height:100svh}`. En móvil se oculta el botón rectangular «Cotizar por WhatsApp» del hero
+>   (sobra con el botón flotante; en escritorio sigue). El notebook se escala por ancho o por alto (`--w:max(167cqw,min(192cqw,…))`) y su alto sale de
+>   `100svh − 76px (zona del botón) − --bloque` (altura medida del texto, que crece algo con el ancho). Los chips quedan abajo (`margin-top:auto`).
+>   En pantallas de ≤ 790 px de alto la etiqueta «Desarrollo web y apps · Chile» se oculta solo a la vista (sigue en el HTML) para que quepa todo.
+>   Medido: el hero mide exactamente el alto de pantalla en 360×740, 360×800, 390×750, 390×780, 390×844, 412×800, 412×915 y 430×932, y el botón
+>   flotante no tapa ningún chip. Por debajo de ~720 px de alto el hero es algo más alto que la pantalla (los chips asoman al desplazar).
+>   Ojo: `.hero` heredaba `align-items:center` de escritorio; en móvil va `stretch`.
+> - **Botón flotante de WhatsApp (solo móvil)**: `<a class="wa-flotante" data-whatsapp>` al final del `<body>`; círculo de 58 px fijo abajo a la
+>   derecha (respeta `safe-area-inset-bottom`), verde profundo `--wa` con ícono blanco (contraste AA), entrada suave solo con movimiento
+>   permitido. En escritorio está oculto (`display:none`). El pie tiene aire extra para que no tape contenido. `main.js` le asigna el enlace.
+> - Verificado: escritorio (1440 px) con 0 diferencias de estilo; las demás secciones en móvil con 0 diferencias; todos los elementos
+>   táctiles de cabecera, hero y servicios ≥ 44 px; la animación de chips se enciende también en móvil; 0 errores de consola.
+> - **Pendiente**: la sesión corrió en la nube y no pudo leer `C:\dev\Skills_rep\INDEX.md`; no se aplicaron las skills de diseño del
+>   proyecto (`high-end-visual-design`, `premium-web-design`, `apple-design`). Revisar el resultado con ellas desde el PC y medir fps en un
+>   móvil real. Revisión hecha solo con Chrome sin ventana (sin GPU).
+
 > **Limpieza de código y archivos (2026-11-18)**: `sitio/` pasó de 184 MB a 2,4 MB sin cambiar nada de lo que se ve ni se hace
 > (comparado con la versión anterior: estilos calculados idénticos, misma estructura del relato, mismas 44 peticiones).
 > - **CSS** dividido en `css/` (`base`, `demos`, `relato`, `hero-notebook`, `relato-apps`, `refinamientos`, `lenis`), cargados en ese
