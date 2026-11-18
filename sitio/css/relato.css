@@ -416,8 +416,6 @@
 .rp-chatgpt .rp-fuente{border:1px solid #dedede;background:#f7f7f7;color:#444}
 .rp-ia-compositor{border:1px solid #dedede;border-radius:1.4em;box-shadow:0 1px 3px #0001}
 
-
-
 /* Acercar los dispositivos al centro del encuadre. */
 .relato-activo .relato-marco{--ipad-w:min(calc(var(--dev-h) * 1.26),calc(56vw - 28px))}
 .relato-activo .relato-historia{left:calc(20% - var(--telf-w) / 2)}
@@ -512,7 +510,6 @@
 .rp-ia-fotos img:nth-child(2){object-position:80% center}
 .rp-ia-ejemplo{display:block;margin-top:.5em;color:#777;font-size:.76em}
 
-
 /* El texto y el computador del video comparten la portada con espacio equivalente. */
 @media(min-width:900px){
   .hero-texto{width:48vw}
@@ -595,5 +592,3 @@
 .relato-activo .rr-pista{height:.26em;background:rgba(255,255,255,.22)}
 .relato-activo .rr-pista b{background:rgba(255,255,255,.85)}
 .relato-activo .rr-tiempo{opacity:.8}
-
-

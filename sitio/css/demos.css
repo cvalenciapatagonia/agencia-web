@@ -1,189 +1,5 @@
-/* ---------- Demostraciones (tarjetas que imitan apps) ---------- */
-.demo{font-size:15px;line-height:1.4;color:#202124;font-family:var(--sans)}
-.demo-google,.demo-maps,.demo-ia,.demo-wa,.demo-gbp{background:#fff;border-radius:var(--r-lg);box-shadow:0 30px 60px -28px rgba(58,40,24,.5),0 2px 8px rgba(58,40,24,.08)}
-.demo-google,.demo-maps,.demo-ia,.demo-gbp{padding:18px}
-.demo svg{width:1em;height:1em;flex:none}
-.demo-app{display:flex;align-items:center;gap:8px;font-size:.87em;font-weight:600;color:#5f6368}
-.demo-app .logo{width:20px;height:20px}
-.demo-app .logo-maps{width:16px;height:22px}
-
-/* Secuencia: los elementos con data-t aparecen al activarse la escena (solo con JS) */
-.js .demo [data-t]{opacity:0;transform:translateY(6px);transition:opacity .35s ease,transform .45s var(--suave)}
-.js .demo [data-t].ver{opacity:1;transform:none}
-.js .demo [data-t].fuera{opacity:0!important}
-.js .demo [data-escribir]{opacity:1;transform:none}
-.tecleando::after{content:"";display:inline-block;width:1.5px;height:1.05em;margin-left:1px;vertical-align:-.15em;background:#1a73e8;animation:parpadeo .8s steps(1) infinite}
-@keyframes parpadeo{50%{opacity:0}}
-
-/* Google */
-.g-barra{display:flex;align-items:center;gap:10px;margin-top:12px;padding:11px 16px;border-radius:999px;border:1px solid #dfe1e5;box-shadow:0 1px 6px rgba(32,33,36,.12);min-height:46px}
-.g-lupa{color:#9aa0a6}
-.g-consulta{color:#202124}
-.g-resultado{margin-top:16px;padding-top:14px;border-top:1px solid #ebebeb}
-.g-sitio{display:flex;align-items:center;gap:10px}
-.g-favicon{display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:#3a302a;color:#fff;font-size:.7em;font-weight:600;letter-spacing:.02em}
-.g-nombre{display:block;font-size:.9em;color:#202124}
-.g-url{display:block;font-size:.8em;color:#4d5156}
-.g-titulo{margin-top:8px;font-size:1.2em;line-height:1.3;color:#1a0dab}
-.g-texto{margin-top:4px;font-size:.9em;color:#4d5156}
-.g-enlaces{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
-.g-enlaces span{font-size:.82em;color:#1a0dab;border:1px solid #dadce0;border-radius:999px;padding:3px 10px}
-.g-tenue{display:grid;gap:7px}
-.g-tenue i{display:block;height:9px;border-radius:5px;background:#f1f3f4}
-.g-tenue i:first-child{width:55%;height:12px;background:#e8eaed}
-.g-tenue i:last-child{width:80%}
-
-/* Google Maps */
-.m-mapa{position:relative;height:130px;margin-top:12px;border-radius:var(--r-sm);overflow:hidden;background:#eef0e8}
-.m-calle{position:absolute;background:#fff;box-shadow:0 0 0 1px #e2e4dc}
-.m-calle-a{left:-10%;right:-10%;top:58%;height:9px;transform:rotate(-8deg)}
-.m-calle-b{top:-10%;bottom:-10%;left:62%;width:9px;transform:rotate(12deg)}
-.m-calle-c{top:-10%;bottom:-10%;left:22%;width:6px;transform:rotate(-20deg)}
-.m-parque{position:absolute;left:68%;top:8%;width:26%;height:36%;border-radius:10px;background:#cde8c4}
-.m-ruta{position:absolute;left:24%;top:62%;width:41%;height:4px;border-radius:2px;background:#4285f4;transform:rotate(-8deg);transform-origin:left center}
-.js .demo .m-ruta[data-t]{transform:rotate(-8deg) scaleX(0);transition:transform .9s var(--suave),opacity .2s}
-.js .demo .m-ruta[data-t].ver{transform:rotate(-8deg) scaleX(1)}
-.m-yo{position:absolute;left:calc(24% - 7px);top:calc(62% - 6px);width:14px;height:14px;border-radius:50%;background:#4285f4;border:2.5px solid #fff;box-shadow:0 0 0 6px rgba(66,133,244,.2)}
-.m-pin{position:absolute;left:calc(64% - 15px);top:calc(54% - 34px);width:30px!important;height:34px!important;color:#ea4335;filter:drop-shadow(0 3px 3px rgba(0,0,0,.25))}
-.m-nombre{margin-top:14px;font-size:1.2em;font-weight:500;color:#202124}
-.m-info{margin-top:2px;font-size:.9em;color:#5f6368}
-.m-abierto{color:#188038;font-weight:500}
-.m-dir{margin-top:2px;font-size:.9em;color:#5f6368}
-.m-acciones{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:14px}
-.m-acc{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:.78em;color:#1a73e8;font-weight:500;text-align:center}
-.m-acc-ico{display:grid;place-items:center;width:40px;height:40px;border-radius:50%;border:1px solid #dadce0;color:#1a73e8;font-size:18px}
-.m-principal .m-acc-ico{background:#1a73e8;border-color:#1a73e8;color:#fff}
-.m-acc-wa{color:#25d366;font-size:20px}
-.m-pulso.efecto .m-acc-ico{animation:pulso 1.4s var(--suave) 2}
-@keyframes pulso{0%{box-shadow:0 0 0 0 rgba(26,115,232,.45);background:#e8f0fe}70%{box-shadow:0 0 0 12px rgba(26,115,232,0);background:#e8f0fe}100%{box-shadow:0 0 0 0 rgba(26,115,232,0)}}
-
-/* WhatsApp */
-.demo-wa{overflow:hidden;font-size:.97em}
-.wa-cabecera{display:flex;align-items:center;gap:10px;padding:12px 14px;background:#008069;color:#fff}
-.wa-avatar{display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:#3a302a;font-size:.78em;font-weight:600;flex:none}
-.wa-quien{flex:1;min-width:0;line-height:1.25}
-.wa-quien strong{display:block;font-weight:600;font-size:.98em}
-.wa-estado{display:grid;font-size:.8em;color:#d9f2ea}
-.wa-estado>span{grid-area:1/1}
-.wa-escribe{background:#008069}
-.wa-logo{width:22px!important;height:22px!important;color:#fff;opacity:.9}
-.wa-chat{display:grid;gap:6px;padding:12px 12px 16px;background:#efeae2;
-  background-image:radial-gradient(rgba(0,0,0,.035) 1px,transparent 1.5px);background-size:14px 14px}
-.wa-dia{justify-self:center;font-size:.75em;color:#54656f;background:#fff;border-radius:8px;padding:2px 10px;box-shadow:0 1px .5px rgba(11,20,26,.13)}
-.wa-msg{position:relative;max-width:84%;padding:7px 10px 8px;border-radius:10px;font-size:.93em;color:#111b21;box-shadow:0 1px .5px rgba(11,20,26,.13)}
-.wa-sale{justify-self:end;background:#d9fdd3;border-top-right-radius:2px}
-.wa-entra{justify-self:start;background:#fff;border-top-left-radius:2px}
-.wa-hora{float:right;display:inline-flex;align-items:center;gap:3px;margin:6px 0 -4px 10px;font-size:.72em;color:#667781}
-.wa-ticks{width:16px!important;height:11px!important;color:#8696a0;transition:color .3s}
-.wa-ticks.efecto{color:#53bdeb}
-.wa-enlace{display:flex;align-items:center;gap:6px;margin-top:6px;padding:7px 9px;border-radius:7px;background:#f0f2f5;color:#027eb5;font-size:.92em;word-break:break-all}
-
-/* Asistente IA */
-.ia-icono{display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,#3e5870,#7f97ad);color:#fff;font-size:14px}
-.ia-pregunta{margin:14px 0 0 auto;width:fit-content;max-width:88%;padding:9px 14px;border-radius:18px 18px 4px 18px;background:#f1ece6;color:#202124}
-.ia-zona{display:grid;margin-top:14px}
-.ia-zona>*{grid-area:1/1}
-.ia-pensando{display:flex;gap:5px;align-self:start;padding:10px 0}
-.ia-pensando i{width:7px;height:7px;border-radius:50%;background:#8a9bab;animation:pensar 1s ease-in-out infinite}
-.ia-pensando i:nth-child(2){animation-delay:.15s}
-.ia-pensando i:nth-child(3){animation-delay:.3s}
-@keyframes pensar{0%,80%,100%{transform:translateY(0);opacity:.5}40%{transform:translateY(-4px);opacity:1}}
-.ia-respuesta>p:first-child{color:#202124}
-.ia-ficha{display:flex;gap:12px;align-items:flex-start;margin-top:12px;padding:12px;border:1px solid #e6e1da;border-radius:var(--r-sm)}
-.ia-ficha-pin{display:grid;place-items:center;width:34px;height:34px;border-radius:10px;background:#fce8e6;color:#ea4335;font-size:18px;flex:none}
-.ia-ficha strong{display:block;font-weight:600}
-.ia-ficha span span{display:block;font-size:.88em;color:#5f6368}
-.ia-ficha .m-abierto{color:#188038}
-.ia-botones{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
-.ia-botones span{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;border:1px solid #dadce0;font-size:.85em;font-weight:500;color:#3e5870}
-.ia-wa{color:#25d366}
-
-/* Avisos del celular */
-.demo-avisos{display:grid;gap:10px}
-.aviso{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border-radius:var(--r-sm);background:rgba(255,255,255,.92);backdrop-filter:blur(8px);box-shadow:0 20px 40px -24px rgba(58,40,24,.55),0 1px 4px rgba(58,40,24,.08)}
-.aviso-icono{display:grid;place-items:center;width:38px;height:38px;border-radius:10px;background:#3e5870;color:#fff;font-size:20px;flex:none}
-.aviso-wa{background:#25d366;font-size:22px}
-.aviso-texto{flex:1;min-width:0;line-height:1.3}
-.aviso-meta{display:flex;justify-content:space-between;font-size:.78em;color:#6b6f75}
-.aviso-meta b{font-weight:400}
-.aviso-texto strong{display:block;margin-top:2px;font-weight:600}
-.aviso-texto>span:last-child{display:block;font-size:.92em;color:#3c4043}
-
-/* Demos combinadas */
-.demo-combo{display:grid;gap:10px}
-.m-resenas{margin-top:14px;padding-top:12px;border-top:1px solid #ebebeb}
-.m-resenas-tit{display:flex;align-items:center;gap:8px;font-size:.85em;font-weight:600;color:#5f6368}
-.m-resenas .logo-gbp{width:16px;height:16px}
-.m-resenas .r-autor{margin-top:8px}
-
 /* Reseñas (Perfil de Empresa en Google) */
 .logo-gbp{width:20px;height:20px;color:#4285f4;flex:none}
-.estrellas{display:inline-block;color:#f4b400;letter-spacing:1px}
-.tr-avatar{display:grid;place-items:center;width:32px;height:32px;border-radius:50%;background:#7b5e4a;color:#fff;font-size:.75em;font-weight:600;flex:none}
-.tr-autor,.r-autor{display:flex;align-items:center;gap:10px;margin-top:10px}
-.tr-autor strong,.r-autor strong{display:block;font-weight:600}
-.r-negocio{margin-top:12px;padding-bottom:12px;border-bottom:1px solid #ebebeb}
-.r-negocio strong{display:block;font-size:1.15em;font-weight:500;color:#202124}
-.r-negocio span{font-size:.85em;color:#5f6368}
-.r-item{padding-top:4px}
-.r-item+.r-item{margin-top:14px;padding-top:4px;border-top:1px solid #f1f3f4}
-.r-meta{display:block;font-size:.82em;color:#5f6368}
-.r-texto{margin-top:8px;color:#202124}
-.r-respuesta{margin-top:10px;padding:10px 12px;border-radius:12px;background:#f1f3f4;font-size:.9em;color:#3c4043}
-.r-respuesta strong{display:block;font-size:.92em;font-weight:600;margin-bottom:2px;color:#202124}
-.r-av1{background:#8d6e63}
-.r-av2{background:#4f6f7d}
-
-/* Hero: tarjetas con interacción, sincronizadas con el video */
-/* Lo que aún no ocurre no ocupa espacio: la tarjeta crece como un chat real */
-.tarjetas [data-en]:not(.ok){display:none}
-.tarjetas [data-en].ok{animation:entra .45s var(--suave) both}
-.tarjetas .wa-escribe.ok{animation:none}
-@keyframes entra{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-.tarjetas .demo{font-size:clamp(12px,.95cqw,15px)}
-.tarjeta-resena{right:1%;bottom:max(7%,80px);width:clamp(230px,18cqw,290px);padding:14px 16px;font-weight:400}
-.tr-cab{display:flex;align-items:center;gap:8px;font-size:.8em;color:var(--gris);line-height:1.3}
-.tr-cab b{font-weight:600;color:var(--tinta)}
-.tr-texto{margin-top:8px;color:#2d2620;line-height:1.35}
-.tarjeta-chat{left:50.500%;top:max(11.500%,calc(var(--nav-h) + 18px - (100cqh - var(--w) * .5625) * var(--py)));width:clamp(240px,17cqw,280px)}
-.tarjeta-chat .wa-avatar{background:#7b5e4a}
-.tarjeta-ia-h{right:1%;bottom:max(7%,80px);width:clamp(230px,18cqw,290px)}
-.ia-ficha-mini{display:flex;align-items:center;flex-wrap:wrap;gap:4px 8px;margin-top:10px;padding:8px 10px;border:1px solid #e6e1da;border-radius:12px;font-size:.92em}
-.ia-ficha-mini .logo-gbp{width:18px;height:18px}
-.ia-ficha-mini strong{font-weight:600}
-.tarjeta-ia-h .ia-pregunta{margin-top:10px}
-.ia-ficha .logo-gbp{width:26px;height:26px}
-.ia-ficha span .estrellas{display:block;font-size:.85em;color:#f4b400}
-
-/* Hero: tarjeta de búsqueda en Google */
-.tarjeta-google{left:50.500%;top:max(11.500%,calc(var(--nav-h) + 18px - (100cqh - var(--w) * .5625) * var(--py)));width:clamp(270px,20cqw,330px);padding:10px;background:#fff}
-.tg-barra{display:flex;align-items:center;gap:10px;padding:9px 14px;border-radius:999px;border:1px solid #dfe1e5;box-shadow:0 1px 6px rgba(32,33,36,.1);font-weight:400;color:#202124;min-height:42px}
-.tg-g{width:20px!important;height:20px!important}
-.tg-q.escribiendo::after{content:"";display:inline-block;width:1.5px;height:1em;margin-left:1px;vertical-align:-.12em;background:#1a73e8}
-.tg-res{padding:10px 8px 4px}
-.tg-url{display:block;font-size:.78em;font-weight:400;color:#4d5156}
-.tg-res strong{display:block;margin-top:2px;font-weight:500;color:#1a0dab}
-
-/* Hero: tarjeta de mapa (simula Google Maps: ruta, pin y botón "Cómo llegar") */
-.tarjeta-mapa{left:50.500%;top:max(11.500%,calc(var(--nav-h) + 18px - (100cqh - var(--w) * .5625) * var(--py)));width:clamp(260px,19.500cqw,320px);padding:8px;background:#fff;color:#202124;font-size:clamp(12px,.95cqw,15px);line-height:1.35;font-weight:400}
-.tm-mapa{position:relative;aspect-ratio:280/130;border-radius:10px;overflow:hidden;background:#ece8df}
-.tm-base{display:block;width:100%;height:100%}
-.tm-ruta{stroke-dasharray:100;stroke-dashoffset:0}
-.tarjetas .tarjeta-mapa .tm-ruta.ok{animation:ruta 1s var(--suave) both}
-@keyframes ruta{from{stroke-dashoffset:100}to{stroke-dashoffset:0}}
-.tm-mapa>.tm-pin{position:absolute;left:70%;top:47.700%;width:14px;height:20px;transform:translate(-50%,-100%);filter:drop-shadow(0 2px 2px rgba(0,0,0,.3))}
-.tarjetas .tarjeta-mapa .tm-pin.ok{animation:cae .5s var(--suave) both}
-@keyframes cae{from{opacity:0;transform:translate(-50%,-260%)}60%{opacity:1}to{opacity:1;transform:translate(-50%,-100%)}}
-.tm-info{padding:10px 6px 4px}
-.tm-info strong{display:block;font-weight:600;font-size:1.05em;color:#202124}
-.tm-meta{display:block;font-size:.88em;color:#5f6368}
-.tm-meta b{font-weight:600;color:#188038}
-.tm-fila{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:8px}
-.tm-eta{font-weight:500;color:#202124}
-.tm-boton{margin-left:auto;padding:6px 12px;border-radius:999px;border:1px solid #dadce0;color:#1a73e8;font-weight:500;font-size:.92em;transition:background-color .3s,color .3s,border-color .3s}
-.tm-boton.efecto{background:#1a73e8;border-color:#1a73e8;color:#fff}
-.tr-lugar{display:flex;align-items:center;gap:6px;margin-top:8px;font-size:.82em;font-weight:500;color:var(--gris)}
-.tr-pin{width:12px;height:16px;flex:none}
 
 /* Chips que se "ganan": empiezan apagados mientras corre el video y se encienden
    cuando llega el logo de su tarjeta */
@@ -253,20 +69,17 @@
   .hero h1{font-size:clamp(42px,11.500vw,76px)}
   .hero-sub{font-size:clamp(19px,4.600vw,26px)}
   .hero-acciones{margin-top:26px}
-  .btn-tinta,.btn-crema{font-size:18px}
+  
   .chips-canales{margin-top:24px;gap:8px}
   .chips-canales a{font-size:14px;padding:5px 13px 5px 9px}
 
   /* El video ocupa la parte baja; arriba queda un espacio libre para las tarjetas */
   .hero-media{position:relative;inset:auto;margin-top:8px;width:100%;aspect-ratio:3/4;max-height:600px}
-  .escena{--w:min(170cqw,(100cqh - 150px) * 1.778);left:calc((100cqw - var(--w)) * .97);top:auto;bottom:0}
+  
   .escena-img,.escena-video{-webkit-mask-image:linear-gradient(transparent,#000 24%);mask-image:linear-gradient(transparent,#000 24%)}
   .hero-media::after{height:14%}
   .tarjeta{font-size:13px}
-  .tarjeta-aviso{padding:9px 14px 9px 10px;gap:10px}
-  .tarjeta-icono{width:32px;height:32px}
-  .tarjetas .demo{font-size:12px}
-  .tarjeta-aviso,.tarjeta-resena,.tarjeta-mapa,.tarjeta-chat,.tarjeta-ia-h{left:43%;right:auto;top:-138px;bottom:auto;width:min(270px,calc(100vw - 40px));max-width:none}
+
   .video-control{left:12px;right:auto;bottom:12px;font-size:13px;z-index:3}
   .video-saltar{left:64px;right:auto;bottom:12px;height:44px;font-size:13px}
 
@@ -292,5 +105,3 @@
   .marca{padding:6px 14px 6px 12px}
   .marca-logo{height:30px}
 }
-
-@keyframes cae{from{opacity:0;transform:translateY(-3.5em)}60%{opacity:1}to{opacity:1;transform:none}}

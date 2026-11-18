@@ -233,6 +233,5 @@ h3{font-family:var(--serif);font-weight:700;font-size:26px;line-height:1.08;lett
 .pie ul a:hover{text-decoration:underline;text-underline-offset:6px}
 .pie-nota{font-size:15px;color:var(--gris)}
 
-
 /* Contenedor de los símbolos SVG (íconos y logotipos) */
 .sprite{position:absolute;width:0;height:0;overflow:hidden}
